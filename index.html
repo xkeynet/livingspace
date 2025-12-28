@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Google tag (gtag.js) -->
+  <!-- Google Analytics GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RDY6CSZZDW"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -13,8 +14,127 @@
   </script>
 
   <title>LIVINGSPACE</title>
+
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/phosphor-icons"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+
+    /* HEADER */
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 64px;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      z-index: 100;
+    }
+
+    header img {
+      height: 32px;
+    }
+
+    .icon {
+      font-size: 26px;
+      color: #fff;
+    }
+
+    /* SUB BAR */
+    .subbar {
+      margin-top: 64px;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      padding: 10px 0;
+    }
+
+    .subbar img {
+      height: 20px;
+    }
+
+    /* HERO VIDEO */
+    .hero {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      overflow: hidden;
+    }
+
+    .hero video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* SOUND TOGGLE */
+    .sound-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 28px;
+      color: #fff;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    /* BLACK SECTION UNDER VIDEO */
+    .after-hero {
+      height: 200px;
+      background: #000;
+    }
+  </style>
 </head>
+
 <body>
-  ...
+
+  <header>
+    <i class="ph-list icon"></i>
+    <img src="assets/IMG_7700.png" alt="LIVINGSPACE logo" />
+    <i class="ph-magnifying-glass icon"></i>
+  </header>
+
+  <div class="subbar">
+    <img src="assets/slogan.jpg" alt="Váš životní prostor" />
+  </div>
+
+  <section class="hero">
+    <video id="heroVideo" autoplay muted loop playsinline>
+      <source src="assets/bose1.mp4" type="video/mp4" />
+    </video>
+
+    <i id="soundBtn" class="ph-speaker-simple-slash sound-toggle"></i>
+  </section>
+
+  <div class="after-hero"></div>
+
+  <script>
+    const video = document.getElementById('heroVideo');
+    const btn = document.getElementById('soundBtn');
+
+    btn.addEventListener('click', () => {
+      video.muted = !video.muted;
+      btn.className = video.muted
+        ? 'ph-speaker-simple-slash sound-toggle'
+        : 'ph-speaker-simple-high sound-toggle';
+    });
+  </script>
+
 </body>
 </html>
