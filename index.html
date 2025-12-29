@@ -19,7 +19,11 @@
   <script src="https://unpkg.com/phosphor-icons"></script>
 
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
     body {
       background: #000;
@@ -41,21 +45,19 @@
       z-index: 100;
     }
 
-    /* Logo (střed) */
     header img {
-      height: 48px;      /* zvětšuješ logo jedním číslem */
-      margin-top: -13px; /* posun nahoru (minus = výš) */
+      height: 48px;      /* velikost loga */
+      margin-top: -13px; /* posun nahoru */
     }
 
-    /* Menu + lupa */
     .nav-icon {
-      font-size: 22px;   /* velikost menu/lupy */
+      font-size: 22px;
       color: #fff;
     }
 
-    /* SUB BAR (slogan) */
+    /* SUBBAR */
     .subbar {
-      margin-top: 80px;  /* oddělí subbar od headeru */
+      margin-top: 80px;
       background: #000;
       display: flex;
       justify-content: center;
@@ -63,7 +65,7 @@
     }
 
     .subbar img {
-      height: 28px;      /* zvětšuješ slogan jedním číslem */
+      height: 28px;
     }
 
     /* HERO VIDEO */
@@ -73,7 +75,7 @@
       aspect-ratio: 16 / 9;
       background: #000;
       overflow: hidden;
-      touch-action: pan-y; /* povolí vertikální scroll, swipe řešíme sami */
+      touch-action: pan-y;
     }
 
     .hero video {
@@ -83,13 +85,13 @@
       display: block;
     }
 
-    /* SOUND TOGGLE (jen speaker) */
+    /* SOUND */
     .sound-toggle {
       position: absolute;
-      right: 6px;        /* natlačí víc doprava */
+      right: 6px;
       top: 50%;
       transform: translateY(-50%);
-      font-size: 22px;   /* velikost speakeru (jen tohle měň) */
+      font-size: 22px;
       color: #fff;
       cursor: pointer;
       z-index: 10;
@@ -97,7 +99,7 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* BLACK SECTION UNDER VIDEO */
+    /* BLACK SECTION */
     .after-hero {
       height: 200px;
       background: #000;
@@ -108,31 +110,32 @@
 <body>
 
   <header>
-    <i class="ph-list nav-icon" aria-label="Menu"></i>
-    <img src="assets/IMG_7700.png" alt="LIVINGSPACE logo" />
-    <i class="ph-magnifying-glass nav-icon" aria-label="Vyhledávání"></i>
+    <i class="ph-list nav-icon"></i>
+    <img src="assets/IMG_7700.png" alt="LIVINGSPACE logo">
+    <i class="ph-magnifying-glass nav-icon"></i>
   </header>
 
   <div class="subbar">
-    <img src="assets/slogan.jpg" alt="Váš životní prostor" />
+    <img src="assets/slogan.jpg" alt="Váš životní prostor">
   </div>
 
   <section class="hero">
-    <!-- 1 přehrávač, jen měníme src -->
     <video id="heroVideo" autoplay muted playsinline></video>
-
-    <!-- start muted -->
-    <i id="soundBtn" class="ph-speaker-simple-slash sound-toggle" aria-label="Zvuk"></i>
+    <i id="soundBtn" class="ph-speaker-simple-slash sound-toggle"></i>
   </section>
 
   <div class="after-hero"></div>
 
   <script>
+    /* =============================
+       VIDEO PLAYLIST
+       ============================= */
+
     const SOURCES = [
       'assets/bose1.mp4',
       'assets/bose2.mp4',
       'assets/bose3.mp4',
-      'assets/bose4.mp4',
+      'assets/bose4.mp4'
     ];
 
     const video = document.getElementById('heroVideo');
@@ -141,7 +144,7 @@
     let index = 0;
     let muted = true;
 
-    function applyIcon() {
+    function updateIcon() {
       btn.className = muted
         ? 'ph-speaker-simple-slash sound-toggle'
         : 'ph-speaker-simple-high sound-toggle';
@@ -149,47 +152,44 @@
 
     function loadVideo(i) {
       index = (i + SOURCES.length) % SOURCES.length;
-
       video.pause();
       video.currentTime = 0;
-
       video.src = SOURCES[index];
-      video.load();
-
       video.muted = muted;
-      applyIcon();
-
-      // iOS může blokovat autoplay. Swipe/klik to obvykle odemkne.
+      updateIcon();
+      video.load();
       video.play().catch(() => {});
     }
 
     // start
     loadVideo(0);
 
-    // mute/unmute
+    // auto-next po dohrání
+    video.addEventListener('ended', () => {
+      loadVideo(index + 1);
+    });
+
+    // mute toggle
     btn.addEventListener('click', () => {
       muted = !muted;
       video.muted = muted;
-      applyIcon();
+      updateIcon();
       if (!muted) video.play().catch(() => {});
     });
 
-    // swipe L/R jen na videu (telefon)
+    // swipe left / right
     let startX = 0;
     const THRESHOLD = 35;
 
-    video.addEventListener('touchstart', (e) => {
+    video.addEventListener('touchstart', e => {
       startX = e.touches[0].clientX;
     }, { passive: true });
 
-    video.addEventListener('touchend', (e) => {
-      const endX = e.changedTouches[0].clientX;
-      const dx = endX - startX;
-
+    video.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - startX;
       if (Math.abs(dx) < THRESHOLD) return;
-
-      if (dx < 0) loadVideo(index + 1); // swipe doleva = další
-      else loadVideo(index - 1);        // swipe doprava = předchozí
+      if (dx < 0) loadVideo(index + 1);
+      else loadVideo(index - 1);
     }, { passive: true });
   </script>
 
