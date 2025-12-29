@@ -25,7 +25,6 @@
       background: #000;
       color: #fff;
       font-family: Arial, sans-serif;
-      overflow-x: hidden;
     }
 
     /* HEADER */
@@ -42,70 +41,55 @@
       z-index: 100;
     }
 
+    /* Logo (střed) */
     header img {
-      height: 48px;
-      margin-top: -13px; /* drží logo výš */
+      height: 48px;      /* zvětšuješ logo jedním číslem */
+      margin-top: -13px; /* posun nahoru (minus = výš) */
     }
 
+    /* Menu + lupa */
     .nav-icon {
-      font-size: 22px;
+      font-size: 22px;   /* velikost menu/lupy */
       color: #fff;
-      line-height: 1;
     }
 
-    /* SUB BAR */
+    /* SUB BAR (slogan) */
     .subbar {
-      margin-top: 80px;
+      margin-top: 80px;  /* oddělí subbar od headeru */
       background: #000;
       display: flex;
       justify-content: center;
       padding: 10px 0;
     }
 
-    .subbar img { height: 28px; }
+    .subbar img {
+      height: 28px;      /* zvětšuješ slogan jedním číslem */
+    }
 
-    /* VIDEO CAROUSEL */
+    /* HERO VIDEO */
     .hero {
       position: relative;
       width: 100%;
-      background: #000;
-      overflow: hidden;
-    }
-
-    .carousel {
-      display: flex;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      background: #000;
-    }
-    .carousel::-webkit-scrollbar { display: none; }
-
-    .slide {
-      flex: 0 0 100%;
-      width: 100%;
-      scroll-snap-align: start;
-      position: relative;
       aspect-ratio: 16 / 9;
       background: #000;
       overflow: hidden;
+      touch-action: pan-y; /* povolí vertikální scroll, swipe řešíme sami */
     }
 
-    .slide video {
+    .hero video {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
     }
 
-    /* SOUND TOGGLE (jen pro speaker, nepro menu/lupu) */
+    /* SOUND TOGGLE (jen speaker) */
     .sound-toggle {
       position: absolute;
-      right: 6px;          /* natlačené víc doprava */
+      right: 6px;        /* natlačí víc doprava */
       top: 50%;
       transform: translateY(-50%);
-      font-size: 22px;     /* tady zmenšuješ jen mikrofon */
+      font-size: 22px;   /* velikost speakeru (jen tohle měň) */
       color: #fff;
       cursor: pointer;
       z-index: 10;
@@ -124,9 +108,9 @@
 <body>
 
   <header>
-    <i class="ph-list nav-icon"></i>
+    <i class="ph-list nav-icon" aria-label="Menu"></i>
     <img src="assets/IMG_7700.png" alt="LIVINGSPACE logo" />
-    <i class="ph-magnifying-glass nav-icon"></i>
+    <i class="ph-magnifying-glass nav-icon" aria-label="Vyhledávání"></i>
   </header>
 
   <div class="subbar">
@@ -134,79 +118,79 @@
   </div>
 
   <section class="hero">
-    <div id="carousel" class="carousel">
-      <div class="slide">
-        <video class="heroVideo" autoplay muted loop playsinline>
-          <source src="assets/bose1.mp4" type="video/mp4" />
-        </video>
-      </div>
+    <!-- 1 přehrávač, jen měníme src -->
+    <video id="heroVideo" autoplay muted playsinline></video>
 
-      <div class="slide">
-        <video class="heroVideo" autoplay muted loop playsinline>
-          <source src="assets/bose2.mp4" type="video/mp4" />
-        </video>
-      </div>
-
-      <div class="slide">
-        <video class="heroVideo" autoplay muted loop playsinline>
-          <source src="assets/bose3.mp4" type="video/mp4" />
-        </video>
-      </div>
-
-      <div class="slide">
-        <video class="heroVideo" autoplay muted loop playsinline>
-          <source src="assets/bose4.mp4" type="video/mp4" />
-        </video>
-      </div>
-    </div>
-
-    <i id="soundBtn" class="ph-speaker-simple-slash sound-toggle"></i>
+    <!-- start muted -->
+    <i id="soundBtn" class="ph-speaker-simple-slash sound-toggle" aria-label="Zvuk"></i>
   </section>
 
   <div class="after-hero"></div>
 
   <script>
-    const carousel = document.getElementById('carousel');
+    const SOURCES = [
+      'assets/bose1.mp4',
+      'assets/bose2.mp4',
+      'assets/bose3.mp4',
+      'assets/bose4.mp4',
+    ];
+
+    const video = document.getElementById('heroVideo');
     const btn = document.getElementById('soundBtn');
-    const videos = Array.from(document.querySelectorAll('.heroVideo'));
 
-    // výchozí: všechno mute (iOS friendly)
-    videos.forEach(v => { v.muted = true; });
+    let index = 0;
+    let muted = true;
 
-    // aktivní video = to, které je nejvíc vidět ve viewportu carouselu
-    let activeVideo = videos[0];
-
-    const observer = new IntersectionObserver((entries) => {
-      // vyber entry s největší viditelností
-      const visible = entries
-        .filter(e => e.isIntersecting)
-        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-
-      if (visible && visible.target) {
-        activeVideo = visible.target;
-
-        // ikonka se řídí stavem aktivního videa
-        btn.className = activeVideo.muted
-          ? 'ph-speaker-simple-slash sound-toggle'
-          : 'ph-speaker-simple-high sound-toggle';
-      }
-    }, {
-      root: carousel,
-      threshold: [0.25, 0.5, 0.75, 0.9]
-    });
-
-    videos.forEach(v => observer.observe(v));
-
-    btn.addEventListener('click', () => {
-      if (!activeVideo) return;
-
-      // toggle jen pro aktivní slide
-      activeVideo.muted = !activeVideo.muted;
-
-      btn.className = activeVideo.muted
+    function applyIcon() {
+      btn.className = muted
         ? 'ph-speaker-simple-slash sound-toggle'
         : 'ph-speaker-simple-high sound-toggle';
+    }
+
+    function loadVideo(i) {
+      index = (i + SOURCES.length) % SOURCES.length;
+
+      video.pause();
+      video.currentTime = 0;
+
+      video.src = SOURCES[index];
+      video.load();
+
+      video.muted = muted;
+      applyIcon();
+
+      // iOS může blokovat autoplay. Swipe/klik to obvykle odemkne.
+      video.play().catch(() => {});
+    }
+
+    // start
+    loadVideo(0);
+
+    // mute/unmute
+    btn.addEventListener('click', () => {
+      muted = !muted;
+      video.muted = muted;
+      applyIcon();
+      if (!muted) video.play().catch(() => {});
     });
+
+    // swipe L/R jen na videu (telefon)
+    let startX = 0;
+    const THRESHOLD = 35;
+
+    video.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+    }, { passive: true });
+
+    video.addEventListener('touchend', (e) => {
+      const endX = e.changedTouches[0].clientX;
+      const dx = endX - startX;
+
+      if (Math.abs(dx) < THRESHOLD) return;
+
+      if (dx < 0) loadVideo(index + 1); // swipe doleva = další
+      else loadVideo(index - 1);        // swipe doprava = předchozí
+    }, { passive: true });
   </script>
 
 </body>
