@@ -19,16 +19,13 @@
   <script src="https://unpkg.com/phosphor-icons"></script>
 
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       background: #000;
       color: #fff;
       font-family: Arial, sans-serif;
+      overflow-x: hidden;
     }
 
     /* HEADER */
@@ -47,12 +44,13 @@
 
     header img {
       height: 48px;
-      margin-top: -13px;
+      margin-top: -13px; /* drží logo výš */
     }
 
-    .icon {
+    .nav-icon {
       font-size: 22px;
       color: #fff;
+      line-height: 1;
     }
 
     /* SUB BAR */
@@ -64,35 +62,55 @@
       padding: 10px 0;
     }
 
-    .subbar img {
-      height: 28px;
-    }
+    .subbar img { height: 28px; }
 
-    /* HERO VIDEO */
+    /* VIDEO CAROUSEL */
     .hero {
       position: relative;
       width: 100%;
+      background: #000;
+      overflow: hidden;
+    }
+
+    .carousel {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      background: #000;
+    }
+    .carousel::-webkit-scrollbar { display: none; }
+
+    .slide {
+      flex: 0 0 100%;
+      width: 100%;
+      scroll-snap-align: start;
+      position: relative;
       aspect-ratio: 16 / 9;
       background: #000;
       overflow: hidden;
     }
 
-    .hero video {
+    .slide video {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      display: block;
     }
 
-    /* SOUND TOGGLE */
+    /* SOUND TOGGLE (jen pro speaker, nepro menu/lupu) */
     .sound-toggle {
       position: absolute;
-      right: 12px;
+      right: 6px;          /* natlačené víc doprava */
       top: 50%;
       transform: translateY(-50%);
-      font-size: 28px;
+      font-size: 22px;     /* tady zmenšuješ jen mikrofon */
       color: #fff;
       cursor: pointer;
       z-index: 10;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     /* BLACK SECTION UNDER VIDEO */
@@ -106,9 +124,9 @@
 <body>
 
   <header>
-    <i class="ph-list icon"></i>
+    <i class="ph-list nav-icon"></i>
     <img src="assets/IMG_7700.png" alt="LIVINGSPACE logo" />
-    <i class="ph-magnifying-glass icon"></i>
+    <i class="ph-magnifying-glass nav-icon"></i>
   </header>
 
   <div class="subbar">
@@ -116,9 +134,31 @@
   </div>
 
   <section class="hero">
-    <video id="heroVideo" autoplay muted loop playsinline>
-      <source src="assets/bose1.mp4" type="video/mp4" />
-    </video>
+    <div id="carousel" class="carousel">
+      <div class="slide">
+        <video class="heroVideo" autoplay muted loop playsinline>
+          <source src="assets/bose1.mp4" type="video/mp4" />
+        </video>
+      </div>
+
+      <div class="slide">
+        <video class="heroVideo" autoplay muted loop playsinline>
+          <source src="assets/bose2.mp4" type="video/mp4" />
+        </video>
+      </div>
+
+      <div class="slide">
+        <video class="heroVideo" autoplay muted loop playsinline>
+          <source src="assets/bose3.mp4" type="video/mp4" />
+        </video>
+      </div>
+
+      <div class="slide">
+        <video class="heroVideo" autoplay muted loop playsinline>
+          <source src="assets/bose4.mp4" type="video/mp4" />
+        </video>
+      </div>
+    </div>
 
     <i id="soundBtn" class="ph-speaker-simple-slash sound-toggle"></i>
   </section>
@@ -126,12 +166,44 @@
   <div class="after-hero"></div>
 
   <script>
-    const video = document.getElementById('heroVideo');
+    const carousel = document.getElementById('carousel');
     const btn = document.getElementById('soundBtn');
+    const videos = Array.from(document.querySelectorAll('.heroVideo'));
+
+    // výchozí: všechno mute (iOS friendly)
+    videos.forEach(v => { v.muted = true; });
+
+    // aktivní video = to, které je nejvíc vidět ve viewportu carouselu
+    let activeVideo = videos[0];
+
+    const observer = new IntersectionObserver((entries) => {
+      // vyber entry s největší viditelností
+      const visible = entries
+        .filter(e => e.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+      if (visible && visible.target) {
+        activeVideo = visible.target;
+
+        // ikonka se řídí stavem aktivního videa
+        btn.className = activeVideo.muted
+          ? 'ph-speaker-simple-slash sound-toggle'
+          : 'ph-speaker-simple-high sound-toggle';
+      }
+    }, {
+      root: carousel,
+      threshold: [0.25, 0.5, 0.75, 0.9]
+    });
+
+    videos.forEach(v => observer.observe(v));
 
     btn.addEventListener('click', () => {
-      video.muted = !video.muted;
-      btn.className = video.muted
+      if (!activeVideo) return;
+
+      // toggle jen pro aktivní slide
+      activeVideo.muted = !activeVideo.muted;
+
+      btn.className = activeVideo.muted
         ? 'ph-speaker-simple-slash sound-toggle'
         : 'ph-speaker-simple-high sound-toggle';
     });
