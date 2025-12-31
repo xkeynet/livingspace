@@ -15,6 +15,11 @@
 
   <title>LIVINGSPACE</title>
 
+  <!-- Chakra Petch (Google Fonts) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
   <!-- Phosphor Icons -->
   <script src="https://unpkg.com/phosphor-icons"></script>
 
@@ -25,10 +30,15 @@
       box-sizing: border-box;
     }
 
+    :root{
+      --ls-font: "Chakra Petch", Arial, sans-serif;
+    }
+
     body {
       background: #000;
       color: #fff;
-      font-family: Arial, sans-serif;
+      font-family: var(--ls-font);
+      letter-spacing: 0.2px;
     }
 
     /* HEADER */
