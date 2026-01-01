@@ -30,11 +30,15 @@
       --ls-font: "Chakra Petch", Arial, sans-serif;
       --ls-grey: #B4B4B4;
 
-      /* STAR-WARS-like menu geometry (tweak here only) */
-      --menu-left:  clamp(44px, 10vw, 72px); /* posuň menu doprava */
-      --menu-right: clamp(24px,  8vw, 56px); /* stáhni šipky doleva */
-      --menu-top-gap: 44px;                  /* mezera pod headerem v menu */
-      --menu-row-pad: 14px;                  /* menší mezery mezi položkami */
+      /* MENU (Star Wars clone tuning) */
+      --menu-left:  clamp(44px, 10vw, 72px); /* menu víc doprava */
+      --menu-right: clamp(24px,  8vw, 56px); /* šipky víc doleva */
+      --menu-top-gap: 44px;
+      --menu-row-pad: 14px;
+
+      /* requested changes */
+      --menu-font-size: 19px;  /* 22px - ~15% */
+      --chev-size: 17px;       /* 20px - ~15% */
     }
 
     body {
@@ -65,6 +69,7 @@
 
     .nav-icon {
       font-size: 22px;
+      line-height: 1;
       color: #fff;
       cursor: pointer;
       user-select: none;
@@ -131,7 +136,7 @@
       display:flex;
       align-items:center;
       justify-content: space-between;
-      padding: 0 16px; /* stejné jako hlavní header */
+      padding: 0 16px;
     }
     .menu-header img{
       height: 48px;
@@ -153,21 +158,22 @@
 
     .menu-item{
       display:flex;
-      align-items:center;
+      align-items:center;              /* šipka na střed řádku */
       justify-content: space-between;
       gap: 16px;
-      padding: var(--menu-row-pad) 0; /* menší mezery */
+      padding: var(--menu-row-pad) 0;
       font-weight: 400;
-      font-size: 22px;
+      font-size: var(--menu-font-size);
       line-height: 1.05;
       text-transform: uppercase;
       letter-spacing: 0.6px;
+      color: var(--ls-grey);           /* menu text šedý jako slogan */
     }
 
-    /* levá šedá čára jen u první položky */
+    /* levá čára jen u první položky – BÍLÁ */
     .menu-item.first{
       position: relative;
-      padding-left: 18px; /* odsazení textu od čáry */
+      padding-left: 18px;
     }
     .menu-item.first::before{
       content:"";
@@ -177,29 +183,30 @@
       transform: translateY(-50%);
       width: 4px;
       height: 26px;
-      background: var(--ls-grey);
+      background: #fff;                /* čára bílá */
       border-radius: 2px;
     }
 
-    /* šipka V – kompaktní a NE u kraje */
+    /* šipka V – menší o ~15%, bílá, vycentrovaná */
     .chev{
-      width: 20px;
-      height: 20px;
+      width: var(--chev-size);
+      height: var(--chev-size);
       position: relative;
-      flex: 0 0 20px;
-      opacity: 0.95;
+      flex: 0 0 var(--chev-size);
+      opacity: 1;
+      transform: translateY(0);        /* držíme přesně na střed */
     }
     .chev::before{
       content:"";
       position:absolute;
       inset: 0;
-      border-right: 2px solid #fff;
+      border-right: 2px solid #fff;    /* šipky zůstávají bílé */
       border-bottom: 2px solid #fff;
       transform: rotate(45deg);
       transform-origin: center;
     }
 
-    /* jemná linka dole (jako ve Star Wars) */
+    /* jemná linka dole */
     .menu-divider{
       width: 100%;
       margin: 18px 0 0;
