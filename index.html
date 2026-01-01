@@ -30,9 +30,20 @@
       --ls-font: "Chakra Petch", Arial, sans-serif;
       --gray: #B4B4B4;
 
-      /* menu padding se dopočítá z headeru */
-      --menu-pad-left: 16px;
-      --menu-pad-right: 16px;
+      /* Star-Wars-like spacing */
+      --header-h: 64px;
+      --pad-x: 16px;         /* stejné jako header padding */
+      --menu-top-gap: 22px;  /* mezera pod logem v menu */
+      --menu-left: 52px;     /* odsazení textu (jako Star Wars) */
+      --menu-right: 20px;    /* odsazení šipek od okraje */
+      --accent-gap: 14px;    /* mezera čára -> text */
+      --accent-w: 4px;
+      --accent-h: 28px;
+
+      --item-size: 34px;     /* velikost menu textu */
+      --item-weight: 500;    /* síla písma */
+      --item-gap: 34px;      /* mezera mezi položkami */
+      --divider: rgba(255,255,255,0.22);
     }
 
     body {
@@ -47,18 +58,20 @@
       position: fixed;
       top: 0;
       width: 100%;
-      height: 64px;
+      height: var(--header-h);
       background: #000;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 16px;
+      padding: 0 var(--pad-x);
       z-index: 100;
     }
 
     header img {
       height: 48px;
       margin-top: -13px;
+      user-select: none;
+      -webkit-user-drag: none;
     }
 
     .nav-icon {
@@ -78,7 +91,11 @@
       padding: 10px 0;
     }
 
-    .subbar img { height: 28px; }
+    .subbar img {
+      height: 28px;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
 
     /* HERO VIDEO */
     .hero {
@@ -118,112 +135,135 @@
     }
 
     /* =============================
-       MENU OVERLAY (Star Wars style)
+       STAR-WARS CLONE MENU OVERLAY
        ============================= */
-
-    .menu-overlay {
+    .menu-overlay{
       position: fixed;
       inset: 0;
       background: #000;
       z-index: 9999;
       display: none;
-      overflow: auto;
-      -webkit-overflow-scrolling: touch;
     }
-    .menu-overlay.open { display: block; }
+    .menu-overlay.open{ display: block; }
 
-    .menu-top {
-      height: 64px;
+    /* overlay header = přesně jako normální header */
+    .menu-header{
+      position: sticky;
+      top: 0;
+      height: var(--header-h);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 16px;
+      padding: 0 var(--pad-x);
+      background: #000;
+      z-index: 2;
     }
 
-    .menu-top .xbtn {
-      font-size: 26px;
+    /* “X” jako Star Wars */
+    .close-x{
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      font-size: 28px;
+      line-height: 1;
       color: #fff;
       cursor: pointer;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
     }
 
-    .menu-top img {
-      height: 48px;
-      margin-top: -13px;
+    /* menu list area */
+    .menu-content{
+      padding-top: var(--menu-top-gap);
+      padding-left: var(--menu-left);
+      padding-right: var(--menu-right);
+      padding-bottom: 40px;
     }
 
-    .menu-top .searchbtn {
-      font-size: 22px;
-      color: #fff;
-      cursor: pointer;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .menu-list {
-      padding-top: 40px; /* mezera pod logem jako Star Wars */
-      padding-left: var(--menu-pad-left);
-      padding-right: var(--menu-pad-right);
-    }
-
-    .menu-item {
+    .menu-item{
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 18px;
       padding: 22px 0;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-weight: 400; /* stejné jako slogan vibe */
-      font-size: 28px;  /* tvoje aktuální velikost */
     }
 
-    /* levá „čárka“ (aktivní) */
-    .menu-item.active {
-      position: relative;
-      padding-left: 18px;
+    .menu-leftwrap{
+      display: flex;
+      align-items: center;
+      gap: var(--accent-gap);
+      min-width: 0;
     }
-    .menu-item.active::before{
-      content:"";
-      position:absolute;
-      left:0;
-      top:50%;
-      transform:translateY(-50%);
-      width:4px;
-      height:34px;
+
+    /* čára vlevo (šedá jako slogan) */
+    .accent{
+      width: var(--accent-w);
+      height: var(--accent-h);
       background: var(--gray);
       border-radius: 2px;
+      flex: 0 0 auto;
+      opacity: 1;
     }
 
-    /* chevron V (větší, roztažené) */
-    .chev {
-      width: 28px;
-      height: 28px;
-      display: inline-block;
+    /* u položek bez čáry držíme zarovnání přes “ghost” */
+    .accent.ghost{
+      opacity: 0;
+    }
+
+    .menu-text{
+      font-size: var(--item-size);
+      font-weight: var(--item-weight);
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Šipka jako Star Wars: široké “V” (ne font znak) */
+    .chev{
+      width: 22px;
+      height: 22px;
+      flex: 0 0 auto;
+      position: relative;
+      margin-right: 2px;
+      opacity: 0.95;
+      transform: translateY(1px);
+    }
+    .chev::before{
+      content: "";
+      position: absolute;
+      inset: 0;
       border-right: 3px solid #fff;
       border-bottom: 3px solid #fff;
       transform: rotate(45deg);
-      margin-left: 16px;
-      opacity: 0.95;
-      flex: 0 0 auto;
+      transform-origin: center;
+      border-radius: 1px;
     }
 
-    /* jemná linka dole jako SW */
-    .menu-divider {
-      margin-top: 26px;
+    /* divider line jako Star Wars */
+    .menu-divider{
       height: 1px;
-      background: rgba(255,255,255,0.18);
-      width: 100%;
+      background: var(--divider);
+      margin-top: 12px;
+    }
+
+    /* prevent background scroll when menu open */
+    body.locked{
+      overflow: hidden;
+      touch-action: none;
     }
   </style>
 </head>
 
 <body>
 
+  <!-- NORMAL HEADER -->
   <header>
-    <i id="openMenu" class="ph-list nav-icon" aria-label="Menu"></i>
-    <img id="headerLogo" src="assets/IMG_7700.png" alt="LIVINGSPACE logo">
-    <i id="headerSearch" class="ph-magnifying-glass nav-icon" aria-label="Vyhledávání"></i>
+    <i id="openMenuBtn" class="ph-list nav-icon" aria-label="Menu"></i>
+    <img src="assets/IMG_7700.png" alt="LIVINGSPACE logo">
+    <i class="ph-magnifying-glass nav-icon" aria-label="Vyhledávání"></i>
   </header>
 
   <div class="subbar">
@@ -237,38 +277,53 @@
 
   <div class="after-hero"></div>
 
-  <!-- MENU OVERLAY -->
+  <!-- STAR-WARS CLONE MENU -->
   <div id="menuOverlay" class="menu-overlay" aria-hidden="true">
-    <div class="menu-top">
-      <span id="closeMenu" class="xbtn" aria-label="Zavřít">×</span>
+    <div class="menu-header">
+      <div id="closeMenuBtn" class="close-x" aria-label="Zavřít">×</div>
       <img src="assets/IMG_7700.png" alt="LIVINGSPACE logo">
-      <span class="searchbtn" aria-label="Vyhledávání">○</span>
+      <i class="ph-magnifying-glass nav-icon" aria-label="Vyhledávání"></i>
     </div>
 
-    <div class="menu-list">
-      <div class="menu-item active">
-        <span>O NÁS</span>
-        <span class="chev" aria-hidden="true"></span>
+    <div class="menu-content">
+      <div class="menu-item">
+        <div class="menu-leftwrap">
+          <div class="accent"></div>
+          <div class="menu-text">O NÁS</div>
+        </div>
+        <div class="chev" aria-hidden="true"></div>
       </div>
 
       <div class="menu-item">
-        <span>PRODUKTY</span>
-        <span class="chev" aria-hidden="true"></span>
+        <div class="menu-leftwrap">
+          <div class="accent ghost"></div>
+          <div class="menu-text">PRODUKTY</div>
+        </div>
+        <div class="chev" aria-hidden="true"></div>
       </div>
 
       <div class="menu-item">
-        <span>VIZE</span>
-        <span class="chev" aria-hidden="true"></span>
+        <div class="menu-leftwrap">
+          <div class="accent ghost"></div>
+          <div class="menu-text">VIZE</div>
+        </div>
+        <div class="chev" aria-hidden="true"></div>
       </div>
 
       <div class="menu-item">
-        <span>PARTNEŘI</span>
-        <span class="chev" aria-hidden="true"></span>
+        <div class="menu-leftwrap">
+          <div class="accent ghost"></div>
+          <div class="menu-text">PARTNEŘI</div>
+        </div>
+        <div class="chev" aria-hidden="true"></div>
       </div>
 
       <div class="menu-item">
-        <span>KONTAKT</span>
-        <span class="chev" aria-hidden="true"></span>
+        <div class="menu-leftwrap">
+          <div class="accent ghost"></div>
+          <div class="menu-text">KONTAKT</div>
+        </div>
+        <div class="chev" aria-hidden="true"></div>
       </div>
 
       <div class="menu-divider"></div>
@@ -311,7 +366,9 @@
 
     loadVideo(0);
 
-    video.addEventListener('ended', () => loadVideo(index + 1));
+    video.addEventListener('ended', () => {
+      loadVideo(index + 1);
+    });
 
     btn.addEventListener('click', () => {
       muted = !muted;
@@ -335,48 +392,29 @@
     }, { passive: true });
 
     /* =============================
-       MENU (padding podle loga + lupy)
+       STAR-WARS MENU OPEN/CLOSE
        ============================= */
-    const menuOverlay = document.getElementById('menuOverlay');
-    const openMenu = document.getElementById('openMenu');
-    const closeMenu = document.getElementById('closeMenu');
-    const headerLogo = document.getElementById('headerLogo');
-    const headerSearch = document.getElementById('headerSearch');
+    const overlay = document.getElementById('menuOverlay');
+    const openBtn = document.getElementById('openMenuBtn');
+    const closeBtn = document.getElementById('closeMenuBtn');
 
-    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
-
-    function syncMenuPadding() {
-      const logoRect = headerLogo.getBoundingClientRect();
-      const searchRect = headerSearch.getBoundingClientRect();
-
-      // left: přesně na levý okraj loga (písmeno L)
-      const left = clamp(Math.round(logoRect.left), 12, 48);
-
-      // right: aby šipky seděly pod lupou (pravý okraj ikony)
-      const right = clamp(Math.round(window.innerWidth - searchRect.right), 12, 48);
-
-      document.documentElement.style.setProperty('--menu-pad-left', left + 'px');
-      document.documentElement.style.setProperty('--menu-pad-right', right + 'px');
+    function openMenu(){
+      overlay.classList.add('open');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('locked');
+    }
+    function closeMenu(){
+      overlay.classList.remove('open');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('locked');
     }
 
-    function openOverlay() {
-      syncMenuPadding();
-      menuOverlay.classList.add('open');
-      menuOverlay.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
-    }
+    openBtn.addEventListener('click', openMenu);
+    closeBtn.addEventListener('click', closeMenu);
 
-    function closeOverlay() {
-      menuOverlay.classList.remove('open');
-      menuOverlay.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-    }
-
-    openMenu.addEventListener('click', openOverlay);
-    closeMenu.addEventListener('click', closeOverlay);
-
-    window.addEventListener('resize', () => {
-      if (menuOverlay.classList.contains('open')) syncMenuPadding();
+    // ESC (desktop)
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay.classList.contains('open')) closeMenu();
     });
   </script>
 
