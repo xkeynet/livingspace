@@ -29,6 +29,12 @@
     :root{
       --ls-font: "Chakra Petch", Arial, sans-serif;
       --ls-grey: #B4B4B4;
+
+      /* STAR-WARS-like menu geometry (tweak here only) */
+      --menu-left:  clamp(44px, 10vw, 72px); /* posuň menu doprava */
+      --menu-right: clamp(24px,  8vw, 56px); /* stáhni šipky doleva */
+      --menu-top-gap: 44px;                  /* mezera pod headerem v menu */
+      --menu-row-pad: 14px;                  /* menší mezery mezi položkami */
     }
 
     body {
@@ -53,8 +59,8 @@
     }
 
     header img {
-      height: 48px;      /* velikost loga */
-      margin-top: -13px; /* posun nahoru */
+      height: 48px;
+      margin-top: -13px;
     }
 
     .nav-icon {
@@ -73,7 +79,6 @@
       justify-content: center;
       padding: 10px 0;
     }
-
     .subbar img { height: 28px; }
 
     /* HERO VIDEO */
@@ -85,7 +90,6 @@
       overflow: hidden;
       touch-action: pan-y;
     }
-
     .hero video {
       width: 100%;
       height: 100%;
@@ -107,7 +111,6 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* BLACK SECTION */
     .after-hero { height: 200px; background: #000; }
 
     /* =============================
@@ -122,29 +125,29 @@
     }
     .menu-overlay.open{ display:block; }
 
-    /* header uvnitř menu – logo MUSÍ být vidět */
+    /* header uvnitř menu – logo zůstává */
     .menu-header{
       height: 64px;
       display:flex;
       align-items:center;
       justify-content: space-between;
-      padding: 0 16px;
+      padding: 0 16px; /* stejné jako hlavní header */
     }
     .menu-header img{
       height: 48px;
       margin-top: -13px;
     }
 
-    /* obsah menu zarovnaný “pod logo” (středový blok) */
+    /* MENU CONTENT = geometrie jako Star Wars */
     .menu-content{
-      max-width: 420px;
-      margin: 0 auto;
-      padding: 0 16px;
+      width: 100%;
+      padding-left: var(--menu-left);
+      padding-right: var(--menu-right);
     }
 
     .menu-list{
       list-style:none;
-      margin-top: 56px;   /* mezera pod headerem jako Star Wars */
+      margin-top: var(--menu-top-gap);
       padding: 0;
     }
 
@@ -153,10 +156,9 @@
       align-items:center;
       justify-content: space-between;
       gap: 16px;
-      padding: 22px 0;    /* vzduch mezi položkama */
-      font-family: var(--ls-font);
-      font-weight: 400;   /* NE tučné */
-      font-size: 22px;    /* menší než předtím */
+      padding: var(--menu-row-pad) 0; /* menší mezery */
+      font-weight: 400;
+      font-size: 22px;
       line-height: 1.05;
       text-transform: uppercase;
       letter-spacing: 0.6px;
@@ -165,7 +167,7 @@
     /* levá šedá čára jen u první položky */
     .menu-item.first{
       position: relative;
-      padding-left: 18px;
+      padding-left: 18px; /* odsazení textu od čáry */
     }
     .menu-item.first::before{
       content:"";
@@ -175,16 +177,16 @@
       transform: translateY(-50%);
       width: 4px;
       height: 26px;
-      background: var(--ls-grey); /* #B4B4B4 */
+      background: var(--ls-grey);
       border-radius: 2px;
     }
 
-    /* šipka V – víc “roztažená” jako Star Wars */
+    /* šipka V – kompaktní a NE u kraje */
     .chev{
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
       position: relative;
-      flex: 0 0 22px;
+      flex: 0 0 20px;
       opacity: 0.95;
     }
     .chev::before{
@@ -199,12 +201,11 @@
 
     /* jemná linka dole (jako ve Star Wars) */
     .menu-divider{
-      max-width: 420px;
-      margin: 20px auto 0;
+      width: 100%;
+      margin: 18px 0 0;
       border-top: 1px solid #1f1f1f;
     }
 
-    /* aby kliky nevyráběly modré zvýraznění */
     button.reset-btn{
       background:none;
       border:none;
