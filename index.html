@@ -218,17 +218,17 @@
     }
 
     /* FIXNÍ “SLOUPEC” PRO ŠIPKY */
-    .chev-btn{
-      background:none;
-      border:none;
-      padding: 0;
-      margin: 0;
-      width: var(--chev-size);
-      height: var(--chev-size);
-      flex: 0 0 var(--chev-size);
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-    }
+    .chev{
+    display: block;                 /* ← KLÍČOVÉ */
+    width: var(--chev-size);
+    height: var(--chev-size);
+    position: relative;
+    flex: 0 0 var(--chev-size);
+    opacity: 1;
+    transform: rotate(0deg);
+    transform-origin: center;
+    transition: transform 520ms cubic-bezier(.2,.9,.2,1);
+   }
 
     /* rotuje jen vnitřek (kresba), ne tlačítko */
     .chev{
