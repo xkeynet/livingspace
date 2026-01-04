@@ -211,31 +211,37 @@
       display:inline-block;
       transition: transform 160ms cubic-bezier(.2,.9,.2,1), color 120ms linear;
       will-change: transform;
+      cursor: pointer;
     }
     .menu-item.active .menu-label{
       transform: translateX(var(--active-shift));
       color: #fff;
     }
 
-    /* FIXNÍ “SLOUPEC” PRO ŠIPKY */
-    .chev{
-    display: block;                 /* ← KLÍČOVÉ */
-    width: var(--chev-size);
-    height: var(--chev-size);
-    position: relative;
-    flex: 0 0 var(--chev-size);
-    opacity: 1;
-    transform: rotate(0deg);
-    transform-origin: center;
-    transition: transform 520ms cubic-bezier(.2,.9,.2,1);
-   }
+    /* TLAČÍTKO ŠIPKY = fixní velikost a fixní sloupec */
+    .chev-btn{
+      width: var(--chev-size);
+      height: var(--chev-size);
+      flex: 0 0 var(--chev-size);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 0;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .chev-btn:focus{ outline: none; }
 
-    /* rotuje jen vnitřek (kresba), ne tlačítko */
+    /* ŠIPKA: rotuje jen kresba uvnitř, pozice zůstává */
     .chev{
       width: 100%;
       height: 100%;
+      display: block;
       position: relative;
-      --spin: 0deg;
+      --spin: 0deg; /* 0 = dolů, 180 = nahoru (ale my přidáváme 360+) */
     }
     .chev::before{
       content:"";
