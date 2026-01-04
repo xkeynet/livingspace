@@ -42,8 +42,8 @@
       /* saber (bílý meč) */
       --saber-w: 4px;
       --saber-h: 26px;
-      --saber-offset: 0px;    /* nech 0, ať je to přesně v ose menu-content */
-      --active-shift: 14px;   /* odskočení doprava */
+      --saber-offset: 0px;
+      --active-shift: 14px;
     }
 
     body {
@@ -151,17 +151,17 @@
       width: 100%;
       padding-left: var(--menu-left);
       padding-right: var(--menu-right);
-      position: relative; /* kvůli meči */
+      position: relative;
     }
 
     .menu-list{
       list-style:none;
       margin-top: var(--menu-top-gap);
       padding: 0;
-      position: relative; /* referenční blok pro meč */
+      position: relative;
     }
 
-    /* bílý meč = jeden element, co přeskakuje */
+    /* bílý meč */
     .saber{
       position: absolute;
       left: var(--saber-offset);
@@ -173,10 +173,10 @@
       transform: translateY(0);
       transition: transform 180ms cubic-bezier(.2,.9,.2,1);
       z-index: 2;
-      pointer-events: none; /* samotná čára neblokuje tap na položky */
+      pointer-events: none;
     }
 
-    /* “handle” pro prst (aby se to dalo táhnout snadno) */
+    /* handle pro prst */
     .saber-handle{
       position: absolute;
       left: calc(var(--saber-offset) - 14px);
@@ -185,12 +185,12 @@
       height: 100%;
       background: transparent;
       z-index: 3;
-      touch-action: none; /* tah meče nevyvolá scroll */
+      touch-action: none;
     }
 
     .menu-item{
       display:flex;
-      align-items:center; /* šipka přesně na střed řádku */
+      align-items:center;
       justify-content: space-between;
       gap: 16px;
       padding: var(--menu-row-pad) 0;
@@ -204,25 +204,38 @@
       -webkit-tap-highlight-color: transparent;
       position: relative;
       z-index: 1;
-      cursor: pointer;
     }
 
-    /* odskočení doprava = aktivní řádek */
-    .menu-item.active{
+    /* POSUN SE DĚJE JEN NA TEXTU (NE NA ŠIPCE) */
+    .menu-label{
+      display:inline-block;
+      transition: transform 160ms cubic-bezier(.2,.9,.2,1), color 120ms linear;
+      will-change: transform;
+    }
+    .menu-item.active .menu-label{
       transform: translateX(var(--active-shift));
-      transition: transform 160ms cubic-bezier(.2,.9,.2,1);
+      color: #fff;
     }
 
-    /* šipka V – bílá, rotuje přes JS (360+), vycentrovaná */
-    .chev{
+    /* FIXNÍ “SLOUPEC” PRO ŠIPKY */
+    .chev-btn{
+      background:none;
+      border:none;
+      padding: 0;
+      margin: 0;
       width: var(--chev-size);
       height: var(--chev-size);
-      position: relative;
       flex: 0 0 var(--chev-size);
-      opacity: 1;
-      transform: rotate(0deg);
-      transform-origin: center;
-      transition: transform 520ms cubic-bezier(.2,.9,.2,1);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* rotuje jen vnitřek (kresba), ne tlačítko */
+    .chev{
+      width: 100%;
+      height: 100%;
+      position: relative;
+      --spin: 0deg;
     }
     .chev::before{
       content:"";
@@ -230,18 +243,19 @@
       inset: 0;
       border-right: 2px solid #fff;
       border-bottom: 2px solid #fff;
-      transform: rotate(45deg);
+      transform: rotate(calc(45deg + var(--spin)));
       transform-origin: center;
+      transition: transform 520ms cubic-bezier(.2,.9,.2,1);
     }
 
-    /* “panel” pod položkou – zatím prázdný, jen aby to “sjelo dolů” */
+    /* panel pod položkou */
     .menu-panel{
       max-height: 0;
       overflow: hidden;
       transition: max-height 260ms cubic-bezier(.2,.9,.2,1);
     }
     .menu-item.open + .menu-panel{
-      max-height: 96px; /* jen placeholder prostor */
+      max-height: 96px;
     }
     .menu-panel-inner{
       padding: 10px 0;
@@ -285,32 +299,46 @@
 
     <div class="menu-content">
       <ul id="menuList" class="menu-list">
-        <!-- SABER + HANDLE (drag po meči) -->
         <div id="saber" class="saber" aria-hidden="true"></div>
         <div id="saberHandle" class="saber-handle" aria-label="Meč - výběr sekce"></div>
 
         <li class="menu-item" data-key="about">
-          <span>O NÁS</span><span class="chev" aria-hidden="true"></span>
+          <span class="menu-label">O NÁS</span>
+          <button class="chev-btn" aria-label="Rozbalit O NÁS">
+            <span class="chev" aria-hidden="true"></span>
+          </button>
         </li>
         <div class="menu-panel" aria-hidden="true"><div class="menu-panel-inner"></div></div>
 
         <li class="menu-item" data-key="products">
-          <span>PRODUKTY</span><span class="chev" aria-hidden="true"></span>
+          <span class="menu-label">PRODUKTY</span>
+          <button class="chev-btn" aria-label="Rozbalit PRODUKTY">
+            <span class="chev" aria-hidden="true"></span>
+          </button>
         </li>
         <div class="menu-panel" aria-hidden="true"><div class="menu-panel-inner"></div></div>
 
         <li class="menu-item" data-key="vision">
-          <span>VIZE</span><span class="chev" aria-hidden="true"></span>
+          <span class="menu-label">VIZE</span>
+          <button class="chev-btn" aria-label="Rozbalit VIZE">
+            <span class="chev" aria-hidden="true"></span>
+          </button>
         </li>
         <div class="menu-panel" aria-hidden="true"><div class="menu-panel-inner"></div></div>
 
         <li class="menu-item" data-key="partners">
-          <span>SPOLUPRÁCE</span><span class="chev" aria-hidden="true"></span>
+          <span class="menu-label">SPOLUPRÁCE</span>
+          <button class="chev-btn" aria-label="Rozbalit SPOLUPRÁCE">
+            <span class="chev" aria-hidden="true"></span>
+          </button>
         </li>
         <div class="menu-panel" aria-hidden="true"><div class="menu-panel-inner"></div></div>
 
         <li class="menu-item" data-key="contact">
-          <span>KONTAKT</span><span class="chev" aria-hidden="true"></span>
+          <span class="menu-label">KONTAKT</span>
+          <button class="chev-btn" aria-label="Rozbalit KONTAKT">
+            <span class="chev" aria-hidden="true"></span>
+          </button>
         </li>
         <div class="menu-panel" aria-hidden="true"><div class="menu-panel-inner"></div></div>
       </ul>
@@ -338,9 +366,7 @@
   <div class="after-hero"></div>
 
   <script>
-    /* =============================
-       MENU (overlay open/close)
-       ============================= */
+    /* MENU overlay */
     const menuOverlay = document.getElementById('menuOverlay');
     const menuOpen = document.getElementById('menuOpen');
     const menuClose = document.getElementById('menuClose');
@@ -348,22 +374,16 @@
     function openMenu(){
       menuOverlay.classList.add('open');
       menuOverlay.setAttribute('aria-hidden','false');
-      requestAnimationFrame(() => {
-        // po otevření srovnej meč na aktivní položku
-        syncSaberToActive();
-      });
+      requestAnimationFrame(() => syncSaberToActive());
     }
     function closeMenu(){
       menuOverlay.classList.remove('open');
       menuOverlay.setAttribute('aria-hidden','true');
     }
-
     menuOpen.addEventListener('click', openMenu);
     menuClose.addEventListener('click', closeMenu);
 
-    /* =============================
-       MENU (saber + accordion + arrow spin)
-       ============================= */
+    /* MENU logic */
     const menuList = document.getElementById('menuList');
     const items = Array.from(menuList.querySelectorAll('.menu-item'));
     const saber = document.getElementById('saber');
@@ -372,20 +392,16 @@
     let activeIndex = 0;
     let openIndex = -1;
 
-    // inicializace rotace šipek
+    // init arrows
     items.forEach((li) => {
       const chev = li.querySelector('.chev');
       chev.dataset.angle = '0';
-      chev.style.transform = 'rotate(0deg)'; // dolů = default
+      chev.style.setProperty('--spin', '0deg');
     });
 
     function setActive(i){
       const next = Math.max(0, Math.min(items.length - 1, i));
       if (next === activeIndex) return;
-
-      // zavři otevřené při změně focusu mečem
-      if (openIndex !== -1) closeItem(openIndex);
-
       items[activeIndex].classList.remove('active');
       activeIndex = next;
       items[activeIndex].classList.add('active');
@@ -396,41 +412,33 @@
       const li = items[activeIndex];
       const listRect = menuList.getBoundingClientRect();
       const liRect = li.getBoundingClientRect();
+      const saberH = parseFloat(getComputedStyle(saber).height);
 
-      // y = střed řádku minus půlka výšky meče
-      const y = (liRect.top - listRect.top) + (liRect.height / 2) - (parseFloat(getComputedStyle(saber).height) / 2);
+      const y = (liRect.top - listRect.top) + (liRect.height / 2) - (saberH / 2);
       saber.style.transform = `translateY(${Math.max(0, y)}px)`;
     }
 
     function spinChevron(li, isOpen){
       const chev = li.querySelector('.chev');
       const current = parseFloat(chev.dataset.angle || '0');
-
-      // closed target = 0deg, open target = 180deg
       const targetBase = isOpen ? 180 : 0;
-
-      // vždy přidej +360 pro “Star Wars” protočení
       const nextAngle = current + 360 + targetBase;
       chev.dataset.angle = String(nextAngle);
-      chev.style.transform = `rotate(${nextAngle}deg)`;
+      chev.style.setProperty('--spin', `${nextAngle}deg`);
     }
 
     function openItem(i){
       if (openIndex === i) return;
-
-      // zavři předchozí
       if (openIndex !== -1) closeItem(openIndex);
 
       const li = items[i];
       li.classList.add('open');
       spinChevron(li, true);
 
-      // panel je hned za li
       const panel = li.nextElementSibling;
       if (panel && panel.classList.contains('menu-panel')) {
         panel.setAttribute('aria-hidden', 'false');
       }
-
       openIndex = i;
     }
 
@@ -445,7 +453,6 @@
       if (panel && panel.classList.contains('menu-panel')) {
         panel.setAttribute('aria-hidden', 'true');
       }
-
       if (openIndex === i) openIndex = -1;
     }
 
@@ -454,26 +461,33 @@
       else openItem(i);
     }
 
-    // default: první řádek aktivní
+    // default
     items[0].classList.add('active');
 
-    // tap na řádek = toggle, současně nastav active
+    // klik na text = jen aktivace
     items.forEach((li, idx) => {
-      li.addEventListener('click', () => {
+      const label = li.querySelector('.menu-label');
+      label.addEventListener('click', (e) => {
+        e.preventDefault();
+        setActive(idx);
+      });
+
+      // klik na šipku = toggle
+      const btn = li.querySelector('.chev-btn');
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         setActive(idx);
         toggleItem(idx);
       });
     });
 
-    // ====== SABER DRAG (po bílé čáře) ======
+    // saber drag
     let dragging = false;
-    let startY = 0;
 
     function pickIndexFromClientY(clientY){
-      // vyber nejbližší položku podle středu
       let best = 0;
       let bestDist = Infinity;
-
       items.forEach((li, idx) => {
         const r = li.getBoundingClientRect();
         const cy = r.top + r.height / 2;
@@ -483,36 +497,30 @@
           best = idx;
         }
       });
-
       return best;
     }
 
     saberHandle.addEventListener('touchstart', (e) => {
       dragging = true;
-      startY = e.touches[0].clientY;
-      // hned přepni na nejbližší při startu
-      setActive(pickIndexFromClientY(startY));
+      const y = e.touches[0].clientY;
+      setActive(pickIndexFromClientY(y));
     }, { passive: true });
 
     saberHandle.addEventListener('touchmove', (e) => {
       if (!dragging) return;
       const y = e.touches[0].clientY;
-      const idx = pickIndexFromClientY(y);
-      setActive(idx);
+      setActive(pickIndexFromClientY(y));
     }, { passive: true });
 
     saberHandle.addEventListener('touchend', () => {
       dragging = false;
     }, { passive: true });
 
-    // při změně velikosti (rotace telefonu) dorovnej meč
     window.addEventListener('resize', () => {
       if (menuOverlay.classList.contains('open')) syncSaberToActive();
     });
 
-    /* =============================
-       VIDEO PLAYLIST
-       ============================= */
+    /* VIDEO PLAYLIST */
     const SOURCES = [
       'assets/bose1.mp4',
       'assets/bose2.mp4',
