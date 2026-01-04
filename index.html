@@ -44,6 +44,9 @@
       --saber-h: 26px;
       --saber-offset: 0px;
       --active-shift: 14px;
+
+      /* šipka rotace (2× pomalejší) */
+      --chev-rot-ms: 1040ms;
     }
 
     body {
@@ -161,6 +164,20 @@
       position: relative;
     }
 
+    /* SABER SLOT (validně uvnitř UL, ale absolutně mimo flow) */
+    .saber-slot{
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 32px;
+      height: 100%;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      z-index: 3;
+      pointer-events: none;
+    }
+
     /* bílý meč */
     .saber{
       position: absolute;
@@ -184,7 +201,8 @@
       width: 32px;
       height: 100%;
       background: transparent;
-      z-index: 3;
+      z-index: 4;
+      pointer-events: auto;
       touch-action: none;
     }
 
@@ -218,30 +236,28 @@
       color: #fff;
     }
 
-    /* TLAČÍTKO ŠIPKY = fixní velikost a fixní sloupec */
+    /* TLAČÍTKO pro šipku (fixní rozměr, nikdy nezmění layout) */
     .chev-btn{
+      background: none;
+      border: none;
+      padding: 0;
+      margin: 0;
       width: var(--chev-size);
       height: var(--chev-size);
-      flex: 0 0 var(--chev-size);
       display: flex;
       align-items: center;
       justify-content: center;
-      background: transparent;
-      border: 0;
-      padding: 0;
-      margin: 0;
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
     }
-    .chev-btn:focus{ outline: none; }
 
-    /* ŠIPKA: rotuje jen kresba uvnitř, pozice zůstává */
+    /* ŠIPKA: rotuje jen kresba uvnitř (pozice zůstává) */
     .chev{
-      width: 100%;
-      height: 100%;
+      width: var(--chev-size);
+      height: var(--chev-size);
       display: block;
       position: relative;
-      --spin: 0deg; /* 0 = dolů, 180 = nahoru (ale my přidáváme 360+) */
+      --spin: 0deg;
     }
     .chev::before{
       content:"";
@@ -251,11 +267,12 @@
       border-bottom: 2px solid #fff;
       transform: rotate(calc(45deg + var(--spin)));
       transform-origin: center;
-      transition: transform 520ms cubic-bezier(.2,.9,.2,1);
+      transition: transform var(--chev-rot-ms) cubic-bezier(.2,.9,.2,1);
     }
 
     /* panel pod položkou */
     .menu-panel{
+      list-style: none;
       max-height: 0;
       overflow: hidden;
       transition: max-height 260ms cubic-bezier(.2,.9,.2,1);
@@ -305,8 +322,12 @@
 
     <div class="menu-content">
       <ul id="menuList" class="menu-list">
-        <div id="saber" class="saber" aria-hidden="true"></div>
-        <div id="saberHandle" class="saber-handle" aria-label="Meč - výběr sekce"></div>
+
+        <!-- SABER (validně v UL) -->
+        <li class="saber-slot" aria-hidden="true">
+          <div id="saber" class="saber"></div>
+          <div id="saberHandle" class="saber-handle" aria-label="Meč - výběr sekce"></div>
+        </li>
 
         <li class="menu-item" data-key="about">
           <span class="menu-label">O NÁS</span>
@@ -314,7 +335,7 @@
             <span class="chev" aria-hidden="true"></span>
           </button>
         </li>
-        <div class="menu-panel" aria-hidden="true"><div class="menu-panel-inner"></div></div>
+        <li class="menu-panel" aria-hidden="true"><div class="menu-panel-inner"></div></li>
 
         <li class="menu-item" data-key="products">
           <span class="menu-label">PRODUKTY</span>
@@ -322,7 +343,7 @@
             <span class="chev" aria-hidden="true"></span>
           </button>
         </li>
-        <div class="menu-panel" aria-hidden="true"><div class="menu-panel-inner"></div></div>
+        <li class="menu-panel" aria-hidden="true"><div class="menu-panel-inner"></div></li>
 
         <li class="menu-item" data-key="vision">
           <span class="menu-label">VIZE</span>
@@ -330,7 +351,7 @@
             <span class="chev" aria-hidden="true"></span>
           </button>
         </li>
-        <div class="menu-panel" aria-hidden="true"><div class="menu-panel-inner"></div></div>
+        <li class="menu-panel" aria-hidden="true"><div class="menu-panel-inner"></div></li>
 
         <li class="menu-item" data-key="partners">
           <span class="menu-label">SPOLUPRÁCE</span>
@@ -338,7 +359,7 @@
             <span class="chev" aria-hidden="true"></span>
           </button>
         </li>
-        <div class="menu-panel" aria-hidden="true"><div class="menu-panel-inner"></div></div>
+        <li class="menu-panel" aria-hidden="true"><div class="menu-panel-inner"></div></li>
 
         <li class="menu-item" data-key="contact">
           <span class="menu-label">KONTAKT</span>
@@ -346,7 +367,7 @@
             <span class="chev" aria-hidden="true"></span>
           </button>
         </li>
-        <div class="menu-panel" aria-hidden="true"><div class="menu-panel-inner"></div></div>
+        <li class="menu-panel" aria-hidden="true"><div class="menu-panel-inner"></div></li>
       </ul>
 
       <div class="menu-divider"></div>
@@ -398,11 +419,11 @@
     let activeIndex = 0;
     let openIndex = -1;
 
-    // init arrows
+    // init arrows: ukládáme jen počet otoček (spolehlivé koncové polohy)
     items.forEach((li) => {
       const chev = li.querySelector('.chev');
-      chev.dataset.angle = '0';
-      chev.style.setProperty('--spin', '0deg');
+      chev.dataset.turns = '0';
+      chev.style.setProperty('--spin', '0deg'); // dolů
     });
 
     function setActive(i){
@@ -416,21 +437,33 @@
 
     function syncSaberToActive(){
       const li = items[activeIndex];
+      if (!li) return;
+
       const listRect = menuList.getBoundingClientRect();
       const liRect = li.getBoundingClientRect();
       const saberH = parseFloat(getComputedStyle(saber).height);
 
-      const y = (liRect.top - listRect.top) + (liRect.height / 2) - (saberH / 2);
-      saber.style.transform = `translateY(${Math.max(0, y)}px)`;
+      // základní Y
+      let y = (liRect.top - listRect.top) + (liRect.height / 2) - (saberH / 2);
+
+      // clamp: meč nikdy nepodjede pod poslední položku
+      const last = items[items.length - 1];
+      const lastRect = last.getBoundingClientRect();
+      const lastCenterY = (lastRect.top - listRect.top) + (lastRect.height / 2) - (saberH / 2);
+      const maxY = Math.max(0, lastCenterY);
+      y = Math.max(0, Math.min(y, maxY));
+
+      saber.style.transform = `translateY(${y}px)`;
     }
 
     function spinChevron(li, isOpen){
       const chev = li.querySelector('.chev');
-      const current = parseFloat(chev.dataset.angle || '0');
-      const targetBase = isOpen ? 180 : 0;
-      const nextAngle = current + 360 + targetBase;
-      chev.dataset.angle = String(nextAngle);
-      chev.style.setProperty('--spin', `${nextAngle}deg`);
+      const turns = parseInt(chev.dataset.turns || '0', 10) + 1;
+      chev.dataset.turns = String(turns);
+
+      const base = isOpen ? 180 : 0;               // jistý finální směr
+      const angle = (turns * 360) + base;          // vždy “Star Wars” protočení + finále
+      chev.style.setProperty('--spin', `${angle}deg`);
     }
 
     function openItem(i){
@@ -446,6 +479,8 @@
         panel.setAttribute('aria-hidden', 'false');
       }
       openIndex = i;
+
+      requestAnimationFrame(() => syncSaberToActive());
     }
 
     function closeItem(i){
@@ -460,6 +495,8 @@
         panel.setAttribute('aria-hidden', 'true');
       }
       if (openIndex === i) openIndex = -1;
+
+      requestAnimationFrame(() => syncSaberToActive());
     }
 
     function toggleItem(i){
