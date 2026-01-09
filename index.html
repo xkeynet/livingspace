@@ -81,7 +81,8 @@
       --sub-row-pad: 12px;
       --panel-text-size: 14px;
       --panel-line: 1.6;
-      --panel-max-h: 190px; /* vlastní scroll pro text, ale nepřeroste do šipek */
+
+      /* ✅ odstranění vnitřního scrollu = max-height pryč */
       --panel-right-safe: calc(var(--chev-size) + 22px); /* aby text nikdy nevlezl pod šipky */
     }
 
@@ -172,7 +173,7 @@
       z-index: 999;
       display: none;
 
-      /* ✅ FIX: overlay musí umět scrollovat */
+      /* overlay scrolluje celý */
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
@@ -186,7 +187,6 @@
       justify-content: space-between;
       padding: 0 16px;
 
-      /* drží header nahoře při scrollu */
       position: sticky;
       top: 0;
       background: #000;
@@ -203,7 +203,6 @@
       padding-right: var(--menu-right);
       position: relative;
 
-      /* dole prostor, aby šlo dojet až na konec */
       padding-bottom: 140px;
     }
 
@@ -214,7 +213,7 @@
       position: relative;
     }
 
-    /* SABER SLOT (validně uvnitř UL, ale absolutně mimo flow) */
+    /* SABER SLOT */
     .saber-slot{
       position: absolute;
       left: 0;
@@ -228,7 +227,6 @@
       pointer-events: none;
     }
 
-    /* bílý meč */
     .saber{
       position: absolute;
       left: var(--saber-offset);
@@ -243,7 +241,6 @@
       pointer-events: none;
     }
 
-    /* handle pro prst */
     .saber-handle{
       position: absolute;
       left: calc(var(--saber-offset) - 14px);
@@ -274,7 +271,6 @@
       z-index: 1;
     }
 
-    /* POSUN SE DĚJE JEN NA TEXTU (NE NA ŠIPCE) */
     .menu-label{
       display:inline-block;
       transition: transform 160ms cubic-bezier(.2,.9,.2,1), color 120ms linear;
@@ -286,7 +282,6 @@
       color: #fff;
     }
 
-    /* TLAČÍTKO pro šipku (fixní rozměr, nikdy nezmění layout) */
     .chev-btn{
       background: none;
       border: none;
@@ -302,7 +297,6 @@
       user-select: none;
     }
 
-    /* ŠIPKA: rotuje jen kresba uvnitř (pozice zůstává) */
     .chev{
       width: var(--chev-size);
       height: var(--chev-size);
@@ -321,7 +315,6 @@
       transition: transform var(--chev-rot-ms) cubic-bezier(.2,.9,.2,1);
     }
 
-    /* panel pod položkou */
     .menu-panel{
       list-style: none;
       max-height: 0;
@@ -329,7 +322,6 @@
       transition: max-height 260ms cubic-bezier(.2,.9,.2,1);
     }
 
-    /* ✅ místo 96px dáme velkoryse, overlay scroll to zvládne */
     .menu-item.open + .menu-panel{
       max-height: 1600px;
     }
@@ -376,7 +368,6 @@
       font-size: var(--sub-font-size);
       line-height: 1.05;
 
-      /* názvy v menu mohou být uppercase stylově, text blok NIKDY */
       text-transform: uppercase;
       letter-spacing: 0.6px;
 
@@ -395,13 +386,12 @@
       color:#fff;
     }
 
-    /* text blok hned pod položkou */
+    /* ✅ text blok bez vlastního scrollu */
     .sub-text{
       margin: 8px 0 14px;
       padding: 10px 0 0;
       border-top: 1px solid #141414;
 
-      /* text NENÍ caps */
       text-transform: none;
       letter-spacing: 0.2px;
 
@@ -409,10 +399,9 @@
       line-height: var(--panel-line);
       color: #fff;
 
-      /* vlastní scroll */
-      max-height: var(--panel-max-h);
-      overflow: auto;
-      -webkit-overflow-scrolling: touch;
+      /* ❌ žádný vnitřní scroll */
+      max-height: none;
+      overflow: visible;
 
       /* bezpečný prostor vpravo = nikdy pod šipky */
       padding-right: var(--panel-right-safe);
@@ -420,7 +409,6 @@
 
     .sub-text[hidden]{ display:none; }
 
-    /* když je jedna otevřená, druhá se “zašedí” */
     .sub-item.dimmed{
       color: var(--ls-grey);
       opacity: 0.55;
@@ -506,7 +494,7 @@
             <span class="chev" aria-hidden="true"></span>
           </button>
         </li>
-        <!-- ✅ VIZE panel vyplněný -->
+
         <li class="menu-panel" aria-hidden="true">
           <div class="menu-panel-inner">
             <ul class="vision-submenu" id="visionSubmenu">
@@ -551,7 +539,6 @@
           </button>
         </li>
 
-        <!-- ✅ KONTAKT panel vyplněný -->
         <li class="menu-panel" aria-hidden="true">
           <div class="menu-panel-inner">
             <div class="contact-block">
@@ -640,10 +627,8 @@
       const liRect = li.getBoundingClientRect();
       const saberH = parseFloat(getComputedStyle(saber).height);
 
-      // základní Y
       let y = (liRect.top - listRect.top) + (liRect.height / 2) - (saberH / 2);
 
-      // clamp: meč nikdy nepodjede pod poslední položku
       const last = items[items.length - 1];
       const lastRect = last.getBoundingClientRect();
       const lastCenterY = (lastRect.top - listRect.top) + (lastRect.height / 2) - (saberH / 2);
@@ -658,8 +643,8 @@
       const turns = parseInt(chev.dataset.turns || '0', 10) + 1;
       chev.dataset.turns = String(turns);
 
-      const base = isOpen ? 180 : 0;               // jistý finální směr
-      const angle = (turns * 360) + base;          // vždy “Star Wars” protočení + finále
+      const base = isOpen ? 180 : 0;
+      const angle = (turns * 360) + base;
       chev.style.setProperty('--spin', `${angle}deg`);
     }
 
@@ -701,10 +686,8 @@
       else openItem(i);
     }
 
-    // default
     items[0].classList.add('active');
 
-    // klik na text = jen aktivace
     items.forEach((li, idx) => {
       const label = li.querySelector('.menu-label');
       label.addEventListener('click', (e) => {
@@ -712,7 +695,6 @@
         setActive(idx);
       });
 
-      // klik na šipku = toggle
       const btn = li.querySelector('.chev-btn');
       btn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -722,7 +704,6 @@
       });
     });
 
-    // saber drag
     let dragging = false;
 
     function pickIndexFromClientY(clientY){
@@ -760,15 +741,12 @@
       if (menuOverlay.classList.contains('open')) syncSaberToActive();
     });
 
-    /* =============================
-       VIZE submenu logic (KUCHYNĚ / MODULOVÉ)
-       ============================= */
+    /* VIZE submenu logic */
     const subItems = Array.from(document.querySelectorAll('.sub-item'));
     const subChevs = Array.from(document.querySelectorAll('.sub-chev'));
     const textKitchen = document.getElementById('textKitchen');
     const textModular = document.getElementById('textModular');
 
-    // init submenu chevrons
     subChevs.forEach((c) => {
       c.dataset.turns = '0';
       c.style.setProperty('--spin', '0deg');
@@ -798,7 +776,6 @@
     }
 
     function openKitchen(){
-      // otevřít KUCHYNĚ, zavřít MODULOVÉ
       const k = subItems.find(x => x.dataset.sub === 'kitchen');
       const m = subItems.find(x => x.dataset.sub === 'modular');
       if (!k || !m) return;
@@ -812,7 +789,6 @@
       spinSubChevron(k, true);
       textKitchen.hidden = false;
 
-      // udržet saber sync (layout se změnil)
       requestAnimationFrame(() => syncSaberToActive());
     }
 
@@ -833,7 +809,6 @@
       requestAnimationFrame(() => syncSaberToActive());
     }
 
-    // handlers pro submenu
     subItems.forEach((li) => {
       const which = li.dataset.sub;
       const label = li.querySelector('.sub-label');
