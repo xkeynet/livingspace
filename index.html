@@ -75,6 +75,14 @@
 
       /* šipka rotace (2× pomalejší) */
       --chev-rot-ms: 1040ms;
+
+      /* VIZE submenu */
+      --sub-font-size: 17px;
+      --sub-row-pad: 12px;
+      --panel-text-size: 14px;
+      --panel-line: 1.6;
+      --panel-max-h: 190px; /* vlastní scroll pro text, ale nepřeroste do šipek */
+      --panel-right-safe: calc(var(--chev-size) + 22px); /* aby text nikdy nevlezl pod šipky */
     }
 
     body {
@@ -163,6 +171,11 @@
       background: #000;
       z-index: 999;
       display: none;
+
+      /* ✅ FIX: overlay musí umět scrollovat */
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
     }
     .menu-overlay.open{ display:block; }
 
@@ -172,6 +185,12 @@
       align-items:center;
       justify-content: space-between;
       padding: 0 16px;
+
+      /* drží header nahoře při scrollu */
+      position: sticky;
+      top: 0;
+      background: #000;
+      z-index: 10;
     }
     .menu-header img{
       height: 48px;
@@ -183,6 +202,9 @@
       padding-left: var(--menu-left);
       padding-right: var(--menu-right);
       position: relative;
+
+      /* dole prostor, aby šlo dojet až na konec */
+      padding-bottom: 140px;
     }
 
     .menu-list{
@@ -277,6 +299,7 @@
       justify-content: center;
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
+      user-select: none;
     }
 
     /* ŠIPKA: rotuje jen kresba uvnitř (pozice zůstává) */
@@ -305,9 +328,12 @@
       overflow: hidden;
       transition: max-height 260ms cubic-bezier(.2,.9,.2,1);
     }
+
+    /* ✅ místo 96px dáme velkoryse, overlay scroll to zvládne */
     .menu-item.open + .menu-panel{
-      max-height: 96px;
+      max-height: 1600px;
     }
+
     .menu-panel-inner{
       padding: 10px 0;
       border-top: 1px solid #141414;
@@ -328,6 +354,107 @@
       font:inherit;
       cursor:pointer;
       -webkit-tap-highlight-color: transparent;
+    }
+
+    /* =============================
+       VIZE (submenu + text blocks)
+       ============================= */
+    .vision-submenu{
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sub-item{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 16px;
+
+      padding: var(--sub-row-pad) 0;
+      font-weight: 400;
+      font-size: var(--sub-font-size);
+      line-height: 1.05;
+
+      /* názvy v menu mohou být uppercase stylově, text blok NIKDY */
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+
+      color: var(--ls-grey);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      position: relative;
+    }
+
+    .sub-label{
+      display:inline-block;
+      cursor: pointer;
+    }
+
+    .sub-item.open .sub-label{
+      color:#fff;
+    }
+
+    /* text blok hned pod položkou */
+    .sub-text{
+      margin: 8px 0 14px;
+      padding: 10px 0 0;
+      border-top: 1px solid #141414;
+
+      /* text NENÍ caps */
+      text-transform: none;
+      letter-spacing: 0.2px;
+
+      font-size: var(--panel-text-size);
+      line-height: var(--panel-line);
+      color: #fff;
+
+      /* vlastní scroll */
+      max-height: var(--panel-max-h);
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+
+      /* bezpečný prostor vpravo = nikdy pod šipky */
+      padding-right: var(--panel-right-safe);
+    }
+
+    .sub-text[hidden]{ display:none; }
+
+    /* když je jedna otevřená, druhá se “zašedí” */
+    .sub-item.dimmed{
+      color: var(--ls-grey);
+      opacity: 0.55;
+    }
+    .sub-item.dimmed .sub-label{
+      color: var(--ls-grey);
+    }
+
+    /* =============================
+       KONTAKT (tel: bez modré/efektů)
+       ============================= */
+    .contact-block{
+      padding: 10px 0 0;
+      border-top: 1px solid #141414;
+      color: #fff;
+      font-size: 15px;
+      line-height: 1.85;
+      text-transform: none;
+      letter-spacing: 0.2px;
+    }
+
+    .contact-link{
+      color: #fff;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+    }
+    .contact-link:visited,
+    .contact-link:hover,
+    .contact-link:active,
+    .contact-link:focus{
+      color:#fff;
+      text-decoration:none;
+      outline:none;
     }
   </style>
 </head>
@@ -379,7 +506,35 @@
             <span class="chev" aria-hidden="true"></span>
           </button>
         </li>
-        <li class="menu-panel" aria-hidden="true"><div class="menu-panel-inner"></div></li>
+        <!-- ✅ VIZE panel vyplněný -->
+        <li class="menu-panel" aria-hidden="true">
+          <div class="menu-panel-inner">
+            <ul class="vision-submenu" id="visionSubmenu">
+
+              <li class="sub-item" data-sub="kitchen">
+                <span class="sub-label">KUCHYNĚ</span>
+                <button class="chev-btn" aria-label="Rozbalit KUCHYNĚ">
+                  <span class="chev sub-chev" aria-hidden="true"></span>
+                </button>
+              </li>
+              <div class="sub-text" id="textKitchen" hidden>
+                Záměrem firmy LIVINGSPACE je výroba luxusních kuchyní inspirované potřebami lidí žijících single v malometrážních bytech ve kterých by našli všechny spotřebiče v jednom kusu nábytku. Proto jsme vytvořili modulární kuchyň AIO (ALL-IN-ONE) s minimalistickým a nadčasovým designem vyznačující se samostatně stojící konstrukcí vybavenou sklopnými dvířky, která se otevírají elektronicky nahoru a odhalují tak vnitřní prostor pracovní desky. Po zavření zcela skryjí pracovní prostor a promění kuchyň v monolitický kus nábytku.
+              </div>
+
+              <li class="sub-item" data-sub="modular">
+                <span class="sub-label">MODULOVÉ SYSTÉMY</span>
+                <button class="chev-btn" aria-label="Rozbalit MODULOVÉ SYSTÉMY">
+                  <span class="chev sub-chev" aria-hidden="true"></span>
+                </button>
+              </li>
+              <div class="sub-text" id="textModular" hidden>
+                Podstata modulových systémů MODULO spočívá ve skladbě několika dílů nábytku, jejichž postavení můžete libovolně měnit, a přizpůsobovat tak daným potřebám v závislosti na prostoru interiéru.<br><br>
+                Staňte se architekty vašeho domu, nebo bytu a užívejte si radost s neomezenými možnostmi našich modulových systémů.
+              </div>
+
+            </ul>
+          </div>
+        </li>
 
         <li class="menu-item" data-key="partners">
           <span class="menu-label">SPOLUPRÁCE</span>
@@ -395,7 +550,21 @@
             <span class="chev" aria-hidden="true"></span>
           </button>
         </li>
-        <li class="menu-panel" aria-hidden="true"><div class="menu-panel-inner"></div></li>
+
+        <!-- ✅ KONTAKT panel vyplněný -->
+        <li class="menu-panel" aria-hidden="true">
+          <div class="menu-panel-inner">
+            <div class="contact-block">
+              LIVINGSPACE.cz<br>
+              Čeladná 858<br>
+              Česká republika<br>
+              <a class="contact-link" href="tel:+420734552875">+420 734 552 875</a><br>
+              <a class="contact-link" href="tel:+420737475065">+420 737 475 065</a><br>
+              <a class="contact-link" href="mailto:info@livingspace.cz">info@livingspace.cz</a>
+            </div>
+          </div>
+        </li>
+
       </ul>
 
       <div class="menu-divider"></div>
@@ -589,6 +758,102 @@
 
     window.addEventListener('resize', () => {
       if (menuOverlay.classList.contains('open')) syncSaberToActive();
+    });
+
+    /* =============================
+       VIZE submenu logic (KUCHYNĚ / MODULOVÉ)
+       ============================= */
+    const subItems = Array.from(document.querySelectorAll('.sub-item'));
+    const subChevs = Array.from(document.querySelectorAll('.sub-chev'));
+    const textKitchen = document.getElementById('textKitchen');
+    const textModular = document.getElementById('textModular');
+
+    // init submenu chevrons
+    subChevs.forEach((c) => {
+      c.dataset.turns = '0';
+      c.style.setProperty('--spin', '0deg');
+    });
+
+    function spinSubChevron(subLi, isOpen){
+      const chev = subLi.querySelector('.sub-chev');
+      if (!chev) return;
+      const turns = parseInt(chev.dataset.turns || '0', 10) + 1;
+      chev.dataset.turns = String(turns);
+
+      const base = isOpen ? 180 : 0;
+      const angle = (turns * 360) + base;
+      chev.style.setProperty('--spin', `${angle}deg`);
+    }
+
+    function closeAllSub(){
+      subItems.forEach((li) => {
+        if (li.classList.contains('open')) {
+          li.classList.remove('open');
+          spinSubChevron(li, false);
+        }
+        li.classList.remove('dimmed');
+      });
+      textKitchen.hidden = true;
+      textModular.hidden = true;
+    }
+
+    function openKitchen(){
+      // otevřít KUCHYNĚ, zavřít MODULOVÉ
+      const k = subItems.find(x => x.dataset.sub === 'kitchen');
+      const m = subItems.find(x => x.dataset.sub === 'modular');
+      if (!k || !m) return;
+
+      const isAlready = k.classList.contains('open');
+      closeAllSub();
+      if (isAlready) return;
+
+      k.classList.add('open');
+      m.classList.add('dimmed');
+      spinSubChevron(k, true);
+      textKitchen.hidden = false;
+
+      // udržet saber sync (layout se změnil)
+      requestAnimationFrame(() => syncSaberToActive());
+    }
+
+    function openModular(){
+      const k = subItems.find(x => x.dataset.sub === 'kitchen');
+      const m = subItems.find(x => x.dataset.sub === 'modular');
+      if (!k || !m) return;
+
+      const isAlready = m.classList.contains('open');
+      closeAllSub();
+      if (isAlready) return;
+
+      m.classList.add('open');
+      k.classList.add('dimmed');
+      spinSubChevron(m, true);
+      textModular.hidden = false;
+
+      requestAnimationFrame(() => syncSaberToActive());
+    }
+
+    // handlers pro submenu
+    subItems.forEach((li) => {
+      const which = li.dataset.sub;
+      const label = li.querySelector('.sub-label');
+      const btn = li.querySelector('.chev-btn');
+
+      const run = () => {
+        if (which === 'kitchen') openKitchen();
+        else if (which === 'modular') openModular();
+      };
+
+      label.addEventListener('click', (e) => {
+        e.preventDefault();
+        run();
+      });
+
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        run();
+      });
     });
 
     /* VIDEO PLAYLIST */
