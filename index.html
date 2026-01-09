@@ -75,6 +75,13 @@
 
       /* šipka rotace (2× pomalejší) */
       --chev-rot-ms: 1040ms;
+
+      /* content blocks */
+      --content-font-size: 14.5px;
+      --content-line: 1.45;
+      --content-max-h: 148px;
+      --content-gap: 12px;
+      --content-border: #141414;
     }
 
     body {
@@ -306,11 +313,81 @@
       transition: max-height 260ms cubic-bezier(.2,.9,.2,1);
     }
     .menu-item.open + .menu-panel{
-      max-height: 96px;
+      max-height: 420px; /* aby se vešel sub-list + scroll box */
     }
     .menu-panel-inner{
       padding: 10px 0;
       border-top: 1px solid #141414;
+    }
+
+    /* ===== VIZE: sub menu ===== */
+    .vision-sublist{
+      list-style: none;
+      padding: 0;
+      margin: 8px 0 0 0;
+    }
+
+    .vision-subitem{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 10px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      font-size: var(--menu-font-size);
+      color: var(--ls-grey);
+      user-select: none;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .vision-subitem .vision-sub-label{
+      display: inline-block;
+      transition: transform 160ms cubic-bezier(.2,.9,.2,1), color 120ms linear;
+      will-change: transform;
+    }
+
+    .vision-subitem.active .vision-sub-label{
+      transform: translateX(var(--active-shift));
+      color: #fff;
+    }
+
+    .vision-content-wrap{
+      margin-top: var(--content-gap);
+      border-top: 1px solid var(--content-border);
+      padding-top: 10px;
+    }
+
+    .scroll-box{
+      max-height: var(--content-max-h);
+      overflow: auto;
+      padding-right: 10px;
+      font-size: var(--content-font-size);
+      line-height: var(--content-line);
+      color: #fff;
+      white-space: pre-wrap;
+      text-transform: none; /* důležité: žádné caps */
+      letter-spacing: 0.2px;
+    }
+
+    /* jemný scrollbar (kde to podporuje) */
+    .scroll-box{
+      scrollbar-width: thin;
+      scrollbar-color: #2a2a2a #000;
+    }
+    .scroll-box::-webkit-scrollbar{ width: 6px; }
+    .scroll-box::-webkit-scrollbar-track{ background: #000; }
+    .scroll-box::-webkit-scrollbar-thumb{ background: #2a2a2a; border-radius: 6px; }
+
+    /* Kontakt blok */
+    .contact-box{
+      margin-top: 8px;
+      border-top: 1px solid var(--content-border);
+      padding-top: 10px;
+    }
+    .contact-box .scroll-box{
+      max-height: 170px;
     }
 
     .menu-divider{
@@ -379,7 +456,33 @@
             <span class="chev" aria-hidden="true"></span>
           </button>
         </li>
-        <li class="menu-panel" aria-hidden="true"><div class="menu-panel-inner"></div></li>
+        <li class="menu-panel" aria-hidden="true">
+          <div class="menu-panel-inner">
+            <!-- VIZE SUBMENU -->
+            <ul id="visionSublist" class="vision-sublist" aria-label="Vize - podsekce">
+              <li class="vision-subitem" data-vision="kitchen">
+                <span class="vision-sub-label">KUCHYNĚ</span>
+                <span class="chev" aria-hidden="true"></span>
+              </li>
+              <li class="vision-subitem" data-vision="modular">
+                <span class="vision-sub-label">MODULOVÉ SYSTÉMY</span>
+                <span class="chev" aria-hidden="true"></span>
+              </li>
+            </ul>
+
+            <!-- SCROLL CONTENT -->
+            <div class="vision-content-wrap">
+              <div id="visionKitchen" class="scroll-box" aria-label="Text - Kuchyně">
+Záměrem firmy LIVINGSPACE je výroba luxusních kuchyní inspirované potřebami lidí žijících single v malometrážních bytech ve kterých by našli všechny spotřebiče v jednom kusu nábytku. Proto jsme vytvořili modulární kuchyň AIO (ALL-IN-ONE) s minimalistickým a nadčasovým designem vyznačující se samostatně stojící konstrukcí vybavenou sklopnými dvířky, která se otevírají elektronicky nahoru a odhalují tak vnitřní prostor pracovní desky. Po zavření zcela skryjí pracovní prostor a promění kuchyň v monolitický kus nábytku.
+              </div>
+
+              <div id="visionModular" class="scroll-box" aria-label="Text - Modulové systémy" style="display:none;">
+Podstata modulových systémů MODULO spočívá ve skladbě několika dílů nábytku, jejichž postavení můžete libovolně měnit, a přizpůsobovat tak daným potřebám v závislosti na prostoru  interiéru. 
+Staňte se architekty vašeho domu, nebo bytu a užívejte si radost s neomezenými možnostmi našich modulových systémů. 
+              </div>
+            </div>
+          </div>
+        </li>
 
         <li class="menu-item" data-key="partners">
           <span class="menu-label">SPOLUPRÁCE</span>
@@ -395,7 +498,21 @@
             <span class="chev" aria-hidden="true"></span>
           </button>
         </li>
-        <li class="menu-panel" aria-hidden="true"><div class="menu-panel-inner"></div></li>
+        <li class="menu-panel" aria-hidden="true">
+          <div class="menu-panel-inner">
+            <div class="contact-box">
+              <div class="scroll-box" aria-label="Kontakt">
+LIVINGSPACE.cz
+Čeladná 858
+ČESKÁ REPUBLIKA 
++420 734 552 875
++420 737 475 065
+info@livingspace.cz
+www.livingspace.cz
+              </div>
+            </div>
+          </div>
+        </li>
       </ul>
 
       <div class="menu-divider"></div>
@@ -508,6 +625,11 @@
       }
       openIndex = i;
 
+      // pokud otevíráme VIZE, nastav default submenu výběr
+      if (li.dataset.key === 'vision') {
+        requestAnimationFrame(() => visionSelect('kitchen'));
+      }
+
       requestAnimationFrame(() => syncSaberToActive());
     }
 
@@ -591,7 +713,49 @@
       if (menuOverlay.classList.contains('open')) syncSaberToActive();
     });
 
-    /* VIDEO PLAYLIST */
+    /* =============================
+       VIZE: KUCHYNĚ / MODULOVÉ SYSTÉMY + scroll box
+       ============================= */
+    const visionSublist = document.getElementById('visionSublist');
+    const visionKitchen = document.getElementById('visionKitchen');
+    const visionModular = document.getElementById('visionModular');
+
+    function visionSelect(which){
+      if (!visionSublist) return;
+
+      const subitems = Array.from(visionSublist.querySelectorAll('.vision-subitem'));
+      subitems.forEach(si => si.classList.remove('active'));
+
+      const active = visionSublist.querySelector(`.vision-subitem[data-vision="${which}"]`);
+      if (active) active.classList.add('active');
+
+      if (which === 'kitchen') {
+        visionKitchen.style.display = 'block';
+        visionModular.style.display = 'none';
+        visionKitchen.scrollTop = 0;
+      } else {
+        visionKitchen.style.display = 'none';
+        visionModular.style.display = 'block';
+        visionModular.scrollTop = 0;
+      }
+    }
+
+    if (visionSublist) {
+      visionSublist.addEventListener('click', (e) => {
+        const target = e.target.closest('.vision-subitem');
+        if (!target) return;
+        e.preventDefault();
+        const key = target.getAttribute('data-vision');
+        visionSelect(key);
+      });
+
+      // default initial
+      visionSelect('kitchen');
+    }
+
+    /* =============================
+       VIDEO PLAYLIST
+       ============================= */
     const SOURCES = [
       'assets/bose1.mp4',
       'assets/bose2.mp4',
