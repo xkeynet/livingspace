@@ -59,7 +59,8 @@
       --ls-grey: #B4B4B4;
 
       /* MENU (Star Wars clone tuning) */
-      --menu-left:  clamp(44px, 10vw, 72px);
+      /* ✅ posun celé menu doleva (blíž k levému kříži) */
+      --menu-left:  clamp(28px, 7vw, 58px);
       --menu-right: clamp(24px,  8vw, 56px);
       --menu-top-gap: 44px;
       --menu-row-pad: 14px;
@@ -82,8 +83,8 @@
       --panel-text-size: 14px;
       --panel-line: 1.6;
 
-      /* ✅ odstranění vnitřního scrollu = max-height pryč */
-      --panel-right-safe: calc(var(--chev-size) + 22px); /* aby text nikdy nevlezl pod šipky */
+      /* ✅ pevná pravá “safe zóna” pro šipky (platí pro všechny texty/panely) */
+      --arrow-safe: calc(var(--chev-size) + 26px);
     }
 
     body {
@@ -295,6 +296,7 @@
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
+      flex: 0 0 var(--chev-size);
     }
 
     .chev{
@@ -326,9 +328,11 @@
       max-height: 1600px;
     }
 
+    /* ✅ všechny panely mají pravý safe prostor pro šipky */
     .menu-panel-inner{
       padding: 10px 0;
       border-top: 1px solid #141414;
+      padding-right: var(--arrow-safe);
     }
 
     .menu-divider{
@@ -386,8 +390,9 @@
       color:#fff;
     }
 
-    /* ✅ text blok bez vlastního scrollu */
+    /* ✅ text blok bez vlastního scrollu + nikdy pod šipky */
     .sub-text{
+      list-style: none;
       margin: 8px 0 14px;
       padding: 10px 0 0;
       border-top: 1px solid #141414;
@@ -399,12 +404,10 @@
       line-height: var(--panel-line);
       color: #fff;
 
-      /* ❌ žádný vnitřní scroll */
       max-height: none;
       overflow: visible;
 
-      /* bezpečný prostor vpravo = nikdy pod šipky */
-      padding-right: var(--panel-right-safe);
+      padding-right: var(--arrow-safe);
     }
 
     .sub-text[hidden]{ display:none; }
@@ -428,6 +431,9 @@
       line-height: 1.85;
       text-transform: none;
       letter-spacing: 0.2px;
+
+      /* ✅ taky safe zóna */
+      padding-right: var(--arrow-safe);
     }
 
     .contact-link{
@@ -495,6 +501,7 @@
           </button>
         </li>
 
+        <!-- ✅ VIZE panel vyplněný -->
         <li class="menu-panel" aria-hidden="true">
           <div class="menu-panel-inner">
             <ul class="vision-submenu" id="visionSubmenu">
@@ -505,9 +512,11 @@
                   <span class="chev sub-chev" aria-hidden="true"></span>
                 </button>
               </li>
-              <div class="sub-text" id="textKitchen" hidden>
+
+              <!-- ✅ musí být LI (ne DIV) -->
+              <li class="sub-text" id="textKitchen" hidden>
                 Záměrem firmy LIVINGSPACE je výroba luxusních kuchyní inspirované potřebami lidí žijících single v malometrážních bytech ve kterých by našli všechny spotřebiče v jednom kusu nábytku. Proto jsme vytvořili modulární kuchyň AIO (ALL-IN-ONE) s minimalistickým a nadčasovým designem vyznačující se samostatně stojící konstrukcí vybavenou sklopnými dvířky, která se otevírají elektronicky nahoru a odhalují tak vnitřní prostor pracovní desky. Po zavření zcela skryjí pracovní prostor a promění kuchyň v monolitický kus nábytku.
-              </div>
+              </li>
 
               <li class="sub-item" data-sub="modular">
                 <span class="sub-label">MODULOVÉ SYSTÉMY</span>
@@ -515,10 +524,12 @@
                   <span class="chev sub-chev" aria-hidden="true"></span>
                 </button>
               </li>
-              <div class="sub-text" id="textModular" hidden>
+
+              <!-- ✅ musí být LI (ne DIV) -->
+              <li class="sub-text" id="textModular" hidden>
                 Podstata modulových systémů MODULO spočívá ve skladbě několika dílů nábytku, jejichž postavení můžete libovolně měnit, a přizpůsobovat tak daným potřebám v závislosti na prostoru interiéru.<br><br>
                 Staňte se architekty vašeho domu, nebo bytu a užívejte si radost s neomezenými možnostmi našich modulových systémů.
-              </div>
+              </li>
 
             </ul>
           </div>
@@ -539,6 +550,7 @@
           </button>
         </li>
 
+        <!-- ✅ KONTAKT panel vyplněný -->
         <li class="menu-panel" aria-hidden="true">
           <div class="menu-panel-inner">
             <div class="contact-block">
@@ -741,12 +753,15 @@
       if (menuOverlay.classList.contains('open')) syncSaberToActive();
     });
 
-    /* VIZE submenu logic */
+    /* =============================
+       VIZE submenu logic (KUCHYNĚ / MODULOVÉ)
+       ============================= */
     const subItems = Array.from(document.querySelectorAll('.sub-item'));
     const subChevs = Array.from(document.querySelectorAll('.sub-chev'));
     const textKitchen = document.getElementById('textKitchen');
     const textModular = document.getElementById('textModular');
 
+    // init submenu chevrons
     subChevs.forEach((c) => {
       c.dataset.turns = '0';
       c.style.setProperty('--spin', '0deg');
@@ -809,6 +824,7 @@
       requestAnimationFrame(() => syncSaberToActive());
     }
 
+    // handlers pro submenu
     subItems.forEach((li) => {
       const which = li.dataset.sub;
       const label = li.querySelector('.sub-label');
