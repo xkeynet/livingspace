@@ -85,6 +85,10 @@
 
       /* ✅ pevná pravá “safe zóna” pro šipky (platí pro všechny texty/panely) */
       --arrow-safe: calc(var(--chev-size) + 26px);
+
+      /* ✅ PARTNERS logos */
+      --partner-logo-max: 260px;
+      --partner-logo-gap: 16px;
     }
 
     body {
@@ -421,6 +425,25 @@
     }
 
     /* =============================
+       SPOLUPRÁCE (logos)
+       ============================= */
+    .partners-stack{
+      list-style: none;
+      padding: 6px 0 2px;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--partner-logo-gap);
+    }
+
+    .partner-logo{
+      display: block;
+      width: 100%;
+      max-width: var(--partner-logo-max);
+      height: auto;
+    }
+
+    /* =============================
        KONTAKT (tel: bez modré/efektů)
        ============================= */
     .contact-block{
@@ -541,7 +564,18 @@
             <span class="chev" aria-hidden="true"></span>
           </button>
         </li>
-        <li class="menu-panel" aria-hidden="true"><div class="menu-panel-inner"></div></li>
+
+        <!-- ✅ SPOLUPRÁCE panel vyplněný (loga pod sebou) -->
+        <li class="menu-panel" aria-hidden="true">
+          <div class="menu-panel-inner">
+            <ul class="partners-stack" aria-label="Partneři">
+              <li><img class="partner-logo" src="assets/bose-top.png" alt="Bose logo" loading="lazy" decoding="async"></li>
+              <li><img class="partner-logo" src="assets/bangolufsen-top.png" alt="Bang &amp; Olufsen logo" loading="lazy" decoding="async"></li>
+              <li><img class="partner-logo" src="assets/alza-top.png" alt="Alza logo" loading="lazy" decoding="async"></li>
+              <li><img class="partner-logo" src="assets/datart-top.png" alt="Datart logo" loading="lazy" decoding="async"></li>
+            </ul>
+          </div>
+        </li>
 
         <li class="menu-item" data-key="contact">
           <span class="menu-label">KONTAKT</span>
