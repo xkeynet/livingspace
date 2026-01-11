@@ -370,6 +370,22 @@
     }
 
     /* =============================
+       O NÁS (text block)
+       ============================= */
+    .about-block{
+      padding: 10px 0 0;
+      border-top: 1px solid #141414;
+      text-transform: none;
+      letter-spacing: 0.2px;
+      font-size: var(--panel-text-size);
+      line-height: var(--panel-line);
+      color: #fff;
+
+      /* ✅ safe zóna pro šipky */
+      padding-right: var(--arrow-safe);
+    }
+
+    /* =============================
        VIZE (submenu + text blocks)
        ============================= */
     .vision-submenu{
@@ -520,7 +536,16 @@
             <span class="chev" aria-hidden="true"></span>
           </button>
         </li>
-        <li class="menu-panel" aria-hidden="true"><div class="menu-panel-inner"></div></li>
+
+        <!-- ✅ O NÁS panel vyplněný -->
+        <li class="menu-panel" aria-hidden="true">
+          <div class="menu-panel-inner">
+            <div class="about-block">
+              LIVINGSPACE je dlouhodobě budovaný prostor, ve kterém propojujeme design, architekturu interiéru a zvuk do jednoho soudržného celku.<br><br>
+              Důraz klademe na špičkovou kvalitu, detail a nadčasovost. Inovativní přístup k myšlení je naší filozofií.
+            </div>
+          </div>
+        </li>
 
         <li class="menu-item" data-key="products">
           <span class="menu-label">PRODUKTY</span>
