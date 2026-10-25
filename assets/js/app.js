@@ -1,7 +1,7 @@
 'use strict';
 
 /* =========================================================
-   VÁCLAV BUCHTELÍK — INTRO
+   LIVINGSPACE — INTRO
    ========================================================= */
 
 (() => {
@@ -11,10 +11,7 @@
 
   const INTRO_VIDEO = {
     manifest:
-      'https://customer-akbn1e8h41lg80xg.cloudflarestream.com/f1b70b472ea6761438a2bde3f6d6a643/manifest/video.m3u8',
-
-    poster:
-      '/assets/vb-web.jpg'
+      'https://customer-akbn1e8h41lg80xg.cloudflarestream.com/f4b0ca84531ec87878ebadc2dd091a53/manifest/video.m3u8'
   };
 
   const HLS_SCRIPT_URL =
@@ -213,10 +210,9 @@
 
     video.setAttribute(
       'aria-label',
-      'Václav Buchtelík speaking about his artistic work'
+      'LIVINGSPACE kitchen presentation'
     );
 
-    video.poster = INTRO_VIDEO.poster;
     video.controls = false;
     video.tabIndex = -1;
 
@@ -387,7 +383,7 @@
       introVideo.load();
     } catch (error) {
       console.error(
-        '[Václav Buchtelík] Video cleanup failed:',
+        '[LIVINGSPACE] Video cleanup failed:',
         error
       );
     }
