@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://vaclavbuchtelik.com/sitemap.xml
+Sitemap: https://livingspace.cz/sitemap.xml
