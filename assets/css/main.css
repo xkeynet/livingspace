@@ -1,5 +1,5 @@
 /* =========================================================
-   VÁCLAV BUCHTELÍK — MAIN
+   LIVINGSPACE — MAIN
    ========================================================= */
 
 .main-view {
@@ -240,7 +240,7 @@
 }
 
 /* =========================================================
-   MAIN LOGO
+   LIVINGSPACE LOGO
    ========================================================= */
 
 .main-view__logo {
@@ -248,13 +248,13 @@
 
   top:
     calc(
-      env(safe-area-inset-top, 0px) -
-      50px
+      env(safe-area-inset-top, 0px) +
+      var(--main-header-height) / 2
     );
 
   left: 50%;
 
-  width: min(40vw, 185px);
+  width: min(48vw, 220px);
   height: auto;
 
   margin: 0;
@@ -267,7 +267,7 @@
   transform:
     translate3d(
       -50%,
-      calc(-100% - 120px),
+      calc(-150% - 120px),
       0
     );
 
@@ -294,7 +294,7 @@
 }
 
 /* =========================================================
-   MAIN LOGO ARRIVAL
+   LIVINGSPACE LOGO ARRIVAL
    ========================================================= */
 
 .main-view.is-logo-visible
@@ -304,7 +304,7 @@
   transform:
     translate3d(
       -50%,
-      0,
+      -50%,
       0
     );
 }
@@ -752,7 +752,7 @@
 }
 
 /* =========================================================
-   ABOUT
+   DOMŮ
    ========================================================= */
 
 .main-menu__about {
@@ -760,7 +760,7 @@
 }
 
 /* =========================================================
-   MY ART
+   MÉDIA
    ========================================================= */
 
 .main-menu__art {
@@ -770,7 +770,7 @@
 }
 
 /* =========================================================
-   MY ART — GALLERY
+   MÉDIA — DESIGN
    ========================================================= */
 
 .main-menu__art-gallery {
@@ -828,7 +828,7 @@
 }
 
 /* =========================================================
-   VISION
+   SHOP
    ========================================================= */
 
 .main-menu__vision {
@@ -836,7 +836,7 @@
 }
 
 /* =========================================================
-   CONTACT
+   KONTAKT
    ========================================================= */
 
 .main-menu__contact {
@@ -931,7 +931,7 @@
   }
 
   .main-view__logo {
-    width: min(43vw, 190px);
+    width: min(48vw, 200px);
   }
 
   .main-view__header-icon {
@@ -953,13 +953,7 @@
   }
 
   .main-view__logo {
-    top:
-      calc(
-        env(safe-area-inset-top, 0px) -
-        35px
-      );
-
-    width: min(42vw, 220px);
+    width: min(48vw, 240px);
   }
 
   .main-view__header {
@@ -997,13 +991,7 @@
   }
 
   .main-view__logo {
-    top:
-      calc(
-        env(safe-area-inset-top, 0px) -
-        60px
-      );
-
-    width: min(28vw, 250px);
+    width: min(32vw, 280px);
   }
 
   .main-view__header-icon {
@@ -1042,9 +1030,7 @@
   }
 
   .main-view__logo {
-    top: -52px;
-
-    width: min(18vw, 270px);
+    width: min(24vw, 320px);
   }
 
   .main-menu__content {
