@@ -254,7 +254,7 @@
 
   left: 50%;
 
-  width: min(48vw, 220px);
+  width: 220px;
   height: auto;
 
   margin: 0;
@@ -930,10 +930,6 @@
     --panel-font-size: 13px;
   }
 
-  .main-view__logo {
-    width: min(48vw, 200px);
-  }
-
   .main-view__header-icon {
     width: 22px;
     height: 22px;
@@ -950,10 +946,6 @@
     --menu-right: clamp(28px, 8vw, 56px);
 
     --menu-font-size: 20px;
-  }
-
-  .main-view__logo {
-    width: min(48vw, 240px);
   }
 
   .main-view__header {
@@ -990,10 +982,6 @@
     padding-right: var(--main-side-tablet);
   }
 
-  .main-view__logo {
-    width: min(32vw, 280px);
-  }
-
   .main-view__header-icon {
     width: 26px;
     height: 26px;
@@ -1027,10 +1015,6 @@
   .main-view__header {
     padding-left: var(--main-side-desktop);
     padding-right: var(--main-side-desktop);
-  }
-
-  .main-view__logo {
-    width: min(24vw, 320px);
   }
 
   .main-menu__content {
