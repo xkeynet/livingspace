@@ -1,7 +1,7 @@
 'use strict';
 
 /* =========================================================
-   VÁCLAV BUCHTELÍK — MAIN
+   LIVINGSPACE — MAIN
    MAIN VIEW + MENU STATE
    ========================================================= */
 
@@ -79,7 +79,7 @@
     if (!menuButton || !menuIcon) return;
 
     menuIcon.src = menuOpen ? ASSETS.cross : ASSETS.hamburger;
-    menuButton.setAttribute('aria-label', menuOpen ? 'Close menu' : 'Menu');
+    menuButton.setAttribute('aria-label', menuOpen ? 'Zavřít menu' : 'Menu');
     menuButton.setAttribute('aria-expanded', menuOpen ? 'true' : 'false');
   };
 
@@ -137,7 +137,7 @@
       'main-view__header-button main-view__header-button--search'
     );
     searchButton.type = 'button';
-    searchButton.setAttribute('aria-label', 'Search');
+    searchButton.setAttribute('aria-label', 'Hledat');
 
     const searchIcon = createIcon(
       ASSETS.search,
@@ -155,7 +155,7 @@
      ========================================================= */
 
   const createLogo = () => {
-    const logo = createIcon(ASSETS.logo, 'main-view__logo', 'Václav Buchtelík');
+    const logo = createIcon(ASSETS.logo, 'main-view__logo', 'LIVINGSPACE');
     logo.id = 'mainLogo';
     return logo;
   };
@@ -167,7 +167,7 @@
   const createChevronButton = label => {
     const button = createElement('button', 'main-menu__chevron-button');
     button.type = 'button';
-    button.setAttribute('aria-label', `Open ${label}`);
+    button.setAttribute('aria-label', `Rozbalit ${label}`);
     button.setAttribute('aria-expanded', 'false');
 
     const icon = createIcon(ASSETS.chevron, 'main-menu__chevron');
@@ -208,9 +208,9 @@
   const createAboutContent = () => {
     const about = createElement('div', 'main-menu__text main-menu__about');
     about.textContent =
-      'Václav Buchtelík is a Czech painter and collage artist born in 1990. ' +
-      'He graduated from the Faculty of Art at the University of Ostrava under Daniel Balabán. ' +
-      'He lives and works in Ostrava.';
+      'LIVINGSPACE je digitální mediální a obchodní platforma zaměřená na moderní bydlení, ' +
+      'architekturu, interiérový design, technologie a inteligentní využití prostoru. ' +
+      'Prostřednictvím vlastních médií přináší inspiraci, informace a nové pohledy na současné bydlení.';
     return about;
   };
 
@@ -219,8 +219,8 @@
     const galleryButton = createElement('button', 'main-menu__art-gallery');
 
     galleryButton.type = 'button';
-    galleryButton.textContent = 'GALLERY';
-    galleryButton.setAttribute('aria-label', 'Open Gallery');
+    galleryButton.textContent = 'DESIGN';
+    galleryButton.setAttribute('aria-label', 'Otevřít DESIGN');
 
     galleryButton.addEventListener('click', event => {
       event.preventDefault();
@@ -228,8 +228,8 @@
 
       /*
        * MAIN owns the menu state.
-       * The MY ART panel remains logically open while the fullscreen
-       * gallery temporarily hides the menu.
+       * The MEDIA panel remains logically open while the fullscreen
+       * DESIGN view temporarily hides the menu.
        */
       closeMainMenu();
       window.dispatchEvent(new CustomEvent('vb:gallery-open-view'));
@@ -242,7 +242,8 @@
   const createVisionContent = () => {
     const vision = createElement('div', 'main-menu__text main-menu__vision');
     vision.textContent =
-      'Václav Buchtelík develops an expressive body of work concerned with anxiety, societal fears and apocalyptic themes.';
+      'LIVINGSPACE SHOP je připravovaný digitální obchod zaměřený na inovativní produkty, ' +
+      'moderní design, technologie a inteligentní řešení pro současné bydlení.';
     return vision;
   };
 
@@ -290,20 +291,20 @@
     const menu = createElement('nav', 'main-menu');
     const content = createElement('div', 'main-menu__content');
 
-    menu.setAttribute('aria-label', 'Main navigation');
+    menu.setAttribute('aria-label', 'Hlavní navigace');
 
     menuList = createElement('ul', 'main-menu__list');
     menuList.id = 'mainMenuList';
 
     menuList.append(
       createSaberSlot(),
-      createMenuItem('about', 'ABOUT'),
+      createMenuItem('about', 'DOMŮ'),
       createMenuPanel(createAboutContent()),
-      createMenuItem('art', 'MY ART'),
+      createMenuItem('art', 'MÉDIA'),
       createMenuPanel(createArtContent()),
-      createMenuItem('vision', 'VISION'),
+      createMenuItem('vision', 'SHOP'),
       createMenuPanel(createVisionContent()),
-      createMenuItem('contact', 'CONTACT'),
+      createMenuItem('contact', 'KONTAKT'),
       createMenuPanel(createContactContent())
     );
 
@@ -463,8 +464,8 @@
     if (artIndex === -1) return;
 
     /*
-     * Restore exactly the state from which GALLERY is entered:
-     * MAIN menu visible + MY ART active + MY ART panel open.
+     * Restore exactly the state from which DESIGN is entered:
+     * MAIN menu visible + MEDIA active + MEDIA panel open.
      */
     setActive(artIndex);
 
@@ -618,7 +619,7 @@
 
     mainView = createElement('section', 'main-view');
     mainView.id = 'mainView';
-    mainView.setAttribute('aria-label', 'Václav Buchtelík main website');
+    mainView.setAttribute('aria-label', 'LIVINGSPACE – hlavní stránka');
 
     mainView.append(createHeader(), createLogo(), createMenu());
     document.body.appendChild(mainView);
