@@ -1,23 +1,29 @@
 'use strict';
 
 /* =========================================================
-   VÁCLAV BUCHTELÍK — HOME / PHASE 7
-   PHOTO CAROUSEL + CLEAN ARTWORK CAPTIONS
+   LIVINGSPACE — HOME
+   SEVEN-SLIDE CAROUSEL + CLEAN PLACEHOLDERS
    ========================================================= */
 
 (() => {
   const DIVIDER_LOGO_GAP_PX = 8;
   const SLIDE_INTERVAL_MS = 5000;
-  const MOTTO_LOGO_SRC = '/assets/img/optimism.png';
+
+  /*
+   * Seven reserved positions for future LIVINGSPACE photography.
+   * Original artwork images, titles, years and motto are removed.
+   *
+   * Future image paths can be added to individual slide objects.
+   */
 
   const HOME_SLIDES = [
-    { image: '/assets/home/home-001.jpg', motto: true, title: 'Z optimistických nálad tvořit nedokážu' },
-    { image: '/assets/home/home-002.png', title: 'Dým', year: '2019' },
-    { image: '/assets/home/home-003.png', title: 'Dítě', year: '2019' },
-    { image: '/assets/home/home-004.png', title: 'Koukej', year: '2019' },
-    { image: '/assets/home/home-005.png', title: 'Trhej!', year: '2019' },
-    { image: '/assets/home/home-006.png', title: 'Skok do ohně', year: '2020' },
-    { image: '/assets/home/home-007.png', title: 'Schody do pekla', year: '2020' }
+    { image: null },
+    { image: null },
+    { image: null },
+    { image: null },
+    { image: null },
+    { image: null },
+    { image: null }
   ];
 
   let mainView = null;
@@ -45,11 +51,15 @@
     return element;
   };
 
-  const isMenuOpen = () => Boolean(mainView?.classList.contains('is-menu-visible'));
+  const isMenuOpen = () =>
+    Boolean(mainView?.classList.contains('is-menu-visible'));
 
   const dispatchSlideChange = () => {
     document.dispatchEvent(new CustomEvent('vb:home-slide-change', {
-      detail: { index: activeIndex, count: slides.length }
+      detail: {
+        index: activeIndex,
+        count: slides.length
+      }
     }));
   };
 
@@ -69,15 +79,24 @@
 
   const getOpenDividerY = () => {
     const originalDivider = mainView?.querySelector('.main-menu__divider');
-    if (!mainView || !originalDivider) return getClosedDividerY();
 
-    return originalDivider.getBoundingClientRect().top - mainView.getBoundingClientRect().top;
+    if (!mainView || !originalDivider) {
+      return getClosedDividerY();
+    }
+
+    return (
+      originalDivider.getBoundingClientRect().top -
+      mainView.getBoundingClientRect().top
+    );
   };
 
   const syncDivider = () => {
     if (!homeView) return;
 
-    const y = isMenuOpen() ? getOpenDividerY() : getClosedDividerY();
+    const y = isMenuOpen()
+      ? getOpenDividerY()
+      : getClosedDividerY();
+
     homeView.style.setProperty('--home-divider-y', `${y}px`);
   };
 
@@ -99,14 +118,20 @@
 
     const slide = slides[index];
     const image = slide.querySelector('.home-carousel__image');
-    const caption = slide.querySelector('.home-carousel__caption');
 
-    if (!image?.naturalWidth || !image?.naturalHeight) return 0;
+    /*
+     * Future photographs retain their natural aspect ratio.
+     * Empty slides use a fixed 4:5 placeholder ratio.
+     */
 
-    const imageHeight = viewport.clientWidth * (image.naturalHeight / image.naturalWidth);
-    const captionHeight = caption?.offsetHeight || 0;
+    if (image?.naturalWidth && image?.naturalHeight) {
+      return (
+        viewport.clientWidth *
+        (image.naturalHeight / image.naturalWidth)
+      );
+    }
 
-    return imageHeight + captionHeight;
+    return viewport.clientWidth * 1.25;
   };
 
   const syncViewportHeight = (index, immediate = false) => {
@@ -120,7 +145,10 @@
 
     if (immediate) {
       viewport.getBoundingClientRect();
-      requestAnimationFrame(() => viewport?.classList.remove('is-height-jump'));
+
+      requestAnimationFrame(() => {
+        viewport?.classList.remove('is-height-jump');
+      });
     }
   };
 
@@ -138,7 +166,14 @@
   const scheduleAutoplay = () => {
     stopAutoplay();
 
-    if (!carouselVisible || isMenuOpen() || document.hidden || transitioning) return;
+    if (
+      !carouselVisible ||
+      isMenuOpen() ||
+      document.hidden ||
+      transitioning
+    ) {
+      return;
+    }
 
     autoplayTimer = window.setTimeout(() => {
       autoplayTimer = null;
@@ -151,8 +186,18 @@
      ========================================================= */
 
   const finishTransition = (current, next) => {
-    current.classList.remove('is-active', 'is-exiting', 'is-entering', 'is-prepared');
-    next.classList.remove('is-entering', 'is-prepared');
+    current.classList.remove(
+      'is-active',
+      'is-exiting',
+      'is-entering',
+      'is-prepared'
+    );
+
+    next.classList.remove(
+      'is-entering',
+      'is-prepared'
+    );
+
     next.classList.add('is-active');
 
     transitioning = false;
@@ -160,7 +205,13 @@
   };
 
   const transitionTo = nextIndex => {
-    if (transitioning || nextIndex === activeIndex || !slides[nextIndex]) return;
+    if (
+      transitioning ||
+      nextIndex === activeIndex ||
+      !slides[nextIndex]
+    ) {
+      return;
+    }
 
     stopAutoplay();
     transitioning = true;
@@ -168,7 +219,13 @@
     const current = slides[activeIndex];
     const next = slides[nextIndex];
 
-    next.classList.remove('is-active', 'is-exiting', 'is-entering', 'is-prepared');
+    next.classList.remove(
+      'is-active',
+      'is-exiting',
+      'is-entering',
+      'is-prepared'
+    );
+
     next.classList.add('is-prepared');
 
     syncViewportHeight(nextIndex);
@@ -181,17 +238,27 @@
         next.classList.remove('is-prepared');
         next.classList.add('is-entering');
 
-        current.classList.remove('is-entering', 'is-prepared');
+        current.classList.remove(
+          'is-entering',
+          'is-prepared'
+        );
+
         current.classList.add('is-exiting');
 
         const onEnd = event => {
-          if (event.target !== next || event.propertyName !== 'transform') return;
+          if (
+            event.target !== next ||
+            event.propertyName !== 'transform'
+          ) {
+            return;
+          }
 
           next.removeEventListener('transitionend', onEnd);
           finishTransition(current, next);
         };
 
         next.addEventListener('transitionend', onEnd);
+
         activeIndex = nextIndex;
         dispatchSlideChange();
       });
@@ -201,13 +268,24 @@
   const showNextSlide = () => {
     if (!slides.length) return;
 
-    const nextIndex = activeIndex === slides.length - 1 ? 0 : activeIndex + 1;
+    const nextIndex =
+      activeIndex === slides.length - 1
+        ? 0
+        : activeIndex + 1;
+
     transitionTo(nextIndex);
   };
 
   const handleExternalSlideRequest = event => {
     const index = Number(event.detail?.index);
-    if (!Number.isInteger(index) || index < 0 || index >= slides.length) return;
+
+    if (
+      !Number.isInteger(index) ||
+      index < 0 ||
+      index >= slides.length
+    ) {
+      return;
+    }
 
     if (index === activeIndex) {
       scheduleAutoplay();
@@ -218,78 +296,76 @@
   };
 
   /* =========================================================
-     FIRST SLIDE MOTTO
-     ========================================================= */
-
-  const createMottoCaption = item => {
-    const caption = createElement('div', 'home-carousel__caption home-carousel__caption--motto');
-    const motto = document.createElement('img');
-
-    motto.className = 'home-carousel__motto';
-    motto.src = MOTTO_LOGO_SRC;
-    motto.alt = item.title;
-    motto.decoding = 'async';
-    motto.draggable = false;
-
-    motto.addEventListener('load', () => {
-      if (activeIndex === 0) syncViewportHeight(0, !carouselVisible);
-    });
-
-    caption.appendChild(motto);
-
-    return caption;
-  };
-
-  /* =========================================================
-     STANDARD CAPTION — SLIDES 2–7
-     ========================================================= */
-
-  const createStandardCaption = item => {
-    const caption = createElement('div', 'home-carousel__caption home-carousel__caption--artwork');
-    const inner = createElement('div', 'home-carousel__caption-inner');
-    const title = createElement('span', 'home-carousel__caption-title');
-    const year = createElement('span', 'home-carousel__caption-year');
-
-    title.textContent = item.title;
-    year.textContent = item.year;
-
-    inner.append(title, year);
-    caption.appendChild(inner);
-
-    return caption;
-  };
-
-  const createCaption = item => item.motto ? createMottoCaption(item) : createStandardCaption(item);
-
-  /* =========================================================
      CREATE CAROUSEL
      ========================================================= */
 
   const createCarousel = () => {
-    const content = createElement('div', 'home-view__content');
-    const carousel = createElement('section', 'home-carousel');
+    const content = createElement(
+      'div',
+      'home-view__content'
+    );
 
-    viewport = createElement('div', 'home-carousel__viewport');
-    carousel.setAttribute('aria-label', 'Selected works by Václav Buchtelík');
+    const carousel = createElement(
+      'section',
+      'home-carousel'
+    );
+
+    viewport = createElement(
+      'div',
+      'home-carousel__viewport'
+    );
+
+    carousel.setAttribute(
+      'aria-label',
+      'LIVINGSPACE — galerie inspirace'
+    );
 
     slides = HOME_SLIDES.map((item, index) => {
-      const slide = createElement('article', 'home-carousel__slide');
-      const image = document.createElement('img');
-      const fullTitle = item.year ? `${item.title} ${item.year}` : item.title;
+      const slide = createElement(
+        'article',
+        'home-carousel__slide'
+      );
 
-      image.className = 'home-carousel__image';
-      image.src = item.image;
-      image.alt = fullTitle;
-      image.decoding = 'async';
-      image.draggable = false;
+      /*
+       * Keep the original image class for CSS compatibility.
+       * Use a black placeholder until a photograph is assigned.
+       */
 
-      if (index === 0) image.fetchPriority = 'high';
+      if (item.image) {
+        const image = document.createElement('img');
 
-      image.addEventListener('load', () => {
-        if (index === activeIndex) syncViewportHeight(index, !carouselVisible);
-      });
+        image.className = 'home-carousel__image';
+        image.src = item.image;
+        image.alt = item.alt || `LIVINGSPACE — fotografie ${index + 1}`;
+        image.decoding = 'async';
+        image.draggable = false;
 
-      slide.append(image, createCaption(item));
+        if (index === 0) {
+          image.fetchPriority = 'high';
+        }
+
+        image.addEventListener('load', () => {
+          if (index === activeIndex) {
+            syncViewportHeight(index, !carouselVisible);
+          }
+        });
+
+        slide.appendChild(image);
+      } else {
+        const placeholder = createElement(
+          'div',
+          'home-carousel__image'
+        );
+
+        placeholder.style.width = '100%';
+        placeholder.style.aspectRatio = '4 / 5';
+        placeholder.style.backgroundColor = '#000000';
+
+        placeholder.setAttribute('aria-hidden', 'true');
+
+        slide.appendChild(placeholder);
+      }
+
       viewport.appendChild(slide);
 
       return slide;
@@ -318,12 +394,19 @@
         if (!homeView || !slides[0]) return;
 
         homeView.classList.add('is-carousel-visible');
+
         slides[0].classList.remove('is-prepared');
         slides[0].classList.add('is-active');
+
         dispatchSlideChange();
 
         const onEnd = event => {
-          if (event.target !== slides[0] || event.propertyName !== 'transform') return;
+          if (
+            event.target !== slides[0] ||
+            event.propertyName !== 'transform'
+          ) {
+            return;
+          }
 
           slides[0].removeEventListener('transitionend', onEnd);
           scheduleAutoplay();
@@ -345,6 +428,7 @@
         if (!homeView) return;
 
         homeView.classList.add('is-divider-visible');
+
         window.setTimeout(revealCarousel, 180);
       });
     });
@@ -358,11 +442,19 @@
     if (!mainView) return;
 
     const waitForArrival = () => {
-      const control = mainView.querySelector('.main-view__header-button');
+      const control = mainView.querySelector(
+        '.main-view__header-button'
+      );
+
       if (!control) return revealDivider();
 
       const onEnd = event => {
-        if (event.target !== control || event.propertyName !== 'transform') return;
+        if (
+          event.target !== control ||
+          event.propertyName !== 'transform'
+        ) {
+          return;
+        }
 
         control.removeEventListener('transitionend', onEnd);
         revealDivider();
@@ -371,28 +463,46 @@
       control.addEventListener('transitionend', onEnd);
     };
 
-    if (mainView.classList.contains('is-controls-visible')) return waitForArrival();
+    if (
+      mainView.classList.contains('is-controls-visible')
+    ) {
+      return waitForArrival();
+    }
 
     controlsObserver = new MutationObserver(() => {
-      if (!mainView?.classList.contains('is-controls-visible')) return;
+      if (
+        !mainView?.classList.contains('is-controls-visible')
+      ) {
+        return;
+      }
 
       controlsObserver.disconnect();
       controlsObserver = null;
+
       waitForArrival();
     });
 
-    controlsObserver.observe(mainView, { attributes: true, attributeFilter: ['class'] });
+    controlsObserver.observe(mainView, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
   };
 
   const watchMenu = () => {
     menuObserver = new MutationObserver(() => {
       scheduleDividerSync();
 
-      if (isMenuOpen()) stopAutoplay();
-      else scheduleAutoplay();
+      if (isMenuOpen()) {
+        stopAutoplay();
+      } else {
+        scheduleAutoplay();
+      }
     });
 
-    menuObserver.observe(mainView, { attributes: true, attributeFilter: ['class'] });
+    menuObserver.observe(mainView, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
   };
 
   const watchLayout = () => {
@@ -408,9 +518,15 @@
       mainView.querySelector('.main-menu__list'),
       mainView.querySelector('.main-view__logo'),
       ...mainView.querySelectorAll('.main-menu__panel')
-    ].filter(Boolean).forEach(element => layoutObserver.observe(element));
+    ]
+      .filter(Boolean)
+      .forEach(element => {
+        layoutObserver.observe(element);
+      });
 
-    if (viewport) layoutObserver.observe(viewport);
+    if (viewport) {
+      layoutObserver.observe(viewport);
+    }
   };
 
   /* =========================================================
@@ -418,16 +534,37 @@
      ========================================================= */
 
   const createHome = () => {
-    if (!mainView || document.getElementById('homeView')) return;
+    if (
+      !mainView ||
+      document.getElementById('homeView')
+    ) {
+      return;
+    }
 
-    homeView = createElement('section', 'home-view');
+    homeView = createElement(
+      'section',
+      'home-view'
+    );
+
     homeView.id = 'homeView';
-    homeView.setAttribute('aria-label', 'Václav Buchtelík home');
 
-    divider = createElement('div', 'home-view__divider');
+    homeView.setAttribute(
+      'aria-label',
+      'LIVINGSPACE — hlavní stránka'
+    );
+
+    divider = createElement(
+      'div',
+      'home-view__divider'
+    );
+
     divider.setAttribute('aria-hidden', 'true');
 
-    homeView.append(divider, createCarousel());
+    homeView.append(
+      divider,
+      createCarousel()
+    );
+
     mainView.appendChild(homeView);
 
     syncDivider();
@@ -438,6 +575,7 @@
 
   const findMain = () => {
     mainView = document.getElementById('mainView');
+
     if (!mainView) return false;
 
     createHome();
@@ -453,15 +591,33 @@
     syncViewportHeight(activeIndex);
   };
 
-  window.addEventListener('resize', handleResize, { passive: true });
-  window.addEventListener('orientationchange', handleResize, { passive: true });
+  window.addEventListener(
+    'resize',
+    handleResize,
+    { passive: true }
+  );
 
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) stopAutoplay();
-    else scheduleAutoplay();
-  });
+  window.addEventListener(
+    'orientationchange',
+    handleResize,
+    { passive: true }
+  );
 
-  document.addEventListener('vb:home-go-to-slide', handleExternalSlideRequest);
+  document.addEventListener(
+    'visibilitychange',
+    () => {
+      if (document.hidden) {
+        stopAutoplay();
+      } else {
+        scheduleAutoplay();
+      }
+    }
+  );
+
+  document.addEventListener(
+    'vb:home-go-to-slide',
+    handleExternalSlideRequest
+  );
 
   if (!findMain()) {
     mainObserver = new MutationObserver(() => {
@@ -471,7 +627,9 @@
       mainObserver = null;
     });
 
-    mainObserver.observe(document.body, { childList: true });
+    mainObserver.observe(document.body, {
+      childList: true
+    });
   }
 
   /* =========================================================
@@ -486,8 +644,13 @@
 
     stopAutoplay();
 
-    document.removeEventListener('vb:home-go-to-slide', handleExternalSlideRequest);
+    document.removeEventListener(
+      'vb:home-go-to-slide',
+      handleExternalSlideRequest
+    );
 
-    if (syncFrame !== null) cancelAnimationFrame(syncFrame);
+    if (syncFrame !== null) {
+      cancelAnimationFrame(syncFrame);
+    }
   }, { once: true });
 })();
