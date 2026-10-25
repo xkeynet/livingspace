@@ -208,9 +208,7 @@
   const createAboutContent = () => {
     const about = createElement('div', 'main-menu__text main-menu__about');
     about.textContent =
-      'LIVINGSPACE je digitální mediální a obchodní platforma zaměřená na moderní bydlení, ' +
-      'architekturu, interiérový design, technologie a inteligentní využití prostoru. ' +
-      'Prostřednictvím vlastních médií přináší inspiraci, informace a nové pohledy na současné bydlení.';
+      'LIVINGSPACE je platforma nabízející nejrozsáhlejší světový výběr designového nábytku, elektroniky, osvětlení a vybavení pro venkovní prostory.';
     return about;
   };
 
