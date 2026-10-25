@@ -249,17 +249,21 @@
     const contact = createElement('div', 'main-menu__text main-menu__contact');
 
     const name = createElement('div', 'main-menu__contact-name');
-    name.textContent = 'Václav Buchtelík';
+    name.textContent = 'LIVINGSPACE';
 
     const email = createElement('a', 'main-menu__contact-email');
-    email.href = 'mailto:art@vaclavbuchtelik.com';
-    email.textContent = 'art@vaclavbuchtelik.com';
+    email.href = 'mailto:design@livingspace.cz';
+    email.textContent = 'design@livingspace.cz';
 
     const phone = createElement('a', 'main-menu__contact-phone');
-    phone.href = 'tel:+420737615992';
-    phone.textContent = '+420 737 615 992';
+    phone.href = 'tel:+420734552875';
+    phone.textContent = '+420 734 552 875';
 
-    contact.append(name, email, phone);
+    const phone2 = createElement('a', 'main-menu__contact-phone');
+    phone2.href = 'tel:+420737475065';
+    phone2.textContent = '+420 737 475 065';
+
+    contact.append(name, email, phone, phone2);
     return contact;
   };
 
