@@ -254,7 +254,7 @@
 
   left: 50%;
 
-  width: 240px;
+  width: 220px;
   height: auto;
 
   margin: 0;
@@ -952,6 +952,15 @@
     padding-left: 18px;
     padding-right: 18px;
     transform: translateY(20px);
+  }
+
+  .main-view__logo {
+    top:
+      calc(
+        env(safe-area-inset-top, 0px) +
+        var(--main-header-height) / 2 +
+        20px
+      );
   }
 }
 
