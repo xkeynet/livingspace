@@ -187,24 +187,10 @@
        ========================================================= -->
   <link
     rel="preload"
-    href="/assets/vb-logo.png"
-    as="image"
-    type="image/png"
-    fetchpriority="high"
-  >
-
-  <link
-    rel="preload"
     href="/assets/vb-logo2.png"
     as="image"
     type="image/png"
-  >
-
-  <link
-    rel="preload"
-    href="/assets/icons/arrow-up.svg"
-    as="image"
-    type="image/svg+xml"
+    fetchpriority="high"
   >
 
   <link
@@ -235,13 +221,6 @@
     type="image/svg+xml"
   >
 
-  <link
-    rel="preload"
-    href="/assets/icons/mute.svg"
-    as="image"
-    type="image/svg+xml"
-  >
-
   <!-- =========================================================
        GOOGLE ANALYTICS
        ========================================================= -->
@@ -262,9 +241,47 @@
   </script>
 
   <!-- =========================================================
-       APP CSS
+       GLOBAL CSS
        ========================================================= -->
-  <link rel="stylesheet" href="/assets/css/app.css">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+      padding: 0;
+
+      background: #000000;
+
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    body {
+      width: 100%;
+      min-height: 100svh;
+      margin: 0;
+      padding: 0;
+
+      overflow-x: hidden;
+
+      background: #000000;
+      color: #ffffff;
+
+      font-family:
+        "Chakra Petch",
+        Arial,
+        sans-serif;
+
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  </style>
 
   <!-- =========================================================
        MAIN CSS
@@ -293,94 +310,10 @@
 </head>
 
 <body>
-  <main class="intro" id="intro">
-    <div class="intro__content">
+  <!-- =========================================================
+       MAIN IS CREATED AUTOMATICALLY BY main.js
+       ========================================================= -->
 
-      <!-- =====================================================
-           LOGO
-           ===================================================== -->
-      <img
-        class="intro__logo"
-        id="introLogo"
-        src="/assets/vb-logo.png"
-        alt="LIVINGSPACE"
-        width="1200"
-        height="1200"
-        decoding="async"
-        fetchpriority="high"
-        draggable="false"
-      >
-
-      <!-- =====================================================
-           ENTER GATE
-           ===================================================== -->
-      <div class="intro__gate" id="introGate">
-        <button
-          class="intro__enter"
-          id="introEnter"
-          type="button"
-          aria-label="Vstoupit na web LIVINGSPACE"
-        >
-          ENTER
-        </button>
-
-        <span
-          class="intro__arrow"
-          id="introArrow"
-          aria-hidden="true"
-        >
-          <img
-            class="intro__arrow-icon"
-            src="/assets/icons/arrow-up.svg"
-            alt=""
-            width="24"
-            height="24"
-            decoding="async"
-            draggable="false"
-          >
-        </span>
-      </div>
-
-      <!-- =====================================================
-           SOUND CONTROL
-           ===================================================== -->
-      <button
-        class="intro__sound"
-        id="introSound"
-        type="button"
-        aria-label="Zapnout zvuk"
-        aria-pressed="false"
-      >
-        <img
-          class="intro__sound-icon"
-          id="introSoundIcon"
-          src="/assets/icons/mute.svg"
-          alt=""
-          width="24"
-          height="24"
-          decoding="async"
-          draggable="false"
-        >
-      </button>
-
-    </div>
-  </main>
-
-  <noscript>
-    <style>
-      .intro__logo,
-      .intro__gate,
-      .intro__enter,
-      .intro__arrow,
-      .intro__sound {
-        opacity: 1 !important;
-        visibility: visible !important;
-        transform: translate3d(0, 0, 0) !important;
-      }
-    </style>
-  </noscript>
-
-  <script src="/assets/js/app.js" defer></script>
   <script src="/assets/js/main.js" defer></script>
   <script src="/assets/js/home.js" defer></script>
   <script src="/assets/js/next.js" defer></script>
