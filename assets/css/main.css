@@ -3,87 +3,77 @@
    ========================================================= */
 
 .main-view {
-  --main-font:
-    "Inter",
-    Arial,
-    sans-serif;
+  /* Typography */
+  --main-font: "Barlow", Arial, sans-serif;
+  --main-menu-font: "Barlow Condensed", "Barlow", Arial, sans-serif;
 
+  /* Colors */
   --main-background: #000000;
   --main-foreground: #ffffff;
   --main-grey: #b4b4b4;
   --main-line: #1f1f1f;
   --main-line-soft: #141414;
 
+  /* Header */
   --main-header-height: 64px;
-
   --main-side-mobile: 16px;
   --main-side-tablet: 28px;
   --main-side-desktop: 42px;
 
+  /* Menu layout */
   --menu-left: clamp(28px, 7vw, 58px);
   --menu-right: clamp(24px, 8vw, 56px);
-
   --menu-top-gap: 42px;
   --menu-row-pad: 14px;
 
+  /* Menu typography */
   --menu-font-size: 19px;
   --menu-letter-spacing: 0.6px;
 
+  /* Chevron */
   --chev-size: 18px;
   --chev-rot-ms: 1040ms;
 
+  /* Saber */
   --saber-width: 4px;
   --saber-height: 26px;
   --saber-offset: 0px;
-
   --active-shift: 14px;
 
+  /* Panels */
   --panel-font-size: 14px;
   --panel-line-height: 1.65;
+  --arrow-safe: calc(var(--chev-size) + 26px);
 
-  --arrow-safe:
-    calc(
-      var(--chev-size) +
-      26px
-    );
-
+  /* Animations */
   --menu-enter-duration: 1150ms;
-  --menu-enter-easing:
-    cubic-bezier(0.16, 1, 0.3, 1);
-
+  --menu-enter-easing: cubic-bezier(0.16, 1, 0.3, 1);
   --main-arrival-duration: 2400ms;
-  --main-arrival-easing:
-    cubic-bezier(0.16, 1, 0.3, 1);
+  --main-arrival-easing: cubic-bezier(0.16, 1, 0.3, 1);
 
+  /* Main container */
   position: fixed;
   inset: 0;
-
   width: 100%;
   height: 100%;
   min-height: 100svh;
-
   overflow: hidden;
 
   background: var(--main-background);
   color: var(--main-foreground);
-
   font-family: var(--main-font);
 
   z-index: 10;
-
   opacity: 0;
-
   pointer-events: none;
-
-  transition:
-    opacity 220ms linear;
+  transition: opacity 220ms linear;
 
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 /* =========================================================
-   MAIN VISIBLE
+   MAIN — VISIBILITY
    ========================================================= */
 
 .main-view.is-visible {
@@ -92,7 +82,7 @@
 }
 
 /* =========================================================
-   MAIN RESET
+   MAIN — RESET
    ========================================================= */
 
 .main-view *,
@@ -104,18 +94,14 @@
 .main-view button {
   margin: 0;
   padding: 0;
-
   appearance: none;
   -webkit-appearance: none;
 
   border: 0;
   border-radius: 0;
-
   background: none;
   color: inherit;
-
   font: inherit;
-
   cursor: pointer;
 
   -webkit-tap-highlight-color: transparent;
@@ -123,95 +109,65 @@
 
 .main-view img {
   display: block;
-
   user-select: none;
   -webkit-user-select: none;
   -webkit-user-drag: none;
 }
 
 /* =========================================================
-   MAIN HEADER
+   HEADER — CONTAINER
    ========================================================= */
 
 .main-view__header {
   position: absolute;
   top: 0;
   left: 0;
-
   width: 100%;
-  height:
-    calc(
-      var(--main-header-height) +
-      env(safe-area-inset-top, 0px)
-    );
+  height: calc(var(--main-header-height) + env(safe-area-inset-top, 0px));
 
-  padding:
-    env(safe-area-inset-top, 0px)
-    var(--main-side-mobile)
-    0;
+  padding: env(safe-area-inset-top, 0px) var(--main-side-mobile) 0;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
 
   z-index: 20;
-
   pointer-events: none;
 }
 
 /* =========================================================
-   HEADER CONTROLS
+   HEADER — CONTROLS
    ========================================================= */
 
 .main-view__header-button {
   position: relative;
-
   width: 44px;
   height: 44px;
 
   display: flex;
   align-items: center;
   justify-content: center;
-
   flex: 0 0 44px;
 
   opacity: 0;
-
   pointer-events: none;
 
-  transform:
-    translate3d(
-      0,
-      calc(-100% - 120px),
-      0
-    );
-
+  transform: translate3d(0, calc(-100% - 120px), 0);
   transform-origin: center center;
-
   will-change: transform, opacity;
 
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 
   transition:
-    transform
-      var(--main-arrival-duration)
-      var(--main-arrival-easing),
+    transform var(--main-arrival-duration) var(--main-arrival-easing),
     opacity 420ms ease-out;
 }
 
-.main-view.is-controls-visible
-.main-view__header-button {
+.main-view.is-controls-visible .main-view__header-button {
   opacity: 1;
-
   pointer-events: auto;
-
-  transform:
-    translate3d(
-      0,
-      0,
-      0
-    );
+  transform: translate3d(0, 0, 0);
 }
 
 .main-view__header-button:focus {
@@ -219,60 +175,49 @@
 }
 
 .main-view__header-button:focus-visible {
-  outline:
-    1px solid
-    rgba(255, 255, 255, 0.8);
-
+  outline: 1px solid rgba(255, 255, 255, 0.8);
   outline-offset: 2px;
 }
 
 /* =========================================================
-   HEADER ICON
+   HEADER — ICONS
    ========================================================= */
 
 .main-view__header-icon {
   width: 24px;
   height: 24px;
-
   object-fit: contain;
-
   pointer-events: none;
 }
 
+.main-view__header-icon--hamburger {
+  width: 30px;
+  height: 30px;
+}
+
+.main-view__header-icon--search {
+  width: 22px;
+  height: 22px;
+}
+
 /* =========================================================
-   LIVINGSPACE LOGO
+   LOGO — LIVINGSPACE
    ========================================================= */
 
 .main-view__logo {
   position: absolute;
-
-  top:
-    calc(
-      env(safe-area-inset-top, 0px) +
-      var(--main-header-height) / 2
-    );
-
+  top: calc(env(safe-area-inset-top, 0px) + var(--main-header-height) / 2);
   left: 50%;
 
   width: 220px;
   height: auto;
-
   margin: 0;
   padding: 0;
-
   object-fit: contain;
 
   opacity: 0;
-
-  transform:
-    translate3d(
-      -50%,
-      calc(-150% - 120px),
-      0
-    );
-
+  transform: translate3d(-50%, calc(-150% - 120px), 0);
   transform-origin: center center;
-
   will-change: transform, opacity;
 
   backface-visibility: hidden;
@@ -283,71 +228,48 @@
   -webkit-user-drag: none;
 
   pointer-events: none;
-
   z-index: 21;
 
   transition:
-    transform
-      var(--main-arrival-duration)
-      var(--main-arrival-easing),
+    transform var(--main-arrival-duration) var(--main-arrival-easing),
     opacity 420ms ease-out;
 }
 
 /* =========================================================
-   LIVINGSPACE LOGO ARRIVAL
+   LOGO — ARRIVAL
    ========================================================= */
 
-.main-view.is-logo-visible
-.main-view__logo {
+.main-view.is-logo-visible .main-view__logo {
   opacity: 1;
-
-  transform:
-    translate3d(
-      -50%,
-      -50%,
-      0
-    );
+  transform: translate3d(-50%, -50%, 0);
 }
 
 /* =========================================================
-   MENU SCROLL AREA
+   MENU — SCROLL AREA
    ========================================================= */
 
 .main-menu {
   position: absolute;
   inset: 0;
-
   width: 100%;
   height: 100%;
   min-height: 100svh;
 
-  padding-top:
-    calc(
-      env(safe-area-inset-top, 0px) +
-      var(--main-header-height)
-    );
+  padding-top: calc(env(safe-area-inset-top, 0px) + var(--main-header-height));
 
   overflow-x: hidden;
   overflow-y: auto;
-
   -webkit-overflow-scrolling: touch;
-
   overscroll-behavior: contain;
 
   z-index: 10;
-
   scrollbar-width: none;
 
   visibility: hidden;
   pointer-events: none;
 }
 
-/* =========================================================
-   MENU VISIBLE
-   ========================================================= */
-
-.main-view.is-menu-visible
-.main-menu {
+.main-view.is-menu-visible .main-menu {
   visibility: visible;
   pointer-events: auto;
 }
@@ -357,32 +279,27 @@
 }
 
 /* =========================================================
-   MENU CONTENT
+   MENU — CONTENT
    ========================================================= */
 
 .main-menu__content {
   position: relative;
-
   width: 100%;
 
   padding-left: var(--menu-left);
   padding-right: var(--menu-right);
-  padding-bottom:
-    calc(
-      120px +
-      env(safe-area-inset-bottom, 0px)
-    );
+  padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
+
+  transform: translateY(30px);
 }
 
 /* =========================================================
-   MENU LIST
+   MENU — LIST
    ========================================================= */
 
 .main-menu__list {
   position: relative;
-
   width: 100%;
-
   list-style: none;
 
   margin: var(--menu-top-gap) 0 0;
@@ -390,35 +307,30 @@
 }
 
 /* =========================================================
-   SABER SLOT
+   SABER — SLOT
    ========================================================= */
 
 .main-menu__saber-slot {
   position: absolute;
-
   left: 0;
   top: 0;
 
   width: 32px;
   height: 100%;
-
   margin: 0;
   padding: 0;
-
   list-style: none;
 
   z-index: 5;
-
   pointer-events: none;
 }
 
 /* =========================================================
-   SABER — WARM NEON GLOW
+   SABER — NEON GLOW
    ========================================================= */
 
 .main-menu__saber {
   position: absolute;
-
   left: var(--saber-offset);
   top: 0;
 
@@ -426,7 +338,6 @@
   height: var(--saber-height);
 
   background: #fff9cf;
-
   border-radius: 3px;
 
   box-shadow:
@@ -435,148 +346,91 @@
     0 0 13px rgba(255, 220, 70, 0.62),
     0 0 22px rgba(255, 205, 35, 0.30);
 
-  transform:
-    translate3d(
-      0,
-      0,
-      0
-    );
-
+  transform: translate3d(0, 0, 0);
   transform-origin: center center;
-
-  transition:
-    transform 180ms
-      cubic-bezier(0.2, 0.9, 0.2, 1);
-
+  transition: transform 180ms cubic-bezier(0.2, 0.9, 0.2, 1);
   will-change: transform;
-
   pointer-events: none;
 }
 
 /* =========================================================
-   SABER HANDLE
+   SABER — HANDLE
    ========================================================= */
 
 .main-menu__saber-handle {
   position: absolute;
-
-  left:
-    calc(
-      var(--saber-offset) -
-      14px
-    );
-
+  left: calc(var(--saber-offset) - 14px);
   top: 0;
 
   width: 32px;
   height: 100%;
-
   background: transparent;
 
   z-index: 6;
-
   pointer-events: auto;
-
   touch-action: none;
 }
 
 /* =========================================================
-   MENU ITEM
+   MENU — ITEMS
    ========================================================= */
 
 .main-menu__item {
   position: relative;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   gap: 16px;
 
   width: 100%;
-
-  padding:
-    var(--menu-row-pad)
-    0;
+  padding: var(--menu-row-pad) 0;
 
   color: var(--main-grey);
-
-  font-family: var(--main-font);
-  font-size: var(--menu-font-size);
-  font-weight: 400;
+  font-family: var(--main-menu-font);
+  font-size: 18px;
+  font-weight: 600;
   line-height: 1.05;
-
-  letter-spacing:
-    var(--menu-letter-spacing);
-
+  letter-spacing: var(--menu-letter-spacing);
   text-transform: uppercase;
 
   user-select: none;
   -webkit-user-select: none;
-
   -webkit-tap-highlight-color: transparent;
 
   opacity: 0;
-
-  transform:
-    translate3d(
-      calc(100vw + 80px),
-      0,
-      0
-    );
-
+  transform: translate3d(calc(100vw + 80px), 0, 0);
   will-change: transform, opacity;
-
   z-index: 2;
 }
 
 /* =========================================================
-   MENU ITEM STAGGER ARRIVAL
+   MENU — STAGGER ARRIVAL
    ========================================================= */
 
-.main-view.is-menu-visible
-.main-menu__item {
-  animation:
-    mainMenuItemEnter
-    var(--menu-enter-duration)
-    var(--menu-enter-easing)
-    forwards;
+.main-view.is-menu-visible .main-menu__item {
+  animation: mainMenuItemEnter var(--menu-enter-duration) var(--menu-enter-easing) forwards;
 }
 
-.main-view.is-menu-visible
-.main-menu__item:nth-of-type(2) {
+.main-view.is-menu-visible .main-menu__item:nth-of-type(2) {
   animation-delay: 0ms;
 }
 
-.main-view.is-menu-visible
-.main-menu__item:nth-of-type(4) {
+.main-view.is-menu-visible .main-menu__item:nth-of-type(4) {
   animation-delay: 120ms;
 }
 
-.main-view.is-menu-visible
-.main-menu__item:nth-of-type(6) {
+.main-view.is-menu-visible .main-menu__item:nth-of-type(6) {
   animation-delay: 240ms;
 }
 
-.main-view.is-menu-visible
-.main-menu__item:nth-of-type(8) {
+.main-view.is-menu-visible .main-menu__item:nth-of-type(8) {
   animation-delay: 360ms;
 }
-
-/* =========================================================
-   MENU ITEM ARRIVAL KEYFRAMES
-   ========================================================= */
 
 @keyframes mainMenuItemEnter {
   0% {
     opacity: 0;
-
-    transform:
-      translate3d(
-        calc(100vw + 80px),
-        0,
-        0
-      );
+    transform: translate3d(calc(100vw + 80px), 0, 0);
   }
 
   18% {
@@ -585,99 +439,67 @@
 
   100% {
     opacity: 1;
-
-    transform:
-      translate3d(
-        0,
-        0,
-        0
-      );
+    transform: translate3d(0, 0, 0);
   }
 }
 
 /* =========================================================
-   MENU LABEL
+   MENU — LABELS
    ========================================================= */
 
 .main-menu__label {
   display: inline-block;
-
   color: inherit;
-
   cursor: pointer;
 
   transition:
-    transform 160ms
-      cubic-bezier(0.2, 0.9, 0.2, 1),
+    transform 160ms cubic-bezier(0.2, 0.9, 0.2, 1),
     color 120ms linear;
 
   will-change: transform, color;
 }
 
 /* =========================================================
-   ACTIVE MENU ITEM
+   MENU — ACTIVE ITEM
    ========================================================= */
 
-.main-menu__item.is-active
-.main-menu__label {
+.main-menu__item.is-active .main-menu__label {
   color: var(--main-foreground);
-
-  transform:
-    translate3d(
-      var(--active-shift),
-      0,
-      0
-    );
+  transform: translate3d(var(--active-shift), 0, 0);
 }
 
 /* =========================================================
-   CHEVRON BUTTON
+   MENU — CHEVRON BUTTON
    ========================================================= */
 
 .main-menu__chevron-button {
-  width: var(--chev-size);
-  height: var(--chev-size);
-
-  flex:
-    0 0
-    var(--chev-size);
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
   background: none;
-
   overflow: visible;
 }
 
 /* =========================================================
-   CHEVRON SVG
+   MENU — CHEVRON ICON
    ========================================================= */
 
 .main-menu__chevron {
-  width: var(--chev-size);
-  height: var(--chev-size);
-
+  width: 34px;
+  height: 34px;
   display: block;
-
   object-fit: contain;
 
-  transform:
-    rotate(
-      var(--chev-spin, 0deg)
-    )
-    translateZ(0);
-
+  transform: rotate(var(--chev-spin, 0deg)) translateZ(0);
   transform-origin: center center;
 
-  transition:
-    transform
-    var(--chev-rot-ms)
-    cubic-bezier(0.2, 0.9, 0.2, 1);
-
+  transition: transform var(--chev-rot-ms) cubic-bezier(0.2, 0.9, 0.2, 1);
   will-change: transform;
-
   pointer-events: none;
 
   backface-visibility: hidden;
@@ -685,54 +507,36 @@
 }
 
 /* =========================================================
-   MENU PANEL
+   MENU — PANELS
    ========================================================= */
 
 .main-menu__panel {
   list-style: none;
-
   max-height: 0;
-
   overflow: hidden;
-
   opacity: 0;
 
   transition:
-    max-height 420ms
-      cubic-bezier(0.2, 0.9, 0.2, 1),
+    max-height 420ms cubic-bezier(0.2, 0.9, 0.2, 1),
     opacity 220ms linear;
 }
 
-/* =========================================================
-   OPEN MENU PANEL
-   ========================================================= */
-
-.main-menu__item.is-open
-+
-.main-menu__panel {
+.main-menu__item.is-open + .main-menu__panel {
   max-height: 1600px;
-
   opacity: 1;
 }
 
-/* =========================================================
-   MENU PANEL INNER
-   ========================================================= */
-
 .main-menu__panel-inner {
-  padding:
-    10px
-    var(--arrow-safe)
-    12px
-    0;
+  padding: 10px var(--arrow-safe) 12px 0;
+  border-top: 1px solid var(--main-line-soft);
+}
 
-  border-top:
-    1px solid
-    var(--main-line-soft);
+.main-menu__panel-inner > * {
+  transform: translate3d(20px, 0, 0);
 }
 
 /* =========================================================
-   PANEL TEXT
+   MENU — PANEL TEXT
    ========================================================= */
 
 .main-menu__text {
@@ -740,19 +544,16 @@
   padding: 0;
 
   color: var(--main-foreground);
-
   font-family: var(--main-font);
   font-size: var(--panel-font-size);
   font-weight: 400;
   line-height: var(--panel-line-height);
-
   letter-spacing: 0.2px;
-
   text-transform: none;
 }
 
 /* =========================================================
-   DOMŮ
+   MENU — DOMŮ
    ========================================================= */
 
 .main-menu__about {
@@ -760,7 +561,7 @@
 }
 
 /* =========================================================
-   MÉDIA
+   MENU — MÉDIA
    ========================================================= */
 
 .main-menu__art {
@@ -770,35 +571,29 @@
 }
 
 /* =========================================================
-   MÉDIA — DESIGN
+   MENU — DESIGN
    ========================================================= */
 
 .main-menu__art-gallery {
   position: relative;
-
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
 
   min-height: 38px;
-
   margin: 0;
   padding: 0;
 
   color: var(--main-grey);
-
-  font-family: var(--main-font);
+  font-family: var(--main-menu-font);
   font-size: 14px;
   font-weight: 600;
   line-height: 1;
-
   letter-spacing: 0.12em;
 
   text-transform: uppercase;
   text-decoration: none;
-
   outline: none;
-
   cursor: pointer;
 
   -webkit-tap-highlight-color: transparent;
@@ -806,8 +601,7 @@
   transition:
     color 120ms linear,
     opacity 120ms linear,
-    transform 160ms
-      cubic-bezier(0.2, 0.9, 0.2, 1);
+    transform 160ms cubic-bezier(0.2, 0.9, 0.2, 1);
 }
 
 .main-menu__art-gallery:visited {
@@ -822,13 +616,11 @@
 .main-menu__art-gallery:active {
   color: var(--main-foreground);
   opacity: 0.7;
-
-  transform:
-    scale(0.97);
+  transform: scale(0.97);
 }
 
 /* =========================================================
-   SHOP
+   MENU — SHOP
    ========================================================= */
 
 .main-menu__vision {
@@ -836,29 +628,25 @@
 }
 
 /* =========================================================
-   KONTAKT
+   MENU — KONTAKT
    ========================================================= */
 
 .main-menu__contact {
   color: var(--main-foreground);
-
   font-size: 15px;
   line-height: 1.85;
 }
 
 /* =========================================================
-   CONTACT LINKS
+   MENU — CONTACT LINKS
    ========================================================= */
 
 .main-menu__contact a {
   display: block;
-
   width: fit-content;
 
   color: var(--main-foreground);
-
   text-decoration: none;
-
   outline: none;
 
   -webkit-tap-highlight-color: transparent;
@@ -872,7 +660,6 @@
 .main-menu__contact a:link,
 .main-menu__contact a:visited {
   color: var(--main-foreground);
-
   text-decoration: none;
 }
 
@@ -881,7 +668,6 @@
 .main-menu__contact a:focus-visible,
 .main-menu__contact a:active {
   color: #fff7c2;
-
   text-decoration: none;
 
   text-shadow:
@@ -897,36 +683,27 @@
 }
 
 /* =========================================================
-   MENU DIVIDER
+   MENU — DIVIDER
    ========================================================= */
 
 .main-menu__divider {
   width: 100%;
-
   margin: 18px 0 0;
-
-  border-top:
-    1px solid
-    var(--main-line);
+  border-top: 1px solid var(--main-line);
 }
 
 /* =========================================================
-   SMALL MOBILE
+   RESPONSIVE — SMALL MOBILE
    ========================================================= */
 
 @media (max-width: 374px) {
   .main-view {
     --menu-left: 27px;
     --menu-right: 24px;
-
     --menu-top-gap: 34px;
-
     --menu-row-pad: 13px;
-
     --menu-font-size: 18px;
-
     --chev-size: 17px;
-
     --panel-font-size: 13px;
   }
 
@@ -937,14 +714,13 @@
 }
 
 /* =========================================================
-   LARGE MOBILE
+   RESPONSIVE — LARGE MOBILE
    ========================================================= */
 
 @media (min-width: 430px) and (max-width: 767px) {
   .main-view {
     --menu-left: clamp(32px, 7vw, 58px);
     --menu-right: clamp(28px, 8vw, 56px);
-
     --menu-font-size: 20px;
   }
 
@@ -955,34 +731,27 @@
   }
 
   .main-view__logo {
-    top:
-      calc(
-        env(safe-area-inset-top, 0px) +
-        var(--main-header-height) / 2 +
-        20px
-      );
+    top: calc(
+      env(safe-area-inset-top, 0px) +
+      var(--main-header-height) / 2 +
+      20px
+    );
   }
 }
 
 /* =========================================================
-   TABLET
+   RESPONSIVE — TABLET
    ========================================================= */
 
 @media (min-width: 768px) {
   .main-view {
     --menu-left: clamp(52px, 8vw, 92px);
     --menu-right: clamp(44px, 8vw, 84px);
-
     --menu-top-gap: 54px;
-
     --menu-row-pad: 17px;
-
     --menu-font-size: 22px;
-
     --chev-size: 20px;
-
     --saber-height: 30px;
-
     --panel-font-size: 15px;
   }
 
@@ -998,26 +767,21 @@
 
   .main-menu__content {
     max-width: 900px;
-
     margin: 0 auto;
   }
 }
 
 /* =========================================================
-   DESKTOP
+   RESPONSIVE — DESKTOP
    ========================================================= */
 
 @media (min-width: 1200px) {
   .main-view {
     --menu-left: 72px;
     --menu-right: 72px;
-
     --menu-top-gap: 62px;
-
     --menu-row-pad: 18px;
-
     --menu-font-size: 23px;
-
     --panel-font-size: 15px;
   }
 
@@ -1032,7 +796,7 @@
 }
 
 /* =========================================================
-   REDUCED MOTION
+   ACCESSIBILITY — REDUCED MOTION
    ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
@@ -1052,8 +816,7 @@
       opacity 300ms ease-out;
   }
 
-  .main-view.is-menu-visible
-  .main-menu__item {
+  .main-view.is-menu-visible .main-menu__item {
     animation-duration: 500ms;
     animation-delay: 0ms;
   }
@@ -1071,62 +834,4 @@
       max-height 240ms ease-out,
       opacity 120ms linear;
   }
-}
-
-/* =========================================================
-   HAMBURGER / CROSS ICON
-   ========================================================= */
-
-.main-view__header-icon--hamburger {
-  width: 30px;
-  height: 30px;
-}
-
-/* =========================================================
-   SEARCH ICON
-   ========================================================= */
-
-.main-view__header-icon--search {
-  width: 22px;
-  height: 22px;
-}
-
-/* =========================================================
-   MAIN MENU — VERTICAL POSITION
-   ========================================================= */
-
-.main-menu__content {
-  transform: translateY(30px);
-}
-
-/* =========================================================
-   MENU CHEVRONS — SIZE
-   ========================================================= */
-
-.main-menu__chevron-button {
-  width: 34px;
-  height: 34px;
-  flex: 0 0 34px;
-}
-
-.main-menu__chevron {
-  width: 34px;
-  height: 34px;
-}
-
-/* =========================================================
-   MENU TYPOGRAPHY — MOBILE TUNING
-   ========================================================= */
-
-.main-menu__item {
-  font-size: 18px;
-  font-weight: 700;
-}
-
-/* =========================================================
-   MENU SUBCONTENT — 30PX INDENT
-   ========================================================= */
-
-.main-menu__panel-inner > * {
-  transform: translate3d(20px, 0, 0);
 }
