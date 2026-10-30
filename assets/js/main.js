@@ -653,8 +653,17 @@
 
   window.addEventListener('resize', handleResize, { passive: true });
   window.addEventListener('orientationchange', handleResize, { passive: true });
-  window.addEventListener('vb:main-enter', createMain);
   window.addEventListener('vb:gallery-closed', handleGalleryClosed);
+
+  /* =========================================================
+     AUTOMATIC MAIN INITIALIZATION
+     ========================================================= */
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', createMain, { once: true });
+  } else {
+    createMain();
+  }
 
   /* =========================================================
      CLEANUP
@@ -681,7 +690,6 @@
 
     window.removeEventListener('resize', handleResize);
     window.removeEventListener('orientationchange', handleResize);
-    window.removeEventListener('vb:main-enter', createMain);
     window.removeEventListener('vb:gallery-closed', handleGalleryClosed);
 
     draggingSaber = false;
