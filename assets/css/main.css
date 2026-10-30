@@ -5,7 +5,7 @@
 .main-view {
   /* Typography */
   --main-font: "Barlow", Arial, sans-serif;
-  --main-menu-font: "Barlow Condensed", "Barlow", Arial, sans-serif;
+  --main-menu-font: "Barlow", Arial, sans-serif;
 
   /* Colors */
   --main-background: #000000;
