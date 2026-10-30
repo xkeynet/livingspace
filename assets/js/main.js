@@ -239,9 +239,17 @@
 
   const createVisionContent = () => {
     const vision = createElement('div', 'main-menu__text main-menu__vision');
-    vision.textContent =
-      'Připravujeme e-shop spojující designový nábytek s high-end elektronikou značek jako Bose, Bang & Olufsen nebo Dyson. ' +
-      'Přinášíme futuristická řešení chytré domácnosti od inteligentního hlasového ovládání až po komplexní automatizaci celého interiéru.';
+
+    vision.append(
+      document.createTextNode(
+        'Připravujeme e-shop spojující designový nábytek s high-end elektronikou značek jako Bose, Bang & Olufsen nebo Dyson.'
+      ),
+      createElement('br'),
+      document.createTextNode(
+        'Přinášíme futuristická řešení chytré domácnosti od inteligentního hlasového ovládání až po komplexní automatizaci celého interiéru.'
+      )
+    );
+
     return vision;
   };
 
