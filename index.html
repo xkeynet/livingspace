@@ -8,6 +8,59 @@
     content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
   >
 
+  <!-- =========================================================
+       CRITICAL RENDER STYLES
+       ========================================================= -->
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #000000;
+      color-scheme: dark;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    body {
+      width: 100%;
+      min-height: 100svh;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      background: #000000;
+      color: #ffffff;
+      font-family: "Barlow", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* MAIN must remain hidden until its initialization completes. */
+    .main-view:not(.is-visible) {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* HOME carousel must never render before its reveal state. */
+    .home-view:not(.is-carousel-visible) .home-carousel {
+      opacity: 0;
+    }
+
+    /* Menu remains hidden until explicitly opened. */
+    .main-view:not(.is-menu-visible) .main-menu {
+      visibility: hidden;
+      pointer-events: none;
+    }
+  </style>
+
   <title>LIVINGSPACE</title>
 
   <!-- =========================================================
@@ -239,49 +292,6 @@
     gtag('js', new Date());
     gtag('config', 'G-ZL8N7FS7NT');
   </script>
-
-  <!-- =========================================================
-       GLOBAL CSS
-       ========================================================= -->
-  <style>
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-    }
-
-    html {
-      width: 100%;
-      min-height: 100%;
-      margin: 0;
-      padding: 0;
-
-      background: #000000;
-
-      -webkit-text-size-adjust: 100%;
-      text-size-adjust: 100%;
-    }
-
-    body {
-      width: 100%;
-      min-height: 100svh;
-      margin: 0;
-      padding: 0;
-
-      overflow-x: hidden;
-
-      background: #000000;
-      color: #ffffff;
-
-      font-family:
-        "Barlow",
-        Arial,
-        sans-serif;
-
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-  </style>
 
   <!-- =========================================================
        MAIN CSS
