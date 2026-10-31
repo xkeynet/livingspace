@@ -128,9 +128,9 @@
      11 — NAVIGATION
      ======================================================= */
 
-  --homeNavMaxW:350px;
+  --homeNavMaxW:175px;
   --homeNavTopGap:36px;
-  --homeNavGap:9px;
+  --homeNavGap:6px;
   --homeNavHitH:24px;
   --homeNavLineH:3px;
   --homeNavInactive:rgba(255,255,255,0.35);
@@ -629,7 +629,7 @@
 
 @media (min-width:768px) {
   .home-carousel__navigation {
-    max-width:380px;
+    max-width:var(--homeNavMaxW);
   }
 }
 
