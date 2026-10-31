@@ -1,371 +1,594 @@
 /* =========================================================
    LIVINGSPACE — HOME
-   ARTICLE NAVIGATION & BUTTONS
+   KOMPLETNÍ VIZUÁLNÍ NASTAVENÍ DOMOVSKÉ STRÁNKY
+
+   HTML = STRUKTURA
+   JS   = OBSAH A FUNKČNÍ LOGIKA
+   CSS  = KOMPLETNÍ DESIGN A RESPONZIVITA
+
+   ZÁKLADNÍ PRAVIDLA:
+   - ZÁPORNÉ POSUNY = NAHORU / DOLEVA
+   - KLADNÉ POSUNY = DOLŮ / DOPRAVA
+   - 0px U RADIUSU = OSTRÉ ROHY
+   - OPACITY 1 = PLNÁ VIDITELNOST
+   - OPACITY 0 = NEVIDITELNÝ PRVEK
+   ========================================================= */
+
+
+/* =========================================================
+   01 — CENTRÁLNÍ NASTAVENÍ HOME
+   ========================================================= */
+
+:root {
+  /* ---------------------------------------------------------
+     ZÁKLADNÍ BARVY
+     --------------------------------------------------------- */
+
+  --homeAccent:#FFE34F;          /* HLAVNÍ ŽLUTÁ BARVA LIVINGSPACE */
+  --homeBlack:#000000;           /* ČERNÁ BARVA POZADÍ */
+  --homeWhite:#FFFFFF;           /* BÍLÁ BARVA TEXTŮ A AKTIVNÍCH PRVKŮ */
+
+  /* ---------------------------------------------------------
+     HOME — ROZMĚRY A VRSTVENÍ
+     --------------------------------------------------------- */
+
+  --homeMinH:100svh;             /* MINIMÁLNÍ VÝŠKA DOMOVSKÉ STRÁNKY */
+  --homeZ:9;                     /* POŘADÍ VRSTVY HOME */
+  --homeContentTopGap:18px;      /* MEZERA MEZI ODDĚLOVAČEM A OBSAHEM */
+  --homeContentBottomPad:90px;   /* SPODNÍ ODSAZENÍ OBSAHU */
+  --homeDesktopMaxW:1100px;      /* MAXIMÁLNÍ ŠÍŘKA OBSAHU NA DESKTOPU */
+
+  /* ---------------------------------------------------------
+     HOME DIVIDER — ODDĚLOVACÍ LINKA
+     --------------------------------------------------------- */
+
+  --homeDividerH:1px;                            /* TLOUŠŤKA ODDĚLOVACÍ LINKY */
+  --homeDividerColor:rgba(255,255,255,0.18);     /* BARVA A PRŮHLEDNOST LINKY */
+  --homeDividerShadow:0 1px 8px rgba(255,255,255,0.06); /* JEMNÝ STÍN LINKY */
+  --homeDividerMoveDuration:900ms;               /* DOBA ANIMACE POHYBU LINKY */
+  --homeDividerFadeDuration:420ms;               /* DOBA ANIMACE ZOBRAZENÍ LINKY */
+
+  /* ---------------------------------------------------------
+     HOME CAROUSEL — ZOBRAZENÍ
+     --------------------------------------------------------- */
+
+  --homeCarouselFadeDuration:220ms; /* RYCHLOST ZOBRAZENÍ KARUSELU */
+
+  /* ---------------------------------------------------------
+     TLAČÍTKA — SPOLEČNÉ ROZMĚRY
+     --------------------------------------------------------- */
+
+  --homeBtnW:150px;             /* ŠÍŘKA OBOU TLAČÍTEK */
+  --homeBtnH:36px;              /* VÝŠKA OBOU TLAČÍTEK */
+  --homeBtnGap:14px;            /* SVISLÁ MEZERA MEZI TLAČÍTKY */
+  --homeBtnX:0px;               /* POSUN OBOU TLAČÍTEK: - DOLEVA / + DOPRAVA */
+  --homeBtnY:0px;               /* POSUN OBOU TLAČÍTEK: - NAHORU / + DOLŮ */
+  --homeBtnRadius:0px;          /* ZAOBLENÍ ROHŮ — 0 = OSTRÉ ROHY */
+  --homeBtnPadX:12px;           /* VNITŘNÍ VODOROVNÉ ODSAZENÍ TEXTU */
+  --homeBtnPadY:0px;            /* VNITŘNÍ SVISLÉ ODSAZENÍ TEXTU */
+
+  /* ---------------------------------------------------------
+     TLAČÍTKA — TYPOGRAFIE
+     --------------------------------------------------------- */
+
+  --homeBtnFont:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; /* RODINA PÍSMA */
+  --homeBtnFontSize:13px;       /* VELIKOST TEXTU TLAČÍTEK */
+  --homeBtnFontWeight:700;      /* TLOUŠŤKA TEXTU */
+  --homeBtnLineHeight:1.2;      /* VÝŠKA ŘÁDKU TEXTU */
+  --homeBtnLetterSpacing:0.02em;/* MEZERY MEZI PÍSMENY */
+
+  /* ---------------------------------------------------------
+     ČÍST — HLAVNÍ ŽLUTÉ TLAČÍTKO
+     --------------------------------------------------------- */
+
+  --homeReadBg:#FFE34F;        /* BARVA POZADÍ TLAČÍTKA ČÍST */
+  --homeReadText:#000000;      /* BARVA TEXTU TLAČÍTKA ČÍST */
+  --homeReadBorder:#FFE34F;    /* BARVA RÁMEČKU TLAČÍTKA ČÍST */
+  --homeReadBorderW:1px;       /* TLOUŠŤKA RÁMEČKU TLAČÍTKA ČÍST */
+  --homeReadHoverBg:#FFFFFF;   /* BARVA POZADÍ PŘI NAJETÍ MYŠÍ */
+  --homeReadHoverText:#000000; /* BARVA TEXTU PŘI NAJETÍ MYŠÍ */
+  --homeReadHoverBorder:#FFFFFF; /* BARVA RÁMEČKU PŘI NAJETÍ MYŠÍ */
+
+  /* ---------------------------------------------------------
+     DALŠÍ — ČERNÉ TLAČÍTKO SE ŽLUTÝM OBRYSEM
+     --------------------------------------------------------- */
+
+  --homeNextBg:#000000;        /* BARVA POZADÍ TLAČÍTKA DALŠÍ */
+  --homeNextText:#FFFFFF;      /* BARVA TEXTU TLAČÍTKA DALŠÍ */
+  --homeNextBorder:#FFE34F;    /* BARVA RÁMEČKU TLAČÍTKA DALŠÍ */
+  --homeNextBorderW:1.5px;     /* TLOUŠŤKA RÁMEČKU TLAČÍTKA DALŠÍ */
+  --homeNextHoverBg:#FFE34F;   /* BARVA POZADÍ PŘI NAJETÍ MYŠÍ */
+  --homeNextHoverText:#000000; /* BARVA TEXTU PŘI NAJETÍ MYŠÍ */
+  --homeNextHoverBorder:#FFE34F; /* BARVA RÁMEČKU PŘI NAJETÍ MYŠÍ */
+
+  /* ---------------------------------------------------------
+     TLAČÍTKA — INTERAKCE
+     --------------------------------------------------------- */
+
+  --homeBtnTransition:180ms;   /* RYCHLOST ZMĚNY BAREV A POHYBU */
+  --homeBtnActiveScale:0.975;  /* ZMENŠENÍ TLAČÍTKA PŘI STISKNUTÍ */
+  --homeBtnFocusW:2px;         /* TLOUŠŤKA OBRYSU PŘI OVLÁDÁNÍ KLÁVESNICÍ */
+  --homeBtnFocusGap:4px;       /* ODSTUP FOKUSOVÉHO OBRYSU */
+  --homeBtnFocusColor:#FFFFFF; /* BARVA FOKUSOVÉHO OBRYSU */
+
+  /* ---------------------------------------------------------
+     NAVIGACE KARUSELU — 7 INDIKÁTORŮ
+     --------------------------------------------------------- */
+
+  --homeNavMaxW:350px;         /* MAXIMÁLNÍ ŠÍŘKA CELÉ ŘADY INDIKÁTORŮ */
+  --homeNavTopGap:36px;        /* MEZERA NAD INDIKÁTORY */
+  --homeNavGap:9px;            /* MEZERA MEZI JEDNOTLIVÝMI INDIKÁTORY */
+  --homeNavHitH:24px;          /* VÝŠKA KLIKACÍ OBLASTI INDIKÁTORU */
+  --homeNavLineH:3px;          /* VÝŠKA VIDITELNÉ ČÁRKY */
+  --homeNavInactive:rgba(255,255,255,0.35); /* BARVA NEAKTIVNÍ ČÁRKY */
+  --homeNavActive:#FFFFFF;     /* BARVA AKTIVNÍ ČÁRKY — BÍLÁ */
+  --homeNavHover:rgba(255,255,255,0.75); /* BARVA ČÁRKY PŘI NAJETÍ MYŠÍ */
+  --homeNavTransition:220ms;   /* RYCHLOST ZMĚNY BARVY ČÁRKY */
+  --homeNavFocusColor:#FFE34F; /* BARVA FOKUSOVÉHO OBRYSU */
+  --homeNavFocusW:2px;         /* TLOUŠŤKA FOKUSOVÉHO OBRYSU */
+  --homeNavFocusGap:3px;       /* ODSTUP FOKUSOVÉHO OBRYSU */
+
+  /* ---------------------------------------------------------
+     SOCIÁLNÍ IKONY
+     --------------------------------------------------------- */
+
+  --homeSocialTopGap:48px;     /* MEZERA NAD SOCIÁLNÍMI IKONAMI */
+  --homeSocialGap:20px;        /* MEZERA MEZI SOCIÁLNÍMI IKONAMI */
+  --homeSocialBox:32px;        /* ŠÍŘKA A VÝŠKA KLIKACÍ OBLASTI */
+  --homeSocialIcon:24px;       /* ŠÍŘKA A VÝŠKA SAMOTNÉ IKONY */
+  --homeSocialColor:#FFFFFF;   /* BARVA SVG IKON, KTERÉ DĚDÍ BARVU */
+  --homeSocialFocusColor:#FFE34F; /* BARVA FOKUSOVÉHO OBRYSU */
+  --homeSocialFocusW:2px;      /* TLOUŠŤKA FOKUSOVÉHO OBRYSU */
+  --homeSocialFocusGap:4px;    /* ODSTUP FOKUSOVÉHO OBRYSU */
+
+  /* ---------------------------------------------------------
+     RESPONZIVITA
+     --------------------------------------------------------- */
+
+  --homeSmallBtnFontSize:12px; /* VELIKOST TEXTU NA MALÝCH MOBILECH */
+  --homeSmallNavGap:6px;       /* MEZERA INDIKÁTORŮ NA MALÝCH MOBILECH */
+  --homeSmallSocialGap:14px;   /* MEZERA SOCIÁLNÍCH IKON NA MALÝCH MOBILECH */
+}
+
+
+/* =========================================================
+   02 — MAIN VIEW / SCROLLOVÁNÍ
+
+   DOMOVSKÁ STRÁNKA SE MŮŽE POSOUVAT SVISLE.
+   PŘI OTEVŘENÉM MENU SE SCROLLOVÁNÍ VYPNE.
    ========================================================= */
 
 .main-view.is-visible {
-  overflow-x: hidden;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow-x:hidden;                  /* ZAKÁZÁNÍ VODOROVNÉHO SCROLLOVÁNÍ */
+  overflow-y:auto;                    /* POVOLENÍ SVISLÉHO SCROLLOVÁNÍ */
+  -webkit-overflow-scrolling:touch;   /* PLYNULÉ SCROLLOVÁNÍ NA IOS */
 }
 
-.main-view.is-menu-visible { overflow: hidden; }
-.main-view:not(.is-menu-visible) .main-menu { pointer-events: none; }
-.main-view.is-menu-visible .main-menu { pointer-events: auto; }
+.main-view.is-menu-visible {
+  overflow:hidden;                    /* ZÁKAZ SCROLLOVÁNÍ PŘI OTEVŘENÉM MENU */
+}
+
+.main-view:not(.is-menu-visible) .main-menu {
+  pointer-events:none;                /* ZAVŘENÉ MENU NEZACHYTÁVÁ KLIKNUTÍ */
+}
+
+.main-view.is-menu-visible .main-menu {
+  pointer-events:auto;                /* OTEVŘENÉ MENU REAGUJE NA KLIKNUTÍ */
+}
+
 
 /* =========================================================
-   HOME
+   03 — HOME VIEW / HLAVNÍ KONTEJNER
    ========================================================= */
 
 .home-view {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  min-height: 100svh;
-  z-index: 9;
-  pointer-events: none;
+  position:absolute;                  /* UMÍSTĚNÍ HOME UVNITŘ MAIN VIEW */
+  top:0;                              /* PŘICHYCENÍ K HORNÍMU OKRAJI */
+  left:0;                             /* PŘICHYCENÍ K LEVÉMU OKRAJI */
+  width:100%;                         /* ŠÍŘKA PŘES CELÝ RODIČOVSKÝ PRVEK */
+  min-height:var(--homeMinH);         /* MINIMÁLNÍ VÝŠKA HOME */
+  z-index:var(--homeZ);               /* VRSTVA HOME */
+  pointer-events:none;                /* SAMOTNÝ OBAL NEBLOKUJE KLIKNUTÍ */
 }
 
-.main-menu__divider { visibility: hidden; }
+.main-menu__divider {
+  visibility:hidden;                  /* SKRYTÍ PŮVODNÍ LINKY MENU */
+}
+
 
 /* =========================================================
-   HOME DIVIDER
+   04 — HOME DIVIDER / ODDĚLOVACÍ LINKA
+
+   POZICI LINKY DYNAMICKY DODÁVÁ JAVASCRIPT
+   PROSTŘEDNICTVÍM --home-divider-y.
+
+   OSTATNÍ VIZUÁLNÍ PARAMETRY ŘÍDÍ CSS.
    ========================================================= */
 
 .home-view__divider {
-  position: absolute;
-  top: 0;
-  left: var(--menu-left);
-  right: var(--menu-right);
-  height: 1px;
-  background: rgba(255, 255, 255, 0.18);
-  box-shadow: 0 1px 8px rgba(255, 255, 255, 0.06);
-  opacity: 0;
-  transform: translate3d(0, var(--home-divider-y, 0px), 0);
-  transform-origin: center;
-  transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1), opacity 420ms ease-out;
-  will-change: transform, opacity;
+  position:absolute;                  /* LINKA JE POLOHOVÁNA NEZÁVISLE */
+  top:0;                              /* VÝCHOZÍ HORNÍ POZICE */
+  left:var(--menu-left);              /* LEVÉ ODSAZENÍ PODLE MENU */
+  right:var(--menu-right);            /* PRAVÉ ODSAZENÍ PODLE MENU */
+  height:var(--homeDividerH);         /* TLOUŠŤKA LINKY */
+  background:var(--homeDividerColor);  /* BARVA LINKY */
+  box-shadow:var(--homeDividerShadow); /* STÍN LINKY */
+  opacity:0;                          /* LINKA JE ZPOČÁTKU SKRYTÁ */
+  transform:translate3d(0,var(--home-divider-y,0px),0); /* SVISLÁ POZICE DODANÁ JS */
+  transform-origin:center;            /* STŘED TRANSFORMACE */
+  transition:
+    transform var(--homeDividerMoveDuration) cubic-bezier(0.16,1,0.3,1),
+    opacity var(--homeDividerFadeDuration) ease-out; /* ANIMACE POHYBU A ZOBRAZENÍ */
+  will-change:transform,opacity;      /* OPTIMALIZAČNÍ NÁPOVĚDA PRO PROHLÍŽEČ */
 }
 
-.home-view.is-divider-visible .home-view__divider { opacity: 1; }
+.home-view.is-divider-visible .home-view__divider {
+  opacity:1;                          /* ZOBRAZENÍ LINKY PO AKTIVACI */
+}
+
 
 /* =========================================================
-   HOME CONTENT
+   05 — HOME CONTENT / OBSAH POD LINKOU
    ========================================================= */
 
 .home-view__content {
-  width: 100%;
-  box-sizing: border-box;
-  padding: calc(var(--home-divider-y, 150px) + 18px) var(--menu-right) 90px var(--menu-left);
-  transition: padding-top 900ms cubic-bezier(0.16, 1, 0.3, 1);
-  pointer-events: none;
+  width:100%;                         /* OBSAH VYUŽÍ DOSTUPNOU ŠÍŘKU */
+  box-sizing:border-box;              /* PADDING JE SOUČÁSTÍ CELKOVÉ ŠÍŘKY */
+  padding:
+    calc(var(--home-divider-y,150px) + var(--homeContentTopGap))
+    var(--menu-right)
+    var(--homeContentBottomPad)
+    var(--menu-left);                 /* HORNÍ / PRAVÉ / SPODNÍ / LEVÉ ODSAZENÍ */
+  transition:padding-top var(--homeDividerMoveDuration) cubic-bezier(0.16,1,0.3,1); /* POHYB OBSAHU S LINKOU */
+  pointer-events:none;                /* PRÁZDNÁ PLOCHA NEBLOKUJE OSTATNÍ PRVKY */
 }
 
-.main-view.is-menu-visible .home-view__content { display: none; }
+.main-view.is-menu-visible .home-view__content {
+  display:none;                       /* SKRYTÍ OBSAHU PŘI OTEVŘENÉM MENU */
+}
+
 
 /* =========================================================
-   CAROUSEL
+   06 — CAROUSEL / HLAVNÍ KONTEJNER KARUSELU
    ========================================================= */
 
 .home-carousel {
-  --home-accent: #FFE34F;
-  --home-button-height: 48px;
-  --home-button-gap: 12px;
+  --home-accent:var(--homeAccent);    /* KOMPATIBILNÍ PROMĚNNÁ PRO ŽLUTOU */
+  --home-button-height:var(--homeBtnH); /* KOMPATIBILNÍ PROMĚNNÁ PRO VÝŠKU TLAČÍTKA */
+  --home-button-gap:var(--homeBtnGap); /* KOMPATIBILNÍ PROMĚNNÁ PRO MEZERU */
 
-  width: 100%;
-  min-width: 0;
-  opacity: 0;
-  transition: opacity 220ms linear;
+  width:100%;                         /* KARUSEL VYUŽIJE ŠÍŘKU OBSAHU */
+  min-width:0;                        /* UMOŽNÍ ZMENŠOVÁNÍ VE FLEX/GRID LAYOUTU */
+  opacity:0;                          /* PŘED AKTIVACÍ JE NEVIDITELNÝ */
+  transition:opacity var(--homeCarouselFadeDuration) linear; /* PLYNULÉ ZOBRAZENÍ */
 }
 
-.home-view.is-carousel-visible .home-carousel { opacity: 1; }
+.home-view.is-carousel-visible .home-carousel {
+  opacity:1;                          /* ZOBRAZENÍ KARUSELU PO AKTIVACI */
+}
+
 
 /* =========================================================
-   ARTICLE BUTTON CONTAINER
+   07 — BUTTON CONTAINER / KONTEJNER TLAČÍTEK
+
+   TLAČÍTKA JSOU POD SEBOU A VYCENTROVANÁ.
+   NEROZTAHUJÍ SE PŘES CELOU ŠÍŘKU STRÁNKY.
    ========================================================= */
 
 .home-view .home-carousel .home-carousel__actions {
-  width: 100%;
-  max-width: 350px;
-  margin: 0 auto;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: var(--home-button-gap);
-  pointer-events: auto;
+  width:100%;                         /* KONTEJNER VYUŽÍ DOSTUPNOU ŠÍŘKU */
+  max-width:var(--homeBtnW);          /* OMEZENÍ NA KOMPAKTNÍ ŠÍŘKU TLAČÍTEK */
+  margin:0 auto;                      /* VODOROVNÉ VYCENTROVÁNÍ */
+  padding:0;                          /* ŽÁDNÉ DODATEČNÉ VNITŘNÍ ODSAZENÍ */
+  display:flex;                       /* FLEXBOX PRO ROZLOŽENÍ TLAČÍTEK */
+  flex-direction:column;              /* TLAČÍTKA POD SEBOU */
+  align-items:stretch;                /* OBOUSTRANNÉ ZAROVNÁNÍ TLAČÍTEK */
+  gap:var(--homeBtnGap);              /* SVISLÁ MEZERA MEZI TLAČÍTKY */
+  position:relative;                  /* REFERENČNÍ POZICE PRO POSUN */
+  left:var(--homeBtnX);               /* VODOROVNÝ POSUN CELÉ SKUPINY */
+  top:var(--homeBtnY);                /* SVISLÝ POSUN CELÉ SKUPINY */
+  pointer-events:auto;                /* TLAČÍTKA REAGUJÍ NA KLIKNUTÍ */
 }
 
+
 /* =========================================================
-   BUTTON BASE — SHARED DESIGN
+   08 — BUTTON BASE / SPOLEČNÝ DESIGN TLAČÍTEK
    ========================================================= */
 
 .home-view .home-carousel .home-carousel__actions .home-carousel__button {
-  appearance: none;
-  -webkit-appearance: none;
+  appearance:none;                    /* ODSTRANĚNÍ NATIVNÍHO STYLU */
+  -webkit-appearance:none;            /* ODSTRANĚNÍ NATIVNÍHO STYLU V SAFARI */
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display:flex;                       /* FLEXBOX PRO ZAROVNÁNÍ TEXTU */
+  align-items:center;                 /* SVISLÉ VYCENTROVÁNÍ TEXTU */
+  justify-content:center;             /* VODOROVNÉ VYCENTROVÁNÍ TEXTU */
 
-  width: 100%;
-  min-width: 0;
-  min-height: var(--home-button-height);
-  box-sizing: border-box;
+  width:100%;                         /* ŠÍŘKA PODLE KONTEJNERU */
+  min-width:0;                        /* POVOLENÍ ZMENŠENÍ NA ÚZKÉ OBRAZOVCE */
+  height:var(--homeBtnH);             /* PEVNÁ VÝŠKA TLAČÍTKA */
+  min-height:var(--homeBtnH);         /* MINIMÁLNÍ VÝŠKA TLAČÍTKA */
+  box-sizing:border-box;              /* RÁMEČEK A PADDING SE POČÍTAJÍ DO ROZMĚRU */
 
-  margin: 0;
-  padding: 12px 20px;
+  margin:0;                           /* ODSTRANĚNÍ VNĚJŠÍCH MEZER */
+  padding:var(--homeBtnPadY) var(--homeBtnPadX); /* VNITŘNÍ ODSAZENÍ TEXTU */
 
-  border-style: solid;
-  border-width: 2px;
-  border-radius: 0;
+  border-style:solid;                  /* PLNÝ RÁMEČEK */
+  border-width:var(--homeReadBorderW); /* VÝCHOZÍ TLOUŠŤKA RÁMEČKU */
+  border-radius:var(--homeBtnRadius);  /* OSTRÉ ROHY */
+  box-shadow:none;                    /* BEZ STÍNU */
 
-  box-shadow: none;
+  font-family:var(--homeBtnFont);     /* PÍSMO TLAČÍTEK */
+  font-size:var(--homeBtnFontSize);   /* VELIKOST TEXTU */
+  font-weight:var(--homeBtnFontWeight); /* TLOUŠŤKA TEXTU */
+  line-height:var(--homeBtnLineHeight); /* VÝŠKA ŘÁDKU */
+  letter-spacing:var(--homeBtnLetterSpacing); /* MEZERY MEZI PÍSMENY */
 
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: 0.02em;
+  text-align:center;                  /* ZAROVNÁNÍ TEXTU NA STŘED */
+  text-decoration:none;               /* BEZ PODTRŽENÍ */
+  text-transform:uppercase;           /* VELKÁ PÍSMENA */
+  white-space:nowrap;                 /* ZÁKAZ ZALOMENÍ TEXTU */
 
-  text-align: center;
-  text-decoration: none;
-  text-transform: uppercase;
-  white-space: nowrap;
+  cursor:pointer;                     /* KURZOR RUKY */
+  touch-action:manipulation;          /* OPTIMALIZACE DOTYKOVÉHO OVLÁDÁNÍ */
 
-  cursor: pointer;
-  touch-action: manipulation;
-
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-  user-select: none;
+  -webkit-tap-highlight-color:transparent; /* BEZ SYSTÉMOVÉHO ZABLIKÁNÍ */
+  -webkit-touch-callout:none;         /* BEZ IOS KONTEXTOVÉ NABÍDKY */
+  user-select:none;                   /* ZÁKAZ OZNAČOVÁNÍ TEXTU */
 
   transition:
-    background-color 180ms ease,
-    border-color 180ms ease,
-    color 180ms ease,
-    transform 180ms ease;
+    background-color var(--homeBtnTransition) ease,
+    border-color var(--homeBtnTransition) ease,
+    color var(--homeBtnTransition) ease,
+    transform var(--homeBtnTransition) ease; /* PLYNULÉ INTERAKCE */
 
-  transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
+  transform:translate3d(0,0,0);       /* VÝCHOZÍ POZICE TLAČÍTKA */
+  backface-visibility:hidden;         /* OMEZENÍ GRAFICKÝCH ARTEFAKTŮ */
 }
 
+
 /* =========================================================
-   PRIMARY BUTTON — SOLID YELLOW
+   09 — ČÍST / PLNÉ ŽLUTÉ TLAČÍTKO
    ========================================================= */
 
 .home-view .home-carousel .home-carousel__actions .home-carousel__button--read {
-  background: #FFE34F !important;
-  background-color: #FFE34F !important;
-  border: 2px solid #FFE34F !important;
-  border-radius: 0 !important;
-  color: #000000 !important;
-  -webkit-text-fill-color: #000000;
-  opacity: 1;
+  background-color:var(--homeReadBg); /* VÝRAZNÉ ŽLUTÉ POZADÍ */
+  border-color:var(--homeReadBorder); /* ŽLUTÝ RÁMEČEK */
+  border-width:var(--homeReadBorderW);/* TLOUŠŤKA ŽLUTÉHO RÁMEČKU */
+  color:var(--homeReadText);          /* ČERNÝ TEXT */
+  -webkit-text-fill-color:var(--homeReadText); /* ČERNÝ TEXT V SAFARI */
+  opacity:1;                          /* PLNÁ VIDITELNOST */
 }
 
-@media (hover: hover) {
+@media (hover:hover) {
   .home-view .home-carousel .home-carousel__actions .home-carousel__button--read:hover:not(:disabled) {
-    background: #FFFFFF !important;
-    background-color: #FFFFFF !important;
-    border-color: #FFFFFF !important;
-    color: #000000 !important;
+    background-color:var(--homeReadHoverBg);     /* BÍLÉ POZADÍ PŘI HOVERU */
+    border-color:var(--homeReadHoverBorder);     /* BÍLÝ RÁMEČEK PŘI HOVERU */
+    color:var(--homeReadHoverText);              /* ČERNÝ TEXT PŘI HOVERU */
+    -webkit-text-fill-color:var(--homeReadHoverText); /* BARVA TEXTU V SAFARI */
   }
 }
 
+
 /* =========================================================
-   SECONDARY BUTTON — YELLOW OUTLINE
+   10 — DALŠÍ / ČERNÉ TLAČÍTKO SE ŽLUTÝM OBRYSEM
    ========================================================= */
 
 .home-view .home-carousel .home-carousel__actions .home-carousel__button--next {
-  background: #000000 !important;
-  background-color: #000000 !important;
-  border: 2px solid #FFE34F !important;
-  border-radius: 0 !important;
-  color: #FFFFFF !important;
-  -webkit-text-fill-color: #FFFFFF;
-  opacity: 1;
+  background-color:var(--homeNextBg); /* ČERNÉ POZADÍ */
+  border-color:var(--homeNextBorder); /* ŽLUTÝ RÁMEČEK */
+  border-width:var(--homeNextBorderW);/* TLOUŠŤKA ŽLUTÉHO RÁMEČKU */
+  color:var(--homeNextText);          /* BÍLÝ TEXT */
+  -webkit-text-fill-color:var(--homeNextText); /* BÍLÝ TEXT V SAFARI */
+  opacity:1;                          /* PLNÁ VIDITELNOST */
 }
 
-@media (hover: hover) {
+@media (hover:hover) {
   .home-view .home-carousel .home-carousel__actions .home-carousel__button--next:hover {
-    background: #FFE34F !important;
-    background-color: #FFE34F !important;
-    border-color: #FFE34F !important;
-    color: #000000 !important;
-    -webkit-text-fill-color: #000000;
+    background-color:var(--homeNextHoverBg);     /* ŽLUTÉ POZADÍ PŘI HOVERU */
+    border-color:var(--homeNextHoverBorder);     /* ŽLUTÝ RÁMEČEK PŘI HOVERU */
+    color:var(--homeNextHoverText);              /* ČERNÝ TEXT PŘI HOVERU */
+    -webkit-text-fill-color:var(--homeNextHoverText); /* BARVA TEXTU V SAFARI */
   }
 }
 
+
 /* =========================================================
-   BUTTON INTERACTIONS
+   11 — BUTTON INTERACTIONS / STISK, FOKUS, DISABLED
    ========================================================= */
 
 .home-view .home-carousel .home-carousel__actions .home-carousel__button:active:not(:disabled) {
-  transform: scale(0.975);
+  transform:scale(var(--homeBtnActiveScale)); /* JEMNÉ ZMENŠENÍ PŘI STISKU */
 }
 
 .home-view .home-carousel .home-carousel__actions .home-carousel__button:focus-visible {
-  outline: 2px solid #FFFFFF;
-  outline-offset: 4px;
+  outline:var(--homeBtnFocusW) solid var(--homeBtnFocusColor); /* VIDITELNÝ FOKUS */
+  outline-offset:var(--homeBtnFocusGap); /* ODSTUP FOKUSOVÉHO OBRYSU */
 }
 
 .home-view .home-carousel .home-carousel__actions .home-carousel__button:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
+  opacity:1;                          /* ŽÁDNÉ ZAŠEDNUTÍ TLAČÍTKA */
+  cursor:not-allowed;                 /* VIZUÁLNÍ INFORMACE O NEAKTIVNÍ FUNKCI */
 }
 
 .home-view .home-carousel .home-carousel__actions .home-carousel__button--read:disabled {
-  opacity: 0.65;
+  background-color:var(--homeReadBg); /* ZACHOVÁNÍ PLNÉ ŽLUTÉ */
+  border-color:var(--homeReadBorder); /* ZACHOVÁNÍ ŽLUTÉHO RÁMEČKU */
+  color:var(--homeReadText);          /* ZACHOVÁNÍ ČERNÉHO TEXTU */
+  -webkit-text-fill-color:var(--homeReadText); /* BARVA TEXTU V SAFARI */
+  opacity:1;                          /* ZÁKAZ ZAŠEDNUTÍ */
 }
 
+
 /* =========================================================
-   CAROUSEL NAVIGATION — WHITE ACTIVE INDICATOR
+   12 — CAROUSEL NAVIGATION / NAVIGAČNÍ INDIKÁTORY
+
+   AKTIVNÍ INDIKÁTOR JE BÍLÝ.
+   NEAKTIVNÍ INDIKÁTORY JSOU POLOPRŮHLEDNÉ.
    ========================================================= */
 
 .home-carousel__navigation {
-  width: 100%;
-  max-width: 350px;
-  margin: 36px auto 0;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-  pointer-events: auto;
+  width:100%;                         /* VYUŽITÍ DOSTUPNÉ ŠÍŘKY */
+  max-width:var(--homeNavMaxW);       /* MAXIMÁLNÍ ŠÍŘKA NAVIGACE */
+  margin:var(--homeNavTopGap) auto 0; /* HORNÍ MEZERA A VODOROVNÉ VYCENTROVÁNÍ */
+  padding:0;                          /* BEZ VNITŘNÍHO ODSAZENÍ */
+  display:flex;                       /* VODOROVNÉ ROZLOŽENÍ INDIKÁTORŮ */
+  align-items:center;                 /* SVISLÉ VYCENTROVÁNÍ */
+  justify-content:center;             /* VODOROVNÉ VYCENTROVÁNÍ */
+  gap:var(--homeNavGap);              /* MEZERY MEZI INDIKÁTORY */
+  pointer-events:auto;                /* NAVIGACE REAGUJE NA KLIKNUTÍ */
 }
 
 .home-carousel__indicator {
-  appearance: none;
-  -webkit-appearance: none;
+  appearance:none;                    /* ODSTRANĚNÍ NATIVNÍHO VZHLEDU */
+  -webkit-appearance:none;            /* ODSTRANĚNÍ NATIVNÍHO VZHLEDU V SAFARI */
 
-  flex: 1 1 0;
-  min-width: 0;
-  height: 24px;
+  flex:1 1 0;                         /* ROVNOMĚRNÉ ROZDĚLENÍ ŠÍŘKY */
+  min-width:0;                        /* UMOŽNĚNÍ ZMENŠENÍ */
+  height:var(--homeNavHitH);          /* VÝŠKA KLIKACÍ OBLASTI */
 
-  margin: 0;
-  padding: 0;
+  margin:0;                           /* BEZ VNĚJŠÍCH MEZER */
+  padding:0;                          /* BEZ VNITŘNÍCH MEZER */
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display:flex;                       /* FLEXBOX PRO ČÁRKU */
+  align-items:center;                 /* SVISLÉ VYCENTROVÁNÍ ČÁRKY */
+  justify-content:center;             /* VODOROVNÉ VYCENTROVÁNÍ ČÁRKY */
 
-  background: transparent;
-  border: 0;
-  border-radius: 0;
+  background:transparent;             /* PRŮHLEDNÉ POZADÍ */
+  border:0;                           /* BEZ RÁMEČKU */
+  border-radius:0;                    /* OSTRÉ ROHY */
 
-  cursor: pointer;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
+  cursor:pointer;                     /* KURZOR RUKY */
+  touch-action:manipulation;          /* OPTIMALIZACE DOTYKOVÉHO OVLÁDÁNÍ */
+  -webkit-tap-highlight-color:transparent; /* BEZ SYSTÉMOVÉHO ZABLIKÁNÍ */
 }
 
 .home-carousel__indicator::after {
-  content: '';
-  display: block;
-  width: 100%;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.35);
-  transition: background-color 220ms ease;
+  content:"";                         /* VYTVOŘENÍ VIDITELNÉ ČÁRKY */
+  display:block;                      /* ČÁRKA JAKO BLOKOVÝ PRVEK */
+  width:100%;                         /* ČÁRKA VYUŽIJE ŠÍŘKU INDIKÁTORU */
+  height:var(--homeNavLineH);         /* TLOUŠŤKA ČÁRKY */
+  background:var(--homeNavInactive);   /* BARVA NEAKTIVNÍ ČÁRKY */
+  transition:background-color var(--homeNavTransition) ease; /* PLYNULÁ ZMĚNA BARVY */
 }
 
 .home-carousel__indicator.is-active::after {
-  background: #FFFFFF;
+  background:var(--homeNavActive);     /* AKTIVNÍ ČÁRKA JE BÍLÁ */
 }
 
-@media (hover: hover) {
+@media (hover:hover) {
   .home-carousel__indicator:hover::after {
-    background: rgba(255, 255, 255, 0.75);
+    background:var(--homeNavHover);    /* ZVÝRAZNĚNÍ ČÁRKY PŘI HOVERU */
   }
 }
 
 .home-carousel__indicator:focus-visible {
-  outline: 2px solid #FFE34F;
-  outline-offset: 3px;
+  outline:var(--homeNavFocusW) solid var(--homeNavFocusColor); /* ŽLUTÝ FOKUS */
+  outline-offset:var(--homeNavFocusGap); /* ODSTUP FOKUSOVÉHO OBRYSU */
 }
 
+
 /* =========================================================
-   SOCIAL LINKS
+   13 — SOCIAL LINKS / SOCIÁLNÍ SÍTĚ
    ========================================================= */
 
 .home-social {
-  width: 100%;
-  margin: 48px auto 0;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 20px;
-  pointer-events: auto;
+  width:100%;                         /* KONTEJNER VYUŽIJE DOSTUPNOU ŠÍŘKU */
+  margin:var(--homeSocialTopGap) auto 0; /* HORNÍ MEZERA A VYCENTROVÁNÍ */
+  padding:0;                          /* BEZ VNITŘNÍHO ODSAZENÍ */
+  display:flex;                       /* FLEXBOX PRO SOCIÁLNÍ IKONY */
+  align-items:center;                 /* SVISLÉ VYCENTROVÁNÍ */
+  justify-content:center;             /* VODOROVNÉ VYCENTROVÁNÍ */
+  flex-wrap:wrap;                     /* ZALOMENÍ IKON NA ÚZKÉ OBRAZOVCE */
+  gap:var(--homeSocialGap);           /* MEZERY MEZI IKONAMI */
+  pointer-events:auto;                /* IKONY REAGUJÍ NA KLIKNUTÍ */
 }
 
 .home-social__link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  color: #FFFFFF;
-  text-decoration: none;
-  -webkit-tap-highlight-color: transparent;
+  display:inline-flex;                /* FLEXBOX PRO ZAROVNÁNÍ IKONY */
+  align-items:center;                 /* SVISLÉ VYCENTROVÁNÍ IKONY */
+  justify-content:center;             /* VODOROVNÉ VYCENTROVÁNÍ IKONY */
+  width:var(--homeSocialBox);         /* ŠÍŘKA KLIKACÍ OBLASTI */
+  height:var(--homeSocialBox);        /* VÝŠKA KLIKACÍ OBLASTI */
+  color:var(--homeSocialColor);       /* BARVA SVG IKON DĚDÍCÍCH BARVU */
+  text-decoration:none;               /* BEZ PODTRŽENÍ ODKAZU */
+  -webkit-tap-highlight-color:transparent; /* BEZ SYSTÉMOVÉHO ZABLIKÁNÍ */
 }
 
 .home-social__link img,
 .home-social__link svg {
-  display: block;
-  width: 24px;
-  height: 24px;
-  object-fit: contain;
+  display:block;                      /* ODSTRANĚNÍ MEZERY POD IKONOU */
+  width:var(--homeSocialIcon);        /* ŠÍŘKA IKONY */
+  height:var(--homeSocialIcon);       /* VÝŠKA IKONY */
+  object-fit:contain;                 /* ZACHOVÁNÍ POMĚRU STRAN */
 }
 
 .home-social__link:focus-visible {
-  outline: 2px solid #FFE34F;
-  outline-offset: 4px;
+  outline:var(--homeSocialFocusW) solid var(--homeSocialFocusColor); /* ŽLUTÝ FOKUS */
+  outline-offset:var(--homeSocialFocusGap); /* ODSTUP FOKUSOVÉHO OBRYSU */
 }
 
+
 /* =========================================================
-   SMALL MOBILE
+   14 — SMALL MOBILE / MALÉ MOBILY DO 374 PX
+
+   MENŠÍ PÍSMO A KOMPAKTNĚJŠÍ MEZERY.
+   ŠÍŘKA TLAČÍTEK SE AUTOMATICKY OMEZÍ
+   PODLE DOSTUPNÉHO PROSTORU.
    ========================================================= */
 
-@media (max-width: 374px) {
+@media (max-width:374px) {
   .home-view .home-carousel .home-carousel__actions .home-carousel__button {
-    font-size: 14px;
+    font-size:var(--homeSmallBtnFontSize); /* MENŠÍ TEXT TLAČÍTEK */
   }
 
-  .home-carousel__navigation { gap: 6px; }
-  .home-social { gap: 14px; }
+  .home-carousel__navigation {
+    gap:var(--homeSmallNavGap);       /* MENŠÍ MEZERY MEZI INDIKÁTORY */
+  }
+
+  .home-social {
+    gap:var(--homeSmallSocialGap);     /* MENŠÍ MEZERY MEZI SOCIÁLNÍMI IKONAMI */
+  }
 }
 
+
 /* =========================================================
-   TABLET
+   15 — TABLET / TABLETY OD 768 PX
+
+   TLAČÍTKA ZŮSTÁVAJÍ KOMPAKTNÍ.
+   NAVIGACE MŮŽE BÝT O NĚCO ŠIRŠÍ.
    ========================================================= */
 
-@media (min-width: 768px) {
-  .home-carousel__actions { max-width: 380px; }
-  .home-carousel__navigation { max-width: 380px; }
+@media (min-width:768px) {
+  .home-carousel__navigation {
+    max-width:380px;                  /* ŠIRŠÍ ŘADA INDIKÁTORŮ NA TABLETU */
+  }
 }
 
+
 /* =========================================================
-   DESKTOP
+   16 — DESKTOP / VELKÉ OBRAZOVKY OD 1200 PX
    ========================================================= */
 
-@media (min-width: 1200px) {
+@media (min-width:1200px) {
   .home-view__content {
-    max-width: 1100px;
-    margin: 0 auto;
+    max-width:var(--homeDesktopMaxW); /* OMEZENÍ ŠÍŘKY OBSAHU */
+    margin:0 auto;                    /* VODOROVNÉ VYCENTROVÁNÍ OBSAHU */
   }
 }
 
+
 /* =========================================================
-   REDUCED MOTION
+   17 — REDUCED MOTION / OMEZENÍ ANIMACÍ
+
+   RESPEKTUJE NASTAVENÍ PŘÍSTUPNOSTI UŽIVATELE.
    ========================================================= */
 
-@media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion:reduce) {
   .home-view__divider,
   .home-view__content,
   .home-carousel,
-  .home-carousel__button {
-    transition-duration: 0.01ms;
+  .home-carousel__button,
+  .home-carousel__indicator::after {
+    transition-duration:0.01ms;       /* PRAKTICKY OKAMŽITÁ ZMĚNA BEZ ANIMACE */
   }
 }
