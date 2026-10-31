@@ -74,18 +74,18 @@
      07 — BUTTONS
      ======================================================= */
 
-  --homeBtnW:150px;
-  --homeBtnH:36px;
+  --homeBtnW:220px;
+  --homeBtnH:44px;
   --homeBtnGap:14px;
   --homeBtnTopGap:24px;
   --homeBtnX:0px;
   --homeBtnY:0px;
-  --homeBtnRadius:0px;
+  --homeBtnRadius:999px;
   --homeBtnPadX:12px;
   --homeBtnPadY:0px;
 
   --homeBtnFont:"Barlow",sans-serif;
-  --homeBtnFontSize:13px;
+  --homeBtnFontSize:15px;
   --homeBtnFontWeight:700;
   --homeBtnLineHeight:1.2;
   --homeBtnLetterSpacing:0.02em;
