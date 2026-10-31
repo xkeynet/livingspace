@@ -152,16 +152,13 @@
   opacity: 0;
   pointer-events: none;
 
-  transform: translate3d(0, calc(-100% - 120px), 0);
+  transform: translate3d(0, 0, 0);
   transform-origin: center center;
-  will-change: transform, opacity;
 
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 
-  transition:
-    transform var(--main-arrival-duration) var(--main-arrival-easing),
-    opacity 420ms ease-out;
+  transition: opacity 420ms ease-out;
 }
 
 .main-view.is-controls-visible .main-view__header-button {
@@ -216,9 +213,8 @@
   object-fit: contain;
 
   opacity: 0;
-  transform: translate3d(-50%, calc(-150% - 120px), 0);
+  transform: translate3d(-50%, -50%, 0);
   transform-origin: center center;
-  will-change: transform, opacity;
 
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
@@ -230,9 +226,7 @@
   pointer-events: none;
   z-index: 21;
 
-  transition:
-    transform var(--main-arrival-duration) var(--main-arrival-easing),
-    opacity 420ms ease-out;
+  transition: opacity 420ms ease-out;
 }
 
 /* =========================================================
@@ -805,15 +799,11 @@
   }
 
   .main-view__logo {
-    transition:
-      transform 700ms ease-out,
-      opacity 300ms ease-out;
+    transition: opacity 300ms ease-out;
   }
 
   .main-view__header-button {
-    transition:
-      transform 700ms ease-out,
-      opacity 300ms ease-out;
+    transition: opacity 300ms ease-out;
   }
 
   .main-view.is-menu-visible .main-menu__item {
