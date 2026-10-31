@@ -152,19 +152,40 @@
   opacity: 0;
   pointer-events: none;
 
-  transform: translate3d(0, 0, 0);
+  transform: translate3d(0, calc(-100% - 120px), 0);
   transform-origin: center center;
 
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-
-  transition: opacity 420ms ease-out;
 }
 
 .main-view.is-controls-visible .main-view__header-button {
   opacity: 1;
   pointer-events: auto;
   transform: translate3d(0, 0, 0);
+
+  animation:
+    mainControlsArrival var(--main-arrival-duration) var(--main-arrival-easing) both;
+}
+
+@keyframes mainControlsArrival {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, calc(-100% - 120px), 0);
+  }
+
+  12% {
+    opacity: 0;
+  }
+
+  30% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
 }
 
 .main-view__header-button:focus {
@@ -213,7 +234,7 @@
   object-fit: contain;
 
   opacity: 0;
-  transform: translate3d(-50%, -50%, 0);
+  transform: translate3d(-50%, calc(-150% - 120px), 0);
   transform-origin: center center;
 
   backface-visibility: hidden;
@@ -225,8 +246,6 @@
 
   pointer-events: none;
   z-index: 21;
-
-  transition: opacity 420ms ease-out;
 }
 
 /* =========================================================
@@ -236,6 +255,29 @@
 .main-view.is-logo-visible .main-view__logo {
   opacity: 1;
   transform: translate3d(-50%, -50%, 0);
+
+  animation:
+    mainLogoArrival var(--main-arrival-duration) var(--main-arrival-easing) both;
+}
+
+@keyframes mainLogoArrival {
+  0% {
+    opacity: 0;
+    transform: translate3d(-50%, calc(-150% - 120px), 0);
+  }
+
+  12% {
+    opacity: 0;
+  }
+
+  30% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(-50%, -50%, 0);
+  }
 }
 
 /* =========================================================
@@ -798,12 +840,14 @@
     transition-duration: 1ms;
   }
 
-  .main-view__logo {
-    transition: opacity 300ms ease-out;
+  .main-view.is-logo-visible .main-view__logo {
+    animation-duration: 700ms;
+    animation-timing-function: ease-out;
   }
 
-  .main-view__header-button {
-    transition: opacity 300ms ease-out;
+  .main-view.is-controls-visible .main-view__header-button {
+    animation-duration: 700ms;
+    animation-timing-function: ease-out;
   }
 
   .main-view.is-menu-visible .main-menu__item {
