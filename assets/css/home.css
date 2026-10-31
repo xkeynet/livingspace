@@ -84,7 +84,7 @@
   --homeBtnPadX:12px;
   --homeBtnPadY:0px;
 
-  --homeBtnFont:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  --homeBtnFont:"Barlow Condensed",sans-serif;
   --homeBtnFontSize:13px;
   --homeBtnFontWeight:700;
   --homeBtnLineHeight:1.2;
