@@ -2,7 +2,7 @@
 
 /* =========================================================
    LIVINGSPACE — HOME
-   SEVEN-SLIDE ADAPTIVE ARTICLE CAROUSEL
+   SEVEN-SLIDE ARTICLE NAVIGATION
    ========================================================= */
 
 (() => {
@@ -11,41 +11,28 @@
   const TRANSITION_DURATION_MS = 1050;
 
   /* =========================================================
-     ARTICLE DATA
+     CONFIGURATION
      ========================================================= */
 
-  const HOME_SLIDES = [
-    { image: null, alt: '', title: '', description: '', url: '' },
-    { image: null, alt: '', title: '', description: '', url: '' },
-    { image: null, alt: '', title: '', description: '', url: '' },
-    { image: null, alt: '', title: '', description: '', url: '' },
-    { image: null, alt: '', title: '', description: '', url: '' },
-    { image: null, alt: '', title: '', description: '', url: '' },
-    { image: null, alt: '', title: '', description: '', url: '' }
-  ];
+  const SLIDE_COUNT = 7;
 
   let mainView = null;
   let homeView = null;
   let divider = null;
-  let viewport = null;
   let navigation = null;
-  let slides = [];
   let indicators = [];
 
   let activeIndex = 0;
-  let transitioning = false;
-  let carouselVisible = false;
+  let navigationVisible = false;
   let dividerVisible = false;
   let destroyed = false;
 
   let mainObserver = null;
   let controlsObserver = null;
   let menuObserver = null;
-  let layoutObserver = null;
 
   let syncFrame = null;
   let autoplayTimer = null;
-  let transitionTimer = null;
   let revealTimer = null;
 
   const createElement = (tag, className = '') => {
@@ -61,7 +48,7 @@
     document.dispatchEvent(new CustomEvent('vb:home-slide-change', {
       detail: {
         index: activeIndex,
-        count: slides.length
+        count: SLIDE_COUNT
       }
     }));
   };
@@ -111,47 +98,6 @@
   };
 
   /* =========================================================
-     ADAPTIVE SLIDE HEIGHT
-     ========================================================= */
-
-  const getSlideHeight = index => {
-    const slide = slides[index];
-    if (!slide) return 0;
-
-    /*
-     * The slide's natural content height determines the viewport.
-     *
-     * No photograph:
-     *   Only article content and buttons occupy space.
-     *
-     * Photograph:
-     *   The image retains its original aspect ratio.
-     *   Title, description and buttons follow underneath.
-     */
-
-    return Math.ceil(slide.scrollHeight);
-  };
-
-  const syncViewportHeight = (index, immediate = false) => {
-    if (!viewport || destroyed) return;
-
-    const height = getSlideHeight(index);
-
-    viewport.classList.toggle('is-height-jump', immediate);
-    viewport.style.height = `${height}px`;
-
-    if (immediate) {
-      viewport.getBoundingClientRect();
-
-      requestAnimationFrame(() => {
-        if (!destroyed) {
-          viewport?.classList.remove('is-height-jump');
-        }
-      });
-    }
-  };
-
-  /* =========================================================
      NAVIGATION
      ========================================================= */
 
@@ -170,38 +116,53 @@
     });
   };
 
+  const goToSlide = index => {
+    if (
+      destroyed ||
+      isMenuOpen() ||
+      !Number.isInteger(index) ||
+      index < 0 ||
+      index >= SLIDE_COUNT
+    ) {
+      return;
+    }
+
+    activeIndex = index;
+    syncNavigation();
+    dispatchSlideChange();
+    scheduleAutoplay();
+  };
+
+  const showNextSlide = () => {
+    if (destroyed) return;
+
+    const nextIndex = (activeIndex + 1) % SLIDE_COUNT;
+    goToSlide(nextIndex);
+  };
+
   const createNavigation = () => {
-    navigation = createElement(
-      'nav',
-      'home-carousel__navigation'
-    );
+    navigation = createElement('nav', 'home-carousel__navigation');
 
     navigation.setAttribute(
       'aria-label',
       'Navigace mezi články'
     );
 
-    indicators = HOME_SLIDES.map((_, index) => {
+    indicators = Array.from({ length: SLIDE_COUNT }, (_, index) => {
       const indicator = createElement(
         'button',
         'home-carousel__indicator'
       );
 
       indicator.type = 'button';
+
       indicator.setAttribute(
         'aria-label',
-        `Zobrazit článek ${index + 1} ze ${HOME_SLIDES.length}`
+        `Zobrazit článek ${index + 1} ze ${SLIDE_COUNT}`
       );
 
       indicator.addEventListener('click', () => {
-        if (destroyed || isMenuOpen()) return;
-
-        if (index === activeIndex) {
-          scheduleAutoplay();
-          return;
-        }
-
-        transitionTo(index);
+        goToSlide(index);
       });
 
       navigation.appendChild(indicator);
@@ -228,10 +189,9 @@
 
     if (
       destroyed ||
-      !carouselVisible ||
+      !navigationVisible ||
       isMenuOpen() ||
-      document.hidden ||
-      transitioning
+      document.hidden
     ) {
       return;
     }
@@ -243,208 +203,35 @@
   };
 
   /* =========================================================
-     SLIDE TRANSITION
+     EXTERNAL NAVIGATION
      ========================================================= */
 
-  const finishTransition = (current, next) => {
-    if (destroyed || !transitioning) return;
-
-    if (transitionTimer !== null) {
-      clearTimeout(transitionTimer);
-      transitionTimer = null;
-    }
-
-    current.classList.remove(
-      'is-active',
-      'is-exiting',
-      'is-entering',
-      'is-prepared'
-    );
-
-    next.classList.remove(
-      'is-entering',
-      'is-prepared'
-    );
-
-    next.classList.add('is-active');
-
-    transitioning = false;
-    scheduleAutoplay();
-  };
-
-  const transitionTo = nextIndex => {
-    if (
-      destroyed ||
-      transitioning ||
-      nextIndex === activeIndex ||
-      !slides[nextIndex]
-    ) {
-      return;
-    }
-
-    stopAutoplay();
-    transitioning = true;
-
-    const current = slides[activeIndex];
-    const next = slides[nextIndex];
-
-    next.classList.remove(
-      'is-active',
-      'is-exiting',
-      'is-entering',
-      'is-prepared'
-    );
-
-    next.classList.add('is-prepared');
-
-    syncViewportHeight(nextIndex);
-    next.getBoundingClientRect();
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        if (destroyed || !current || !next) return;
-
-        next.classList.remove('is-prepared');
-        next.classList.add('is-entering');
-
-        current.classList.remove(
-          'is-entering',
-          'is-prepared'
-        );
-
-        current.classList.add('is-exiting');
-
-        activeIndex = nextIndex;
-        syncNavigation();
-        dispatchSlideChange();
-
-        const onEnd = event => {
-          if (
-            event.target !== next ||
-            event.propertyName !== 'transform'
-          ) {
-            return;
-          }
-
-          next.removeEventListener('transitionend', onEnd);
-          finishTransition(current, next);
-        };
-
-        next.addEventListener('transitionend', onEnd);
-
-        /*
-         * Fallback for interrupted or disabled CSS transitions.
-         */
-
-        transitionTimer = window.setTimeout(() => {
-          next.removeEventListener('transitionend', onEnd);
-          finishTransition(current, next);
-        }, TRANSITION_DURATION_MS + 150);
-      });
-    });
-  };
-
-  const showNextSlide = () => {
-    if (!slides.length || destroyed) return;
-
-    const nextIndex =
-      activeIndex === slides.length - 1
-        ? 0
-        : activeIndex + 1;
-
-    transitionTo(nextIndex);
-  };
-
   const handleExternalSlideRequest = event => {
-    const index = Number(event.detail?.index);
+    if (event.detail?.index == null) return;
 
-    if (
-      destroyed ||
-      event.detail?.index == null ||
-      !Number.isInteger(index) ||
-      index < 0 ||
-      index >= slides.length
-    ) {
-      return;
-    }
-
-    if (index === activeIndex) {
-      scheduleAutoplay();
-      return;
-    }
-
-    transitionTo(index);
+    const index = Number(event.detail.index);
+    goToSlide(index);
   };
 
   /* =========================================================
-     ARTICLE CONTENT
+     BUTTONS
      ========================================================= */
 
-  const createArticleContent = item => {
-    const article = createElement(
-      'div',
-      'home-carousel__article'
-    );
-
-    if (item.title) {
-      const title = createElement(
-        'h2',
-        'home-carousel__title'
-      );
-
-      title.textContent = item.title;
-      article.appendChild(title);
-    }
-
-    if (item.description) {
-      const description = createElement(
-        'p',
-        'home-carousel__description'
-      );
-
-      description.textContent = item.description;
-      article.appendChild(description);
-    }
-
+  const createActions = () => {
     const actions = createElement(
       'div',
       'home-carousel__actions'
     );
 
-    /*
-     * READ:
-     * Becomes a real link when an article URL is configured.
-     * No navigation to nonexistent article pages.
-     */
+    const read = createElement(
+      'button',
+      'home-carousel__button home-carousel__button--read'
+    );
 
-    if (item.url) {
-      const read = createElement(
-        'a',
-        'home-carousel__button home-carousel__button--read'
-      );
-
-      read.href = item.url;
-      read.textContent = 'ČÍST';
-
-      actions.appendChild(read);
-    } else {
-      const read = createElement(
-        'button',
-        'home-carousel__button home-carousel__button--read'
-      );
-
-      read.type = 'button';
-      read.textContent = 'ČÍST';
-      read.disabled = true;
-      read.setAttribute('aria-label', 'Článek se připravuje');
-
-      actions.appendChild(read);
-    }
-
-    /*
-     * NEXT:
-     * Advances to the next slide using the existing carousel.
-     */
+    read.type = 'button';
+    read.textContent = 'ČÍST DÁLE';
+    read.disabled = true;
+    read.setAttribute('aria-label', 'Článek se připravuje');
 
     const next = createElement(
       'button',
@@ -459,10 +246,8 @@
       showNextSlide();
     });
 
-    actions.appendChild(next);
-    article.appendChild(actions);
-
-    return article;
+    actions.append(read, next);
+    return actions;
   };
 
   /* =========================================================
@@ -470,13 +255,7 @@
      ========================================================= */
 
   const createSocialLinks = () => {
-    /*
-     * Reuse existing social links from the main menu.
-     * Do not invent social profile URLs or icon paths.
-     *
-     * The selector targets links containing recognizable
-     * social-network destinations.
-     */
+    if (!mainView) return null;
 
     const sourceLinks = [
       ...mainView.querySelectorAll('.main-menu a[href]')
@@ -505,10 +284,7 @@
 
     if (!sourceLinks.length) return null;
 
-    const social = createElement(
-      'nav',
-      'home-social'
-    );
+    const social = createElement('nav', 'home-social');
 
     social.setAttribute(
       'aria-label',
@@ -521,10 +297,7 @@
       if (seen.has(source.href)) return;
       seen.add(source.href);
 
-      const link = createElement(
-        'a',
-        'home-social__link'
-      );
+      const link = createElement('a', 'home-social__link');
 
       link.href = source.href;
       link.target = '_blank';
@@ -565,10 +338,10 @@
   };
 
   /* =========================================================
-     CREATE CAROUSEL
+     CREATE HOME CONTENT
      ========================================================= */
 
-  const createCarousel = () => {
+  const createHomeContent = () => {
     const content = createElement(
       'div',
       'home-view__content'
@@ -579,57 +352,12 @@
       'home-carousel'
     );
 
-    viewport = createElement(
-      'div',
-      'home-carousel__viewport'
-    );
-
     carousel.setAttribute(
       'aria-label',
       'LIVINGSPACE — doporučené články'
     );
 
-    slides = HOME_SLIDES.map((item, index) => {
-      const slide = createElement(
-        'article',
-        'home-carousel__slide'
-      );
-
-      if (item.image) {
-        const image = document.createElement('img');
-
-        image.className = 'home-carousel__image';
-        image.src = item.image;
-        image.alt = item.alt || `LIVINGSPACE — fotografie ${index + 1}`;
-        image.decoding = 'async';
-        image.draggable = false;
-
-        if (index === 0) {
-          image.fetchPriority = 'high';
-        } else {
-          image.loading = 'lazy';
-        }
-
-        image.addEventListener('load', () => {
-          if (index === activeIndex) {
-            syncViewportHeight(index, !carouselVisible);
-          }
-        });
-
-        slide.appendChild(image);
-      }
-
-      slide.appendChild(createArticleContent(item));
-      viewport.appendChild(slide);
-
-      return slide;
-    });
-
-    if (slides[0]) {
-      slides[0].classList.add('is-prepared');
-    }
-
-    carousel.appendChild(viewport);
+    carousel.appendChild(createActions());
     carousel.appendChild(createNavigation());
 
     content.appendChild(carousel);
@@ -644,41 +372,18 @@
      ARRIVAL
      ========================================================= */
 
-  const revealCarousel = () => {
-    if (!homeView || carouselVisible || destroyed) return;
+  const revealNavigation = () => {
+    if (!homeView || navigationVisible || destroyed) return;
 
-    carouselVisible = true;
-    syncViewportHeight(0, true);
+    navigationVisible = true;
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        if (!homeView || !slides[0] || destroyed) return;
+        if (!homeView || destroyed) return;
 
         homeView.classList.add('is-carousel-visible');
-
-        slides[0].classList.remove('is-prepared');
-        slides[0].classList.add('is-active');
-
         dispatchSlideChange();
-
-        const onEnd = event => {
-          if (
-            event.target !== slides[0] ||
-            event.propertyName !== 'transform'
-          ) {
-            return;
-          }
-
-          slides[0].removeEventListener('transitionend', onEnd);
-          scheduleAutoplay();
-        };
-
-        slides[0].addEventListener('transitionend', onEnd);
-
-        window.setTimeout(() => {
-          slides[0]?.removeEventListener('transitionend', onEnd);
-          scheduleAutoplay();
-        }, TRANSITION_DURATION_MS + 150);
+        scheduleAutoplay();
       });
     });
   };
@@ -696,7 +401,7 @@
         homeView.classList.add('is-divider-visible');
 
         revealTimer = window.setTimeout(
-          revealCarousel,
+          revealNavigation,
           180
         );
       });
@@ -742,9 +447,7 @@
     }
 
     controlsObserver = new MutationObserver(() => {
-      if (!mainView?.classList.contains('is-controls-visible')) {
-        return;
-      }
+      if (!mainView?.classList.contains('is-controls-visible')) return;
 
       controlsObserver.disconnect();
       controlsObserver = null;
@@ -775,52 +478,14 @@
     });
   };
 
-  const watchLayout = () => {
-    if (typeof ResizeObserver === 'undefined') return;
-
-    layoutObserver = new ResizeObserver(() => {
-      scheduleDividerSync();
-      syncViewportHeight(activeIndex);
-    });
-
-    [
-      mainView.querySelector('.main-menu__content'),
-      mainView.querySelector('.main-menu__list'),
-      mainView.querySelector('.main-view__logo'),
-      ...mainView.querySelectorAll('.main-menu__panel')
-    ]
-      .filter(Boolean)
-      .forEach(element => {
-        layoutObserver.observe(element);
-      });
-
-    /*
-     * Observe the slide contents, not the viewport itself.
-     * This avoids resize feedback loops.
-     */
-
-    slides.forEach(slide => {
-      layoutObserver.observe(slide);
-    });
-  };
-
   /* =========================================================
      CREATE HOME
      ========================================================= */
 
   const createHome = () => {
-    if (
-      !mainView ||
-      document.getElementById('homeView')
-    ) {
-      return;
-    }
+    if (!mainView || document.getElementById('homeView')) return;
 
-    homeView = createElement(
-      'section',
-      'home-view'
-    );
-
+    homeView = createElement('section', 'home-view');
     homeView.id = 'homeView';
 
     homeView.setAttribute(
@@ -828,16 +493,12 @@
       'LIVINGSPACE — hlavní stránka'
     );
 
-    divider = createElement(
-      'div',
-      'home-view__divider'
-    );
-
+    divider = createElement('div', 'home-view__divider');
     divider.setAttribute('aria-hidden', 'true');
 
     homeView.append(
       divider,
-      createCarousel()
+      createHomeContent()
     );
 
     mainView.appendChild(homeView);
@@ -845,7 +506,6 @@
     syncDivider();
     watchControls();
     watchMenu();
-    watchLayout();
   };
 
   const findMain = () => {
@@ -863,31 +523,18 @@
 
   const handleResize = () => {
     scheduleDividerSync();
-    syncViewportHeight(activeIndex);
   };
 
-  window.addEventListener(
-    'resize',
-    handleResize,
-    { passive: true }
-  );
+  window.addEventListener('resize', handleResize, { passive: true });
+  window.addEventListener('orientationchange', handleResize, { passive: true });
 
-  window.addEventListener(
-    'orientationchange',
-    handleResize,
-    { passive: true }
-  );
-
-  document.addEventListener(
-    'visibilitychange',
-    () => {
-      if (document.hidden) {
-        stopAutoplay();
-      } else {
-        scheduleAutoplay();
-      }
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      stopAutoplay();
+    } else {
+      scheduleAutoplay();
     }
-  );
+  });
 
   document.addEventListener(
     'vb:home-go-to-slide',
@@ -918,21 +565,11 @@
     mainObserver?.disconnect();
     controlsObserver?.disconnect();
     menuObserver?.disconnect();
-    layoutObserver?.disconnect();
 
     stopAutoplay();
 
-    if (transitionTimer !== null) {
-      clearTimeout(transitionTimer);
-    }
-
-    if (revealTimer !== null) {
-      clearTimeout(revealTimer);
-    }
-
-    if (syncFrame !== null) {
-      cancelAnimationFrame(syncFrame);
-    }
+    if (revealTimer !== null) clearTimeout(revealTimer);
+    if (syncFrame !== null) cancelAnimationFrame(syncFrame);
 
     document.removeEventListener(
       'vb:home-go-to-slide',
