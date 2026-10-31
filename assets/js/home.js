@@ -2,38 +2,71 @@
 
 /* =========================================================
    LIVINGSPACE — HOME
-   SEVEN-SLIDE ARTICLE NAVIGATION
+   ADAPTIVE SEVEN-SLIDE ARTICLE CAROUSEL
    ========================================================= */
 
 (() => {
   const DIVIDER_LOGO_GAP_PX = 8;
   const SLIDE_INTERVAL_MS = 5000;
   const TRANSITION_DURATION_MS = 1050;
+  const TRANSITION_FALLBACK_MS = 150;
 
   /* =========================================================
-     CONFIGURATION
+     01 — ARTICLE DATA
+
+     image       = cesta k fotografii
+     alt         = alternativní text fotografie
+     title       = nadpis článku
+     description = krátký popis
+     url         = odkaz na celý článek
+
+     Fotografie zachovávají původní poměr stran.
+     Prázdné image nevytváří žádný obrazový prostor.
      ========================================================= */
 
-  const SLIDE_COUNT = 7;
+  const HOME_SLIDES = [
+    { image: null, alt: '', title: '', description: '', url: '' },
+    { image: null, alt: '', title: '', description: '', url: '' },
+    { image: null, alt: '', title: '', description: '', url: '' },
+    { image: null, alt: '', title: '', description: '', url: '' },
+    { image: null, alt: '', title: '', description: '', url: '' },
+    { image: null, alt: '', title: '', description: '', url: '' },
+    { image: null, alt: '', title: '', description: '', url: '' }
+  ];
+
+  /* =========================================================
+     02 — STATE
+     ========================================================= */
 
   let mainView = null;
   let homeView = null;
-  let divider = null;
-  let navigation = null;
+  let viewport = null;
+  let slides = [];
   let indicators = [];
 
   let activeIndex = 0;
-  let navigationVisible = false;
+  let transitioning = false;
+  let carouselVisible = false;
   let dividerVisible = false;
   let destroyed = false;
 
   let mainObserver = null;
   let controlsObserver = null;
   let menuObserver = null;
+  let layoutObserver = null;
 
   let syncFrame = null;
   let autoplayTimer = null;
+  let transitionTimer = null;
   let revealTimer = null;
+  let controlsTimer = null;
+  let arrivalTimer = null;
+
+  let transitionEndHandler = null;
+  let transitionEndElement = null;
+  let arrivalEndHandler = null;
+  let controlsEndHandler = null;
+  let controlsEndElement = null;
 
   const createElement = (tag, className = '') => {
     const element = document.createElement(tag);
@@ -44,17 +77,20 @@
   const isMenuOpen = () =>
     Boolean(mainView?.classList.contains('is-menu-visible'));
 
+  const prefersReducedMotion = () =>
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   const dispatchSlideChange = () => {
     document.dispatchEvent(new CustomEvent('vb:home-slide-change', {
       detail: {
         index: activeIndex,
-        count: SLIDE_COUNT
+        count: slides.length
       }
     }));
   };
 
   /* =========================================================
-     DIVIDER
+     03 — DIVIDER
      ========================================================= */
 
   const getClosedDividerY = () => {
@@ -89,6 +125,8 @@
   };
 
   const scheduleDividerSync = () => {
+    if (destroyed) return;
+
     if (syncFrame !== null) cancelAnimationFrame(syncFrame);
 
     syncFrame = requestAnimationFrame(() => {
@@ -98,7 +136,46 @@
   };
 
   /* =========================================================
-     NAVIGATION
+     04 — ADAPTIVE CAROUSEL HEIGHT
+
+     Výška vychází ze skutečného obsahu snímku.
+
+     Fotografie 16:9 → odpovídající výška.
+     Fotografie 4:3  → odpovídající výška.
+     Fotografie 3:2  → odpovídající výška.
+     Fotografie 4:5  → odpovídající výška.
+
+     Bez fotografie → pouze text a tlačítka.
+     ========================================================= */
+
+  const getSlideHeight = index => {
+    const slide = slides[index];
+    if (!slide) return 0;
+
+    return Math.ceil(slide.getBoundingClientRect().height);
+  };
+
+  const syncViewportHeight = (index, immediate = false) => {
+    if (!viewport || destroyed) return;
+
+    const height = getSlideHeight(index);
+
+    viewport.classList.toggle('is-height-jump', immediate);
+    viewport.style.height = `${height}px`;
+
+    if (immediate) {
+      viewport.getBoundingClientRect();
+
+      requestAnimationFrame(() => {
+        if (!destroyed) {
+          viewport?.classList.remove('is-height-jump');
+        }
+      });
+    }
+  };
+
+  /* =========================================================
+     05 — NAVIGATION
      ========================================================= */
 
   const syncNavigation = () => {
@@ -114,41 +191,38 @@
         indicator.removeAttribute('aria-current');
       }
     });
-  };
 
-  const goToSlide = index => {
-    if (
-      destroyed ||
-      isMenuOpen() ||
-      !Number.isInteger(index) ||
-      index < 0 ||
-      index >= SLIDE_COUNT
-    ) {
-      return;
-    }
+    slides.forEach((slide, index) => {
+      const active = index === activeIndex;
 
-    activeIndex = index;
-    syncNavigation();
-    dispatchSlideChange();
-    scheduleAutoplay();
-  };
+      slide.setAttribute('aria-hidden', String(!active));
 
-  const showNextSlide = () => {
-    if (destroyed) return;
-
-    const nextIndex = (activeIndex + 1) % SLIDE_COUNT;
-    goToSlide(nextIndex);
+      if ('inert' in slide) {
+        slide.inert = !active;
+      } else {
+        slide.querySelectorAll('a, button').forEach(element => {
+          if (active) {
+            element.removeAttribute('tabindex');
+          } else {
+            element.setAttribute('tabindex', '-1');
+          }
+        });
+      }
+    });
   };
 
   const createNavigation = () => {
-    navigation = createElement('nav', 'home-carousel__navigation');
+    const navigation = createElement(
+      'nav',
+      'home-carousel__navigation'
+    );
 
     navigation.setAttribute(
       'aria-label',
       'Navigace mezi články'
     );
 
-    indicators = Array.from({ length: SLIDE_COUNT }, (_, index) => {
+    indicators = HOME_SLIDES.map((_, index) => {
       const indicator = createElement(
         'button',
         'home-carousel__indicator'
@@ -158,11 +232,18 @@
 
       indicator.setAttribute(
         'aria-label',
-        `Zobrazit článek ${index + 1} ze ${SLIDE_COUNT}`
+        `Zobrazit článek ${index + 1} ze ${HOME_SLIDES.length}`
       );
 
       indicator.addEventListener('click', () => {
-        goToSlide(index);
+        if (destroyed || isMenuOpen()) return;
+
+        if (index === activeIndex) {
+          scheduleAutoplay();
+          return;
+        }
+
+        transitionTo(index);
       });
 
       navigation.appendChild(indicator);
@@ -174,7 +255,7 @@
   };
 
   /* =========================================================
-     AUTOPLAY
+     06 — AUTOPLAY
      ========================================================= */
 
   const stopAutoplay = () => {
@@ -189,7 +270,8 @@
 
     if (
       destroyed ||
-      !navigationVisible ||
+      !carouselVisible ||
+      transitioning ||
       isMenuOpen() ||
       document.hidden
     ) {
@@ -203,35 +285,206 @@
   };
 
   /* =========================================================
-     EXTERNAL NAVIGATION
+     07 — TRANSITION CLEANUP
      ========================================================= */
+
+  const clearTransitionListener = () => {
+    if (transitionEndElement && transitionEndHandler) {
+      transitionEndElement.removeEventListener(
+        'transitionend',
+        transitionEndHandler
+      );
+    }
+
+    transitionEndElement = null;
+    transitionEndHandler = null;
+
+    if (transitionTimer !== null) {
+      clearTimeout(transitionTimer);
+      transitionTimer = null;
+    }
+  };
+
+  const finishTransition = (current, next) => {
+    if (destroyed || !transitioning) return;
+
+    clearTransitionListener();
+
+    current.classList.remove(
+      'is-active',
+      'is-exiting',
+      'is-entering',
+      'is-prepared'
+    );
+
+    next.classList.remove(
+      'is-entering',
+      'is-prepared'
+    );
+
+    next.classList.add('is-active');
+
+    transitioning = false;
+
+    syncViewportHeight(activeIndex);
+    syncNavigation();
+    scheduleAutoplay();
+  };
+
+  /* =========================================================
+     08 — SLIDE TRANSITION
+     ========================================================= */
+
+  const transitionTo = nextIndex => {
+    if (
+      destroyed ||
+      transitioning ||
+      isMenuOpen() ||
+      nextIndex === activeIndex ||
+      !slides[nextIndex]
+    ) {
+      return;
+    }
+
+    stopAutoplay();
+    transitioning = true;
+
+    const current = slides[activeIndex];
+    const next = slides[nextIndex];
+
+    next.classList.remove(
+      'is-active',
+      'is-exiting',
+      'is-entering',
+      'is-prepared'
+    );
+
+    next.classList.add('is-prepared');
+
+    syncViewportHeight(nextIndex);
+
+    next.getBoundingClientRect();
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (destroyed || !current || !next) return;
+
+        next.classList.remove('is-prepared');
+        next.classList.add('is-entering');
+
+        current.classList.remove(
+          'is-entering',
+          'is-prepared'
+        );
+
+        current.classList.add('is-exiting');
+
+        activeIndex = nextIndex;
+
+        syncNavigation();
+        dispatchSlideChange();
+
+        if (prefersReducedMotion()) {
+          finishTransition(current, next);
+          return;
+        }
+
+        transitionEndElement = next;
+
+        transitionEndHandler = event => {
+          if (
+            event.target !== next ||
+            event.propertyName !== 'transform'
+          ) {
+            return;
+          }
+
+          finishTransition(current, next);
+        };
+
+        next.addEventListener(
+          'transitionend',
+          transitionEndHandler
+        );
+
+        transitionTimer = window.setTimeout(() => {
+          finishTransition(current, next);
+        }, TRANSITION_DURATION_MS + TRANSITION_FALLBACK_MS);
+      });
+    });
+  };
+
+  const showNextSlide = () => {
+    if (destroyed || !slides.length) return;
+
+    transitionTo((activeIndex + 1) % slides.length);
+  };
 
   const handleExternalSlideRequest = event => {
     if (event.detail?.index == null) return;
 
     const index = Number(event.detail.index);
-    goToSlide(index);
+
+    if (
+      !Number.isInteger(index) ||
+      index < 0 ||
+      index >= slides.length
+    ) {
+      return;
+    }
+
+    if (index === activeIndex) {
+      scheduleAutoplay();
+      return;
+    }
+
+    transitionTo(index);
   };
 
   /* =========================================================
-     BUTTONS
+     09 — ARTICLE ACTIONS
      ========================================================= */
 
-  const createActions = () => {
+  const createActions = item => {
     const actions = createElement(
       'div',
       'home-carousel__actions'
     );
 
-    const read = createElement(
-      'button',
-      'home-carousel__button home-carousel__button--read'
-    );
+    /*
+     * ČÍST
+     * Aktivní pouze při existujícím odkazu na článek.
+     */
 
-    read.type = 'button';
-    read.textContent = 'ČÍST DÁLE';
-    read.disabled = true;
-    read.setAttribute('aria-label', 'Článek se připravuje');
+    let read;
+
+    if (item.url) {
+      read = createElement(
+        'a',
+        'home-carousel__button home-carousel__button--read'
+      );
+
+      read.href = item.url;
+    } else {
+      read = createElement(
+        'button',
+        'home-carousel__button home-carousel__button--read'
+      );
+
+      read.type = 'button';
+      read.disabled = true;
+      read.setAttribute(
+        'aria-label',
+        'Článek se připravuje'
+      );
+    }
+
+    read.textContent = 'ČÍST';
+
+    /*
+     * DALŠÍ
+     * Přechod na následující snímek.
+     */
 
     const next = createElement(
       'button',
@@ -247,11 +500,111 @@
     });
 
     actions.append(read, next);
+
     return actions;
   };
 
   /* =========================================================
-     SOCIAL LINKS
+     10 — ARTICLE CONTENT
+     ========================================================= */
+
+  const createArticleContent = item => {
+    const article = createElement(
+      'div',
+      'home-carousel__article'
+    );
+
+    if (item.title) {
+      const title = createElement(
+        'h2',
+        'home-carousel__title'
+      );
+
+      title.textContent = item.title;
+      article.appendChild(title);
+    }
+
+    if (item.description) {
+      const description = createElement(
+        'p',
+        'home-carousel__description'
+      );
+
+      description.textContent = item.description;
+      article.appendChild(description);
+    }
+
+    article.appendChild(createActions(item));
+
+    return article;
+  };
+
+  /* =========================================================
+     11 — CREATE SLIDES
+     ========================================================= */
+
+  const createSlides = () => {
+    slides = HOME_SLIDES.map((item, index) => {
+      const slide = createElement(
+        'article',
+        'home-carousel__slide'
+      );
+
+      slide.setAttribute(
+        'aria-label',
+        `Článek ${index + 1} ze ${HOME_SLIDES.length}`
+      );
+
+      /*
+       * Fotografie vzniká pouze tehdy, pokud je uvedena cesta.
+       * Žádný placeholder ani rezervovaná výška.
+       */
+
+      if (item.image) {
+        const image = document.createElement('img');
+
+        image.className = 'home-carousel__image';
+        image.src = item.image;
+        image.alt = item.alt || `LIVINGSPACE — fotografie ${index + 1}`;
+        image.decoding = 'async';
+        image.draggable = false;
+
+        if (index === 0) {
+          image.fetchPriority = 'high';
+        } else {
+          image.loading = 'lazy';
+        }
+
+        image.addEventListener('load', () => {
+          if (index === activeIndex) {
+            syncViewportHeight(index, !carouselVisible);
+          }
+        });
+
+        image.addEventListener('error', () => {
+          image.remove();
+
+          if (index === activeIndex) {
+            syncViewportHeight(index, !carouselVisible);
+          }
+        });
+
+        slide.appendChild(image);
+      }
+
+      slide.appendChild(createArticleContent(item));
+      viewport.appendChild(slide);
+
+      return slide;
+    });
+
+    if (slides[0]) {
+      slides[0].classList.add('is-prepared');
+    }
+  };
+
+  /* =========================================================
+     12 — SOCIAL LINKS
      ========================================================= */
 
   const createSocialLinks = () => {
@@ -284,7 +637,10 @@
 
     if (!sourceLinks.length) return null;
 
-    const social = createElement('nav', 'home-social');
+    const social = createElement(
+      'nav',
+      'home-social'
+    );
 
     social.setAttribute(
       'aria-label',
@@ -297,7 +653,10 @@
       if (seen.has(source.href)) return;
       seen.add(source.href);
 
-      const link = createElement('a', 'home-social__link');
+      const link = createElement(
+        'a',
+        'home-social__link'
+      );
 
       link.href = source.href;
       link.target = '_blank';
@@ -316,12 +675,12 @@
       if (icon) {
         const clonedIcon = icon.cloneNode(true);
 
+        clonedIcon.removeAttribute('id');
+
         if (clonedIcon.tagName.toLowerCase() === 'img') {
           clonedIcon.alt = '';
-          clonedIcon.removeAttribute('id');
         } else {
           clonedIcon.setAttribute('aria-hidden', 'true');
-          clonedIcon.removeAttribute('id');
         }
 
         link.appendChild(clonedIcon);
@@ -338,10 +697,10 @@
   };
 
   /* =========================================================
-     CREATE HOME CONTENT
+     13 — CREATE CAROUSEL
      ========================================================= */
 
-  const createHomeContent = () => {
+  const createCarousel = () => {
     const content = createElement(
       'div',
       'home-view__content'
@@ -357,33 +716,88 @@
       'LIVINGSPACE — doporučené články'
     );
 
-    carousel.appendChild(createActions());
+    viewport = createElement(
+      'div',
+      'home-carousel__viewport'
+    );
+
+    createSlides();
+
+    carousel.appendChild(viewport);
     carousel.appendChild(createNavigation());
 
     content.appendChild(carousel);
 
     const social = createSocialLinks();
-    if (social) content.appendChild(social);
+
+    if (social) {
+      content.appendChild(social);
+    }
 
     return content;
   };
 
   /* =========================================================
-     ARRIVAL
+     14 — ARRIVAL
      ========================================================= */
 
-  const revealNavigation = () => {
-    if (!homeView || navigationVisible || destroyed) return;
+  const revealCarousel = () => {
+    if (!homeView || carouselVisible || destroyed) return;
 
-    navigationVisible = true;
+    carouselVisible = true;
+    syncViewportHeight(0, true);
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        if (!homeView || destroyed) return;
+        if (!homeView || !slides[0] || destroyed) return;
 
         homeView.classList.add('is-carousel-visible');
+
+        slides[0].classList.remove('is-prepared');
+        slides[0].classList.add('is-active');
+
+        syncNavigation();
         dispatchSlideChange();
-        scheduleAutoplay();
+
+        if (prefersReducedMotion()) {
+          scheduleAutoplay();
+          return;
+        }
+
+        arrivalEndHandler = event => {
+          if (
+            event.target !== slides[0] ||
+            event.propertyName !== 'transform'
+          ) {
+            return;
+          }
+
+          slides[0].removeEventListener(
+            'transitionend',
+            arrivalEndHandler
+          );
+
+          arrivalEndHandler = null;
+          scheduleAutoplay();
+        };
+
+        slides[0].addEventListener(
+          'transitionend',
+          arrivalEndHandler
+        );
+
+        arrivalTimer = window.setTimeout(() => {
+          if (arrivalEndHandler) {
+            slides[0]?.removeEventListener(
+              'transitionend',
+              arrivalEndHandler
+            );
+
+            arrivalEndHandler = null;
+          }
+
+          scheduleAutoplay();
+        }, TRANSITION_DURATION_MS + TRANSITION_FALLBACK_MS);
       });
     });
   };
@@ -401,7 +815,7 @@
         homeView.classList.add('is-divider-visible');
 
         revealTimer = window.setTimeout(
-          revealNavigation,
+          revealCarousel,
           180
         );
       });
@@ -409,7 +823,7 @@
   };
 
   /* =========================================================
-     MAIN WATCHERS
+     15 — MAIN WATCHERS
      ========================================================= */
 
   const watchControls = () => {
@@ -420,9 +834,14 @@
         '.main-view__header-button'
       );
 
-      if (!control) return revealDivider();
+      if (!control) {
+        revealDivider();
+        return;
+      }
 
-      const onEnd = event => {
+      controlsEndElement = control;
+
+      controlsEndHandler = event => {
         if (
           event.target !== control ||
           event.propertyName !== 'transform'
@@ -430,24 +849,46 @@
           return;
         }
 
-        control.removeEventListener('transitionend', onEnd);
+        control.removeEventListener(
+          'transitionend',
+          controlsEndHandler
+        );
+
+        controlsEndHandler = null;
+        controlsEndElement = null;
+
         revealDivider();
       };
 
-      control.addEventListener('transitionend', onEnd);
+      control.addEventListener(
+        'transitionend',
+        controlsEndHandler
+      );
 
-      window.setTimeout(() => {
-        control.removeEventListener('transitionend', onEnd);
+      controlsTimer = window.setTimeout(() => {
+        if (controlsEndHandler) {
+          control.removeEventListener(
+            'transitionend',
+            controlsEndHandler
+          );
+
+          controlsEndHandler = null;
+          controlsEndElement = null;
+        }
+
         revealDivider();
-      }, TRANSITION_DURATION_MS + 150);
+      }, TRANSITION_DURATION_MS + TRANSITION_FALLBACK_MS);
     };
 
     if (mainView.classList.contains('is-controls-visible')) {
-      return waitForArrival();
+      waitForArrival();
+      return;
     }
 
     controlsObserver = new MutationObserver(() => {
-      if (!mainView?.classList.contains('is-controls-visible')) return;
+      if (!mainView?.classList.contains('is-controls-visible')) {
+        return;
+      }
 
       controlsObserver.disconnect();
       controlsObserver = null;
@@ -478,14 +919,39 @@
     });
   };
 
+  const watchLayout = () => {
+    if (typeof ResizeObserver === 'undefined') return;
+
+    layoutObserver = new ResizeObserver(() => {
+      scheduleDividerSync();
+      syncViewportHeight(activeIndex);
+    });
+
+    [
+      mainView.querySelector('.main-menu__content'),
+      mainView.querySelector('.main-menu__list'),
+      mainView.querySelector('.main-view__logo'),
+      ...mainView.querySelectorAll('.main-menu__panel'),
+      ...slides
+    ]
+      .filter(Boolean)
+      .forEach(element => {
+        layoutObserver.observe(element);
+      });
+  };
+
   /* =========================================================
-     CREATE HOME
+     16 — CREATE HOME
      ========================================================= */
 
   const createHome = () => {
     if (!mainView || document.getElementById('homeView')) return;
 
-    homeView = createElement('section', 'home-view');
+    homeView = createElement(
+      'section',
+      'home-view'
+    );
+
     homeView.id = 'homeView';
 
     homeView.setAttribute(
@@ -493,12 +959,16 @@
       'LIVINGSPACE — hlavní stránka'
     );
 
-    divider = createElement('div', 'home-view__divider');
+    const divider = createElement(
+      'div',
+      'home-view__divider'
+    );
+
     divider.setAttribute('aria-hidden', 'true');
 
     homeView.append(
       divider,
-      createHomeContent()
+      createCarousel()
     );
 
     mainView.appendChild(homeView);
@@ -506,6 +976,7 @@
     syncDivider();
     watchControls();
     watchMenu();
+    watchLayout();
   };
 
   const findMain = () => {
@@ -518,23 +989,38 @@
   };
 
   /* =========================================================
-     GLOBAL EVENTS
+     17 — GLOBAL EVENTS
      ========================================================= */
 
   const handleResize = () => {
     scheduleDividerSync();
+    syncViewportHeight(activeIndex);
   };
 
-  window.addEventListener('resize', handleResize, { passive: true });
-  window.addEventListener('orientationchange', handleResize, { passive: true });
-
-  document.addEventListener('visibilitychange', () => {
+  const handleVisibilityChange = () => {
     if (document.hidden) {
       stopAutoplay();
     } else {
       scheduleAutoplay();
     }
-  });
+  };
+
+  window.addEventListener(
+    'resize',
+    handleResize,
+    { passive: true }
+  );
+
+  window.addEventListener(
+    'orientationchange',
+    handleResize,
+    { passive: true }
+  );
+
+  document.addEventListener(
+    'visibilitychange',
+    handleVisibilityChange
+  );
 
   document.addEventListener(
     'vb:home-go-to-slide',
@@ -556,7 +1042,7 @@
   }
 
   /* =========================================================
-     CLEANUP
+     18 — CLEANUP
      ========================================================= */
 
   window.addEventListener('pagehide', () => {
@@ -565,11 +1051,37 @@
     mainObserver?.disconnect();
     controlsObserver?.disconnect();
     menuObserver?.disconnect();
+    layoutObserver?.disconnect();
 
     stopAutoplay();
+    clearTransitionListener();
 
     if (revealTimer !== null) clearTimeout(revealTimer);
+    if (controlsTimer !== null) clearTimeout(controlsTimer);
+    if (arrivalTimer !== null) clearTimeout(arrivalTimer);
     if (syncFrame !== null) cancelAnimationFrame(syncFrame);
+
+    if (arrivalEndHandler && slides[0]) {
+      slides[0].removeEventListener(
+        'transitionend',
+        arrivalEndHandler
+      );
+    }
+
+    if (controlsEndHandler && controlsEndElement) {
+      controlsEndElement.removeEventListener(
+        'transitionend',
+        controlsEndHandler
+      );
+    }
+
+    window.removeEventListener('resize', handleResize);
+    window.removeEventListener('orientationchange', handleResize);
+
+    document.removeEventListener(
+      'visibilitychange',
+      handleVisibilityChange
+    );
 
     document.removeEventListener(
       'vb:home-go-to-slide',
