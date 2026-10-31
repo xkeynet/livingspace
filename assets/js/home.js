@@ -2,40 +2,41 @@
 
 /* =========================================================
    LIVINGSPACE — HOME
-   SEVEN-SLIDE CAROUSEL + CLEAN PLACEHOLDERS
+   SEVEN-SLIDE ADAPTIVE ARTICLE CAROUSEL
    ========================================================= */
 
 (() => {
   const DIVIDER_LOGO_GAP_PX = 8;
   const SLIDE_INTERVAL_MS = 5000;
+  const TRANSITION_DURATION_MS = 1050;
 
-  /*
-   * Seven reserved positions for future LIVINGSPACE photography.
-   * Original artwork images, titles, years and motto are removed.
-   *
-   * Future image paths can be added to individual slide objects.
-   */
+  /* =========================================================
+     ARTICLE DATA
+     ========================================================= */
 
   const HOME_SLIDES = [
-    { image: null },
-    { image: null },
-    { image: null },
-    { image: null },
-    { image: null },
-    { image: null },
-    { image: null }
+    { image: null, alt: '', title: '', description: '', url: '' },
+    { image: null, alt: '', title: '', description: '', url: '' },
+    { image: null, alt: '', title: '', description: '', url: '' },
+    { image: null, alt: '', title: '', description: '', url: '' },
+    { image: null, alt: '', title: '', description: '', url: '' },
+    { image: null, alt: '', title: '', description: '', url: '' },
+    { image: null, alt: '', title: '', description: '', url: '' }
   ];
 
   let mainView = null;
   let homeView = null;
   let divider = null;
   let viewport = null;
+  let navigation = null;
   let slides = [];
+  let indicators = [];
 
   let activeIndex = 0;
   let transitioning = false;
   let carouselVisible = false;
   let dividerVisible = false;
+  let destroyed = false;
 
   let mainObserver = null;
   let controlsObserver = null;
@@ -44,6 +45,8 @@
 
   let syncFrame = null;
   let autoplayTimer = null;
+  let transitionTimer = null;
+  let revealTimer = null;
 
   const createElement = (tag, className = '') => {
     const element = document.createElement(tag);
@@ -80,9 +83,7 @@
   const getOpenDividerY = () => {
     const originalDivider = mainView?.querySelector('.main-menu__divider');
 
-    if (!mainView || !originalDivider) {
-      return getClosedDividerY();
-    }
+    if (!mainView || !originalDivider) return getClosedDividerY();
 
     return (
       originalDivider.getBoundingClientRect().top -
@@ -91,7 +92,7 @@
   };
 
   const syncDivider = () => {
-    if (!homeView) return;
+    if (!homeView || destroyed) return;
 
     const y = isMenuOpen()
       ? getOpenDividerY()
@@ -110,35 +111,31 @@
   };
 
   /* =========================================================
-     SLIDE SIZE
+     ADAPTIVE SLIDE HEIGHT
      ========================================================= */
 
   const getSlideHeight = index => {
-    if (!viewport || !slides[index]) return 0;
-
     const slide = slides[index];
-    const image = slide.querySelector('.home-carousel__image');
+    if (!slide) return 0;
 
     /*
-     * Future photographs retain their natural aspect ratio.
-     * Empty slides use a fixed 4:5 placeholder ratio.
+     * The slide's natural content height determines the viewport.
+     *
+     * No photograph:
+     *   Only article content and buttons occupy space.
+     *
+     * Photograph:
+     *   The image retains its original aspect ratio.
+     *   Title, description and buttons follow underneath.
      */
 
-    if (image?.naturalWidth && image?.naturalHeight) {
-      return (
-        viewport.clientWidth *
-        (image.naturalHeight / image.naturalWidth)
-      );
-    }
-
-    return viewport.clientWidth * 1.25;
+    return Math.ceil(slide.scrollHeight);
   };
 
   const syncViewportHeight = (index, immediate = false) => {
-    if (!viewport) return;
+    if (!viewport || destroyed) return;
 
     const height = getSlideHeight(index);
-    if (!height) return;
 
     viewport.classList.toggle('is-height-jump', immediate);
     viewport.style.height = `${height}px`;
@@ -147,9 +144,72 @@
       viewport.getBoundingClientRect();
 
       requestAnimationFrame(() => {
-        viewport?.classList.remove('is-height-jump');
+        if (!destroyed) {
+          viewport?.classList.remove('is-height-jump');
+        }
       });
     }
+  };
+
+  /* =========================================================
+     NAVIGATION
+     ========================================================= */
+
+  const syncNavigation = () => {
+    indicators.forEach((indicator, index) => {
+      const active = index === activeIndex;
+
+      indicator.classList.toggle('is-active', active);
+      indicator.setAttribute('aria-pressed', String(active));
+
+      if (active) {
+        indicator.setAttribute('aria-current', 'true');
+      } else {
+        indicator.removeAttribute('aria-current');
+      }
+    });
+  };
+
+  const createNavigation = () => {
+    navigation = createElement(
+      'nav',
+      'home-carousel__navigation'
+    );
+
+    navigation.setAttribute(
+      'aria-label',
+      'Navigace mezi články'
+    );
+
+    indicators = HOME_SLIDES.map((_, index) => {
+      const indicator = createElement(
+        'button',
+        'home-carousel__indicator'
+      );
+
+      indicator.type = 'button';
+      indicator.setAttribute(
+        'aria-label',
+        `Zobrazit článek ${index + 1} ze ${HOME_SLIDES.length}`
+      );
+
+      indicator.addEventListener('click', () => {
+        if (destroyed || isMenuOpen()) return;
+
+        if (index === activeIndex) {
+          scheduleAutoplay();
+          return;
+        }
+
+        transitionTo(index);
+      });
+
+      navigation.appendChild(indicator);
+      return indicator;
+    });
+
+    syncNavigation();
+    return navigation;
   };
 
   /* =========================================================
@@ -167,6 +227,7 @@
     stopAutoplay();
 
     if (
+      destroyed ||
       !carouselVisible ||
       isMenuOpen() ||
       document.hidden ||
@@ -186,6 +247,13 @@
      ========================================================= */
 
   const finishTransition = (current, next) => {
+    if (destroyed || !transitioning) return;
+
+    if (transitionTimer !== null) {
+      clearTimeout(transitionTimer);
+      transitionTimer = null;
+    }
+
     current.classList.remove(
       'is-active',
       'is-exiting',
@@ -206,6 +274,7 @@
 
   const transitionTo = nextIndex => {
     if (
+      destroyed ||
       transitioning ||
       nextIndex === activeIndex ||
       !slides[nextIndex]
@@ -233,7 +302,7 @@
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        if (!current || !next) return;
+        if (destroyed || !current || !next) return;
 
         next.classList.remove('is-prepared');
         next.classList.add('is-entering');
@@ -244,6 +313,10 @@
         );
 
         current.classList.add('is-exiting');
+
+        activeIndex = nextIndex;
+        syncNavigation();
+        dispatchSlideChange();
 
         const onEnd = event => {
           if (
@@ -259,14 +332,20 @@
 
         next.addEventListener('transitionend', onEnd);
 
-        activeIndex = nextIndex;
-        dispatchSlideChange();
+        /*
+         * Fallback for interrupted or disabled CSS transitions.
+         */
+
+        transitionTimer = window.setTimeout(() => {
+          next.removeEventListener('transitionend', onEnd);
+          finishTransition(current, next);
+        }, TRANSITION_DURATION_MS + 150);
       });
     });
   };
 
   const showNextSlide = () => {
-    if (!slides.length) return;
+    if (!slides.length || destroyed) return;
 
     const nextIndex =
       activeIndex === slides.length - 1
@@ -280,6 +359,8 @@
     const index = Number(event.detail?.index);
 
     if (
+      destroyed ||
+      event.detail?.index == null ||
       !Number.isInteger(index) ||
       index < 0 ||
       index >= slides.length
@@ -293,6 +374,194 @@
     }
 
     transitionTo(index);
+  };
+
+  /* =========================================================
+     ARTICLE CONTENT
+     ========================================================= */
+
+  const createArticleContent = item => {
+    const article = createElement(
+      'div',
+      'home-carousel__article'
+    );
+
+    if (item.title) {
+      const title = createElement(
+        'h2',
+        'home-carousel__title'
+      );
+
+      title.textContent = item.title;
+      article.appendChild(title);
+    }
+
+    if (item.description) {
+      const description = createElement(
+        'p',
+        'home-carousel__description'
+      );
+
+      description.textContent = item.description;
+      article.appendChild(description);
+    }
+
+    const actions = createElement(
+      'div',
+      'home-carousel__actions'
+    );
+
+    /*
+     * READ:
+     * Becomes a real link when an article URL is configured.
+     * No navigation to nonexistent article pages.
+     */
+
+    if (item.url) {
+      const read = createElement(
+        'a',
+        'home-carousel__button home-carousel__button--read'
+      );
+
+      read.href = item.url;
+      read.textContent = 'ČÍST';
+
+      actions.appendChild(read);
+    } else {
+      const read = createElement(
+        'button',
+        'home-carousel__button home-carousel__button--read'
+      );
+
+      read.type = 'button';
+      read.textContent = 'ČÍST';
+      read.disabled = true;
+      read.setAttribute('aria-label', 'Článek se připravuje');
+
+      actions.appendChild(read);
+    }
+
+    /*
+     * NEXT:
+     * Advances to the next slide using the existing carousel.
+     */
+
+    const next = createElement(
+      'button',
+      'home-carousel__button home-carousel__button--next'
+    );
+
+    next.type = 'button';
+    next.textContent = 'DALŠÍ';
+
+    next.addEventListener('click', () => {
+      if (destroyed || isMenuOpen()) return;
+      showNextSlide();
+    });
+
+    actions.appendChild(next);
+    article.appendChild(actions);
+
+    return article;
+  };
+
+  /* =========================================================
+     SOCIAL LINKS
+     ========================================================= */
+
+  const createSocialLinks = () => {
+    /*
+     * Reuse existing social links from the main menu.
+     * Do not invent social profile URLs or icon paths.
+     *
+     * The selector targets links containing recognizable
+     * social-network destinations.
+     */
+
+    const sourceLinks = [
+      ...mainView.querySelectorAll('.main-menu a[href]')
+    ].filter(link => {
+      try {
+        const url = new URL(link.href, document.baseURI);
+        const host = url.hostname.toLowerCase();
+
+        return [
+          'instagram.com',
+          'tiktok.com',
+          'facebook.com',
+          'youtube.com',
+          'youtu.be',
+          'x.com',
+          'twitter.com',
+          'pinterest.com',
+          'linkedin.com'
+        ].some(domain =>
+          host === domain || host.endsWith(`.${domain}`)
+        );
+      } catch {
+        return false;
+      }
+    });
+
+    if (!sourceLinks.length) return null;
+
+    const social = createElement(
+      'nav',
+      'home-social'
+    );
+
+    social.setAttribute(
+      'aria-label',
+      'LIVINGSPACE — sociální sítě'
+    );
+
+    const seen = new Set();
+
+    sourceLinks.forEach(source => {
+      if (seen.has(source.href)) return;
+      seen.add(source.href);
+
+      const link = createElement(
+        'a',
+        'home-social__link'
+      );
+
+      link.href = source.href;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+
+      const label =
+        source.getAttribute('aria-label') ||
+        source.getAttribute('title') ||
+        source.textContent.trim() ||
+        'Sociální síť';
+
+      link.setAttribute('aria-label', label);
+
+      const icon = source.querySelector('img, svg');
+
+      if (icon) {
+        const clonedIcon = icon.cloneNode(true);
+
+        if (clonedIcon.tagName.toLowerCase() === 'img') {
+          clonedIcon.alt = '';
+          clonedIcon.removeAttribute('id');
+        } else {
+          clonedIcon.setAttribute('aria-hidden', 'true');
+          clonedIcon.removeAttribute('id');
+        }
+
+        link.appendChild(clonedIcon);
+      } else {
+        const text = createElement('span');
+        text.textContent = label;
+        link.appendChild(text);
+      }
+
+      social.appendChild(link);
+    });
+
+    return social.childElementCount ? social : null;
   };
 
   /* =========================================================
@@ -317,7 +586,7 @@
 
     carousel.setAttribute(
       'aria-label',
-      'LIVINGSPACE — galerie inspirace'
+      'LIVINGSPACE — doporučené články'
     );
 
     slides = HOME_SLIDES.map((item, index) => {
@@ -325,11 +594,6 @@
         'article',
         'home-carousel__slide'
       );
-
-      /*
-       * Keep the original image class for CSS compatibility.
-       * Use a black placeholder until a photograph is assigned.
-       */
 
       if (item.image) {
         const image = document.createElement('img');
@@ -342,6 +606,8 @@
 
         if (index === 0) {
           image.fetchPriority = 'high';
+        } else {
+          image.loading = 'lazy';
         }
 
         image.addEventListener('load', () => {
@@ -351,30 +617,25 @@
         });
 
         slide.appendChild(image);
-      } else {
-        const placeholder = createElement(
-          'div',
-          'home-carousel__image'
-        );
-
-        placeholder.style.width = '100%';
-        placeholder.style.aspectRatio = '4 / 5';
-        placeholder.style.backgroundColor = '#000000';
-
-        placeholder.setAttribute('aria-hidden', 'true');
-
-        slide.appendChild(placeholder);
       }
 
+      slide.appendChild(createArticleContent(item));
       viewport.appendChild(slide);
 
       return slide;
     });
 
-    slides[0].classList.add('is-prepared');
+    if (slides[0]) {
+      slides[0].classList.add('is-prepared');
+    }
 
     carousel.appendChild(viewport);
+    carousel.appendChild(createNavigation());
+
     content.appendChild(carousel);
+
+    const social = createSocialLinks();
+    if (social) content.appendChild(social);
 
     return content;
   };
@@ -384,14 +645,14 @@
      ========================================================= */
 
   const revealCarousel = () => {
-    if (!homeView || carouselVisible) return;
+    if (!homeView || carouselVisible || destroyed) return;
 
     carouselVisible = true;
     syncViewportHeight(0, true);
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        if (!homeView || !slides[0]) return;
+        if (!homeView || !slides[0] || destroyed) return;
 
         homeView.classList.add('is-carousel-visible');
 
@@ -413,23 +674,31 @@
         };
 
         slides[0].addEventListener('transitionend', onEnd);
+
+        window.setTimeout(() => {
+          slides[0]?.removeEventListener('transitionend', onEnd);
+          scheduleAutoplay();
+        }, TRANSITION_DURATION_MS + 150);
       });
     });
   };
 
   const revealDivider = () => {
-    if (!homeView || dividerVisible) return;
+    if (!homeView || dividerVisible || destroyed) return;
 
     syncDivider();
     dividerVisible = true;
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        if (!homeView) return;
+        if (!homeView || destroyed) return;
 
         homeView.classList.add('is-divider-visible');
 
-        window.setTimeout(revealCarousel, 180);
+        revealTimer = window.setTimeout(
+          revealCarousel,
+          180
+        );
       });
     });
   };
@@ -461,18 +730,19 @@
       };
 
       control.addEventListener('transitionend', onEnd);
+
+      window.setTimeout(() => {
+        control.removeEventListener('transitionend', onEnd);
+        revealDivider();
+      }, TRANSITION_DURATION_MS + 150);
     };
 
-    if (
-      mainView.classList.contains('is-controls-visible')
-    ) {
+    if (mainView.classList.contains('is-controls-visible')) {
       return waitForArrival();
     }
 
     controlsObserver = new MutationObserver(() => {
-      if (
-        !mainView?.classList.contains('is-controls-visible')
-      ) {
+      if (!mainView?.classList.contains('is-controls-visible')) {
         return;
       }
 
@@ -524,9 +794,14 @@
         layoutObserver.observe(element);
       });
 
-    if (viewport) {
-      layoutObserver.observe(viewport);
-    }
+    /*
+     * Observe the slide contents, not the viewport itself.
+     * This avoids resize feedback loops.
+     */
+
+    slides.forEach(slide => {
+      layoutObserver.observe(slide);
+    });
   };
 
   /* =========================================================
@@ -628,7 +903,8 @@
     });
 
     mainObserver.observe(document.body, {
-      childList: true
+      childList: true,
+      subtree: true
     });
   }
 
@@ -637,6 +913,8 @@
      ========================================================= */
 
   window.addEventListener('pagehide', () => {
+    destroyed = true;
+
     mainObserver?.disconnect();
     controlsObserver?.disconnect();
     menuObserver?.disconnect();
@@ -644,13 +922,21 @@
 
     stopAutoplay();
 
-    document.removeEventListener(
-      'vb:home-go-to-slide',
-      handleExternalSlideRequest
-    );
+    if (transitionTimer !== null) {
+      clearTimeout(transitionTimer);
+    }
+
+    if (revealTimer !== null) {
+      clearTimeout(revealTimer);
+    }
 
     if (syncFrame !== null) {
       cancelAnimationFrame(syncFrame);
     }
+
+    document.removeEventListener(
+      'vb:home-go-to-slide',
+      handleExternalSlideRequest
+    );
   }, { once: true });
 })();
