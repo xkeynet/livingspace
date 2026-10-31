@@ -257,7 +257,7 @@
     const contact = createElement('div', 'main-menu__text main-menu__contact');
 
     const name = createElement('div', 'main-menu__contact-name');
-    name.textContent = 'LIVINGSPACE';
+    name.textContent = 'LIVINGSPACE ČELADNÁ';
 
     const email = createElement('a', 'main-menu__contact-email');
     email.href = 'mailto:design@livingspace.cz';
