@@ -48,9 +48,10 @@
   let dividerSyncFrame = null;
   let dividerLastY = null;
   let dividerLastTime = null;
-  let dividerVisualY = 0;
-  let dividerVelocity = 0;
+  let dividerVisualY = null;
   let dividerTracking = false;
+  let dividerSettling = false;
+  let dividerStableFrames = 0;
 
   /* =========================================================
      HELPERS
@@ -84,6 +85,8 @@
 
   const stopDividerTracking = () => {
     dividerTracking = false;
+    dividerSettling = false;
+    dividerStableFrames = 0;
 
     if (dividerSyncFrame !== null) {
       cancelAnimationFrame(dividerSyncFrame);
@@ -97,31 +100,45 @@
 
     dividerLastY = null;
     dividerLastTime = null;
-    dividerVisualY = 0;
-    dividerVelocity = 0;
+    dividerVisualY = null;
   };
 
   const syncDividerMotion = timestamp => {
     dividerSyncFrame = null;
     if (!dividerTracking || !menuDivider) return;
 
-    const actualY = menuDivider.getBoundingClientRect().top - dividerVisualY;
-    const deltaTime = dividerLastTime === null ? 16.667 : Math.min(50, Math.max(1, timestamp - dividerLastTime));
-    const actualVelocity = dividerLastY === null ? 0 : (actualY - dividerLastY) / deltaTime;
+    const renderedY = menuDivider.getBoundingClientRect().top;
+    const currentOffset = dividerVisualY === null ? 0 : dividerVisualY - dividerLastY;
+    const actualY = renderedY - currentOffset;
 
-    if (dividerLastY === null) {
-      dividerVisualY = 0;
-      dividerVelocity = actualVelocity;
+    const deltaTime = dividerLastTime === null
+      ? 16.667
+      : Math.min(50, Math.max(1, timestamp - dividerLastTime));
+
+    if (dividerVisualY === null) {
+      dividerVisualY = actualY;
     } else {
-      const blend = 1 - Math.exp(-deltaTime / 38);
-      dividerVelocity += (actualVelocity - dividerVelocity) * blend;
-      const predictedY = actualY + dividerVelocity * Math.min(18, deltaTime);
-      const currentY = actualY + dividerVisualY;
-      const nextY = currentY + (predictedY - currentY) * blend;
-      dividerVisualY = nextY - actualY;
+      const blend = 1 - Math.exp(-deltaTime / 28);
+      dividerVisualY += (actualY - dividerVisualY) * blend;
     }
 
-    menuDivider.style.transform = `translate3d(0, ${dividerVisualY}px, 0)`;
+    const offset = dividerVisualY - actualY;
+
+    menuDivider.style.transform = `translate3d(0, ${offset}px, 0)`;
+
+    if (dividerSettling) {
+      const positionStable = dividerLastY !== null && Math.abs(actualY - dividerLastY) < 0.025;
+      const offsetStable = Math.abs(offset) < 0.025;
+
+      dividerStableFrames = positionStable && offsetStable
+        ? dividerStableFrames + 1
+        : 0;
+
+      if (dividerStableFrames >= 4) {
+        stopDividerTracking();
+        return;
+      }
+    }
 
     dividerLastY = actualY;
     dividerLastTime = timestamp;
@@ -131,13 +148,18 @@
   const startDividerTracking = () => {
     if (!menuDivider) return;
 
-    if (dividerSyncFrame !== null) cancelAnimationFrame(dividerSyncFrame);
+    if (dividerTracking) {
+      dividerSettling = false;
+      dividerStableFrames = 0;
+      return;
+    }
 
     dividerTracking = true;
+    dividerSettling = false;
+    dividerStableFrames = 0;
     dividerLastY = null;
     dividerLastTime = null;
-    dividerVisualY = 0;
-    dividerVelocity = 0;
+    dividerVisualY = null;
 
     menuDivider.style.transform = '';
     menuDivider.style.willChange = 'transform';
@@ -148,41 +170,8 @@
   const finishDividerTracking = () => {
     if (!dividerTracking) return;
 
-    window.setTimeout(() => {
-      if (!dividerTracking || !menuDivider) return;
-
-      const actualY = menuDivider.getBoundingClientRect().top - dividerVisualY;
-      const offset = dividerVisualY;
-
-      if (Math.abs(offset) < 0.5) {
-        stopDividerTracking();
-        return;
-      }
-
-      if (dividerSyncFrame !== null) {
-        cancelAnimationFrame(dividerSyncFrame);
-        dividerSyncFrame = null;
-      }
-
-      dividerTracking = false;
-      menuDivider.animate(
-        [
-          { transform: `translate3d(0, ${offset}px, 0)` },
-          { transform: 'translate3d(0, 0, 0)' }
-        ],
-        {
-          duration: 120,
-          easing: 'cubic-bezier(0.2, 0.9, 0.2, 1)'
-        }
-      );
-
-      menuDivider.style.transform = '';
-      menuDivider.style.willChange = '';
-      dividerLastY = actualY;
-      dividerLastTime = null;
-      dividerVisualY = 0;
-      dividerVelocity = 0;
-    }, 440);
+    dividerSettling = true;
+    dividerStableFrames = 0;
   };
 
   /* =========================================================
