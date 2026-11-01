@@ -1,1 +1,301 @@
+/* =========================================================
+   LIVINGSPACE — ICONICS
+   SOCIAL ICONS & TRADEMARK
 
+   HTML = STRUKTURA
+   JS   = OBSAH A FUNKČNÍ LOGIKA
+   CSS  = DESIGN A RESPONZIVITA
+   ========================================================= */
+
+:root {
+  /* =======================================================
+     01 — COLORS
+     ======================================================= */
+
+  --iconicsWhite:#FFFFFF;
+  --iconicsMuted:rgba(255,255,255,0.55);
+  --iconicsAccent:#FFE34F;
+
+  /* =======================================================
+     02 — SECTION
+     ======================================================= */
+
+  --iconicsTopGap:42px;
+  --iconicsMaxW:640px;
+  --iconicsBottomGap:0px;
+
+  /* =======================================================
+     03 — ALIEN
+     ======================================================= */
+
+  --iconicsAlienW:110px;
+  --iconicsAlienOpacity:1;
+  --iconicsAlienGap:22px;
+
+  /* =======================================================
+     04 — HEADING
+     ======================================================= */
+
+  --iconicsHeadingFont:"Barlow",sans-serif;
+  --iconicsHeadingSize:15px;
+  --iconicsHeadingWeight:600;
+  --iconicsHeadingSpacing:0.01em;
+  --iconicsHeadingLineHeight:1.3;
+
+  /* =======================================================
+     05 — SOCIAL ICONS
+     ======================================================= */
+
+  --iconicsIconSize:23px;
+  --iconicsIconBox:28px;
+  --iconicsIconGap:13px;
+  --iconicsIconsTopGap:14px;
+
+  /* =======================================================
+     06 — DIVIDER
+     ======================================================= */
+
+  --iconicsDividerW:1px;
+  --iconicsDividerH:23px;
+  --iconicsDividerColor:rgba(255,255,255,0.45);
+
+  /* =======================================================
+     07 — COPYRIGHT
+     ======================================================= */
+
+  --iconicsCopyrightTopGap:34px;
+  --iconicsCopyrightSize:11px;
+  --iconicsCopyrightWeight:400;
+  --iconicsCopyrightSpacing:0.02em;
+  --iconicsCopyrightLineHeight:1.5;
+}
+
+/* =========================================================
+   SECTION
+   ========================================================= */
+
+.iconics {
+  position:relative;
+  width:100%;
+  max-width:var(--iconicsMaxW);
+  box-sizing:border-box;
+  margin:var(--iconicsTopGap) auto var(--iconicsBottomGap);
+  padding:0;
+  color:var(--iconicsWhite);
+  pointer-events:none;
+}
+
+/* =========================================================
+   MAIN LAYOUT
+   ========================================================= */
+
+.iconics__main {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  min-width:0;
+  gap:var(--iconicsAlienGap);
+}
+
+/* =========================================================
+   ALIEN
+   ========================================================= */
+
+.iconics__alien {
+  display:block;
+  flex:0 0 var(--iconicsAlienW);
+  width:var(--iconicsAlienW);
+  max-width:var(--iconicsAlienW);
+  height:auto;
+  object-fit:contain;
+  opacity:var(--iconicsAlienOpacity);
+  user-select:none;
+  -webkit-user-select:none;
+  -webkit-user-drag:none;
+  pointer-events:none;
+}
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.iconics__content {
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  flex:0 1 auto;
+  min-width:0;
+}
+
+/* =========================================================
+   HEADING
+   ========================================================= */
+
+.iconics__heading {
+  margin:0;
+  padding:0;
+  color:var(--iconicsWhite);
+  font-family:var(--iconicsHeadingFont);
+  font-size:var(--iconicsHeadingSize);
+  font-weight:var(--iconicsHeadingWeight);
+  line-height:var(--iconicsHeadingLineHeight);
+  letter-spacing:var(--iconicsHeadingSpacing);
+  text-align:left;
+}
+
+/* =========================================================
+   SOCIAL ICONS
+   ========================================================= */
+
+.iconics__icons {
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  flex-wrap:nowrap;
+  width:max-content;
+  max-width:100%;
+  min-width:0;
+  margin:var(--iconicsIconsTopGap) 0 0;
+  padding:0;
+  gap:var(--iconicsIconGap);
+}
+
+.iconics__item {
+  display:inline-flex;
+  flex:0 0 var(--iconicsIconBox);
+  align-items:center;
+  justify-content:center;
+  width:var(--iconicsIconBox);
+  height:var(--iconicsIconBox);
+  margin:0;
+  padding:0;
+}
+
+.iconics__icon {
+  display:block;
+  width:var(--iconicsIconSize);
+  height:var(--iconicsIconSize);
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  user-select:none;
+  -webkit-user-select:none;
+  -webkit-user-drag:none;
+  pointer-events:none;
+}
+
+/* =========================================================
+   VERTICAL DIVIDER
+   ========================================================= */
+
+.iconics__divider {
+  display:block;
+  flex:0 0 var(--iconicsDividerW);
+  width:var(--iconicsDividerW);
+  height:var(--iconicsDividerH);
+  margin:0;
+  padding:0;
+  background:var(--iconicsDividerColor);
+}
+
+/* =========================================================
+   COPYRIGHT
+   ========================================================= */
+
+.iconics__copyright {
+  width:100%;
+  margin:var(--iconicsCopyrightTopGap) 0 0;
+  padding:0;
+  color:var(--iconicsMuted);
+  font-family:var(--iconicsHeadingFont);
+  font-size:var(--iconicsCopyrightSize);
+  font-weight:var(--iconicsCopyrightWeight);
+  line-height:var(--iconicsCopyrightLineHeight);
+  letter-spacing:var(--iconicsCopyrightSpacing);
+  text-align:center;
+}
+
+/* =========================================================
+   SMALL MOBILE — UP TO 374px
+   ========================================================= */
+
+@media (max-width:374px) {
+  :root {
+    --iconicsTopGap:36px;
+    --iconicsAlienW:66px;
+    --iconicsAlienGap:10px;
+    --iconicsHeadingSize:12px;
+    --iconicsIconSize:18px;
+    --iconicsIconBox:20px;
+    --iconicsIconGap:5px;
+    --iconicsIconsTopGap:11px;
+    --iconicsDividerH:19px;
+    --iconicsCopyrightTopGap:28px;
+    --iconicsCopyrightSize:10px;
+  }
+}
+
+/* =========================================================
+   MOBILE — 375px TO 767px
+   ========================================================= */
+
+@media (min-width:375px) and (max-width:767px) {
+  :root {
+    --iconicsAlienW:82px;
+    --iconicsAlienGap:12px;
+    --iconicsHeadingSize:13px;
+    --iconicsIconSize:20px;
+    --iconicsIconBox:23px;
+    --iconicsIconGap:7px;
+    --iconicsIconsTopGap:12px;
+  }
+}
+
+/* =========================================================
+   TABLET — 768px TO 1199px
+   ========================================================= */
+
+@media (min-width:768px) and (max-width:1199px) {
+  :root {
+    --iconicsAlienW:105px;
+    --iconicsAlienGap:20px;
+    --iconicsHeadingSize:15px;
+    --iconicsIconSize:24px;
+    --iconicsIconBox:30px;
+    --iconicsIconGap:14px;
+  }
+}
+
+/* =========================================================
+   DESKTOP — 1200px+
+   ========================================================= */
+
+@media (min-width:1200px) {
+  :root {
+    --iconicsTopGap:52px;
+    --iconicsAlienW:125px;
+    --iconicsAlienGap:28px;
+    --iconicsHeadingSize:17px;
+    --iconicsIconSize:26px;
+    --iconicsIconBox:34px;
+    --iconicsIconGap:16px;
+    --iconicsIconsTopGap:16px;
+    --iconicsCopyrightTopGap:42px;
+    --iconicsCopyrightSize:12px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion:reduce) {
+  .iconics,
+  .iconics__alien,
+  .iconics__icon {
+    transition:none;
+    animation:none;
+  }
+}
