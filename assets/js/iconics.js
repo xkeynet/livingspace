@@ -20,6 +20,12 @@
     ]
   };
 
+  let section = null;
+  let mainView = null;
+  let mainObserver = null;
+  let menuObserver = null;
+  let destroyed = false;
+
   const createElement = (tag, className = '') => {
     const element = document.createElement(tag);
     if (className) element.className = className;
@@ -43,9 +49,9 @@
   };
 
   const createIconics = () => {
-    const section = createElement('section', 'iconics');
-    section.id = 'iconics';
-    section.setAttribute('aria-label', 'LIVINGSPACE — sociální sítě');
+    const element = createElement('section', 'iconics');
+    element.id = 'iconics';
+    element.setAttribute('aria-label', 'LIVINGSPACE — sociální sítě');
 
     const main = createElement('div', 'iconics__main');
 
@@ -79,36 +85,88 @@
 
     content.append(heading, icons);
     main.append(alien, content);
-    section.append(main, copyright);
+    element.append(main, copyright);
 
-    return section;
+    return element;
+  };
+
+  const syncPlacement = () => {
+    if (destroyed || !section || !mainView) return;
+
+    const menuOpen = mainView.classList.contains('is-menu-visible');
+
+    if (menuOpen) {
+      const divider = mainView.querySelector('.main-menu__divider');
+      if (!divider) return;
+
+      if (section.previousElementSibling !== divider) {
+        divider.insertAdjacentElement('afterend', section);
+      }
+
+      section.classList.add('iconics--menu');
+      return;
+    }
+
+    const carousel = mainView.querySelector('#homeView .home-carousel');
+    if (!carousel) return;
+
+    if (section.previousElementSibling !== carousel) {
+      carousel.insertAdjacentElement('afterend', section);
+    }
+
+    section.classList.remove('iconics--menu');
   };
 
   const mount = () => {
-    if (document.getElementById('iconics')) return true;
+    if (destroyed) return false;
 
-    const carousel = document.querySelector('#homeView .home-carousel');
-    if (!carousel) return false;
+    mainView = document.getElementById('mainView');
+    if (!mainView) return false;
 
-    const section = createIconics();
-    carousel.insertAdjacentElement('afterend', section);
+    const carousel = mainView.querySelector('#homeView .home-carousel');
+    const divider = mainView.querySelector('.main-menu__divider');
+
+    if (!carousel || !divider) return false;
+
+    section = document.getElementById('iconics') || createIconics();
+
+    syncPlacement();
+
+    if (!menuObserver) {
+      menuObserver = new MutationObserver(syncPlacement);
+
+      menuObserver.observe(mainView, {
+        attributes: true,
+        attributeFilter: ['class']
+      });
+    }
 
     return true;
   };
 
   if (!mount()) {
-    const observer = new MutationObserver(() => {
+    mainObserver = new MutationObserver(() => {
       if (!mount()) return;
-      observer.disconnect();
+
+      mainObserver?.disconnect();
+      mainObserver = null;
     });
 
-    observer.observe(document.body, {
+    mainObserver.observe(document.body, {
       childList: true,
       subtree: true
     });
-
-    window.addEventListener('pagehide', () => {
-      observer.disconnect();
-    }, { once: true });
   }
+
+  window.addEventListener('pagehide', () => {
+    destroyed = true;
+
+    mainObserver?.disconnect();
+    menuObserver?.disconnect();
+
+    mainObserver = null;
+    menuObserver = null;
+    section = null;
+    mainView = null;
+  }, { once: true });
 })();
