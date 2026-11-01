@@ -44,6 +44,13 @@
   let menuItems = [];
   let saber = null;
   let saberHandle = null;
+  let menuDivider = null;
+  let dividerSyncFrame = null;
+  let dividerLastY = null;
+  let dividerLastTime = null;
+  let dividerVisualY = 0;
+  let dividerVelocity = 0;
+  let dividerTracking = false;
 
   /* =========================================================
      HELPERS
@@ -70,6 +77,113 @@
   const crossIconPreload = new Image();
   crossIconPreload.decoding = 'sync';
   crossIconPreload.src = ASSETS.cross;
+
+  /* =========================================================
+     DIVIDER — SMOOTH MOTION
+     ========================================================= */
+
+  const stopDividerTracking = () => {
+    dividerTracking = false;
+
+    if (dividerSyncFrame !== null) {
+      cancelAnimationFrame(dividerSyncFrame);
+      dividerSyncFrame = null;
+    }
+
+    if (menuDivider) {
+      menuDivider.style.transform = '';
+      menuDivider.style.willChange = '';
+    }
+
+    dividerLastY = null;
+    dividerLastTime = null;
+    dividerVisualY = 0;
+    dividerVelocity = 0;
+  };
+
+  const syncDividerMotion = timestamp => {
+    dividerSyncFrame = null;
+    if (!dividerTracking || !menuDivider) return;
+
+    const actualY = menuDivider.getBoundingClientRect().top - dividerVisualY;
+    const deltaTime = dividerLastTime === null ? 16.667 : Math.min(50, Math.max(1, timestamp - dividerLastTime));
+    const actualVelocity = dividerLastY === null ? 0 : (actualY - dividerLastY) / deltaTime;
+
+    if (dividerLastY === null) {
+      dividerVisualY = 0;
+      dividerVelocity = actualVelocity;
+    } else {
+      const blend = 1 - Math.exp(-deltaTime / 38);
+      dividerVelocity += (actualVelocity - dividerVelocity) * blend;
+      const predictedY = actualY + dividerVelocity * Math.min(18, deltaTime);
+      const currentY = actualY + dividerVisualY;
+      const nextY = currentY + (predictedY - currentY) * blend;
+      dividerVisualY = nextY - actualY;
+    }
+
+    menuDivider.style.transform = `translate3d(0, ${dividerVisualY}px, 0)`;
+
+    dividerLastY = actualY;
+    dividerLastTime = timestamp;
+    dividerSyncFrame = requestAnimationFrame(syncDividerMotion);
+  };
+
+  const startDividerTracking = () => {
+    if (!menuDivider) return;
+
+    if (dividerSyncFrame !== null) cancelAnimationFrame(dividerSyncFrame);
+
+    dividerTracking = true;
+    dividerLastY = null;
+    dividerLastTime = null;
+    dividerVisualY = 0;
+    dividerVelocity = 0;
+
+    menuDivider.style.transform = '';
+    menuDivider.style.willChange = 'transform';
+
+    dividerSyncFrame = requestAnimationFrame(syncDividerMotion);
+  };
+
+  const finishDividerTracking = () => {
+    if (!dividerTracking) return;
+
+    window.setTimeout(() => {
+      if (!dividerTracking || !menuDivider) return;
+
+      const actualY = menuDivider.getBoundingClientRect().top - dividerVisualY;
+      const offset = dividerVisualY;
+
+      if (Math.abs(offset) < 0.5) {
+        stopDividerTracking();
+        return;
+      }
+
+      if (dividerSyncFrame !== null) {
+        cancelAnimationFrame(dividerSyncFrame);
+        dividerSyncFrame = null;
+      }
+
+      dividerTracking = false;
+      menuDivider.animate(
+        [
+          { transform: `translate3d(0, ${offset}px, 0)` },
+          { transform: 'translate3d(0, 0, 0)' }
+        ],
+        {
+          duration: 120,
+          easing: 'cubic-bezier(0.2, 0.9, 0.2, 1)'
+        }
+      );
+
+      menuDivider.style.transform = '';
+      menuDivider.style.willChange = '';
+      dividerLastY = actualY;
+      dividerLastTime = null;
+      dividerVisualY = 0;
+      dividerVelocity = 0;
+    }, 440);
+  };
 
   /* =========================================================
      MENU VISIBILITY
@@ -318,9 +432,9 @@
       createMenuPanel(createContactContent())
     );
 
-    const divider = createElement('div', 'main-menu__divider');
+    menuDivider = createElement('div', 'main-menu__divider');
 
-    content.append(menuList, divider);
+    content.append(menuList, menuDivider);
     menu.appendChild(content);
 
     return menu;
@@ -426,6 +540,8 @@
     const item = menuItems[index];
     if (!item) return;
 
+    startDividerTracking();
+
     item.classList.remove('is-open');
     spinChevron(item, false);
 
@@ -437,6 +553,7 @@
 
     if (openIndex === index) openIndex = -1;
     scheduleSaberSync();
+    finishDividerTracking();
   };
 
   const openItem = index => {
@@ -692,6 +809,8 @@
       cancelAnimationFrame(saberSyncFrame);
       saberSyncFrame = null;
     }
+
+    stopDividerTracking();
 
     menuResizeObserver?.disconnect();
     menuResizeObserver = null;
