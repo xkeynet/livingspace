@@ -548,7 +548,7 @@
 
 .main-menu__panel {
   display: grid;
-  grid-template-rows: 0fr;
+  grid-template-rows: minmax(0, 0fr);
   list-style: none;
   overflow: hidden;
   opacity: 0;
@@ -559,15 +559,15 @@
 }
 
 .main-menu__item.is-open + .main-menu__panel {
-  grid-template-rows: 1fr;
+  grid-template-rows: minmax(0, 1fr);
   opacity: 1;
 }
 
 .main-menu__panel-inner {
   min-height: 0;
   overflow: hidden;
-  padding: 0 var(--arrow-safe) 0 0;
-  border-top: 0 solid var(--main-line-soft);
+  padding: 10px var(--arrow-safe) 12px 0;
+  border-top: 1px solid var(--main-line-soft);
 
   transition:
     padding-top 420ms cubic-bezier(0.2, 0.9, 0.2, 1),
