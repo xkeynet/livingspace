@@ -54,8 +54,11 @@
   let controlsObserver = null;
   let menuObserver = null;
   let layoutObserver = null;
+  let panelObserver = null;
 
   let syncFrame = null;
+  let trackingFrame = null;
+  let trackingTimer = null;
   let autoplayTimer = null;
   let transitionTimer = null;
   let revealTimer = null;
@@ -133,6 +136,56 @@
       syncFrame = null;
       syncDivider();
     });
+  };
+
+  const stopDividerTracking = () => {
+    if (trackingFrame !== null) {
+      cancelAnimationFrame(trackingFrame);
+      trackingFrame = null;
+    }
+
+    if (trackingTimer !== null) {
+      clearTimeout(trackingTimer);
+      trackingTimer = null;
+    }
+
+    if (!homeView || destroyed) return;
+
+    syncDivider();
+    homeView.classList.remove('is-divider-tracking');
+  };
+
+  const startDividerTracking = () => {
+    if (!homeView || destroyed || !isMenuOpen()) return;
+
+    if (trackingFrame !== null) {
+      cancelAnimationFrame(trackingFrame);
+      trackingFrame = null;
+    }
+
+    if (trackingTimer !== null) {
+      clearTimeout(trackingTimer);
+      trackingTimer = null;
+    }
+
+    homeView.classList.add('is-divider-tracking');
+    syncDivider();
+
+    const track = () => {
+      if (destroyed || !homeView || !isMenuOpen()) {
+        stopDividerTracking();
+        return;
+      }
+
+      syncDivider();
+      trackingFrame = requestAnimationFrame(track);
+    };
+
+    trackingFrame = requestAnimationFrame(track);
+
+    trackingTimer = window.setTimeout(() => {
+      stopDividerTracking();
+    }, 500);
   };
 
   /* =========================================================
@@ -904,6 +957,8 @@
 
   const watchMenu = () => {
     menuObserver = new MutationObserver(() => {
+      if (!isMenuOpen()) stopDividerTracking();
+
       scheduleDividerSync();
 
       if (isMenuOpen()) {
@@ -919,11 +974,35 @@
     });
   };
 
+  const watchPanels = () => {
+    const list = mainView?.querySelector('.main-menu__list');
+    if (!list) return;
+
+    panelObserver = new MutationObserver(mutations => {
+      if (!isMenuOpen()) return;
+
+      const changed = mutations.some(mutation =>
+        mutation.target.classList.contains('main-menu__item') &&
+        mutation.oldValue?.includes('is-open') !==
+          mutation.target.classList.contains('is-open')
+      );
+
+      if (changed) startDividerTracking();
+    });
+
+    panelObserver.observe(list, {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class'],
+      attributeOldValue: true
+    });
+  };
+
   const watchLayout = () => {
     if (typeof ResizeObserver === 'undefined') return;
 
     layoutObserver = new ResizeObserver(() => {
-      scheduleDividerSync();
+      if (trackingFrame === null) scheduleDividerSync();
       syncViewportHeight(activeIndex);
     });
 
@@ -976,6 +1055,7 @@
     syncDivider();
     watchControls();
     watchMenu();
+    watchPanels();
     watchLayout();
   };
 
@@ -1051,6 +1131,7 @@
     mainObserver?.disconnect();
     controlsObserver?.disconnect();
     menuObserver?.disconnect();
+    panelObserver?.disconnect();
     layoutObserver?.disconnect();
 
     stopAutoplay();
@@ -1060,6 +1141,8 @@
     if (controlsTimer !== null) clearTimeout(controlsTimer);
     if (arrivalTimer !== null) clearTimeout(arrivalTimer);
     if (syncFrame !== null) cancelAnimationFrame(syncFrame);
+    if (trackingFrame !== null) cancelAnimationFrame(trackingFrame);
+    if (trackingTimer !== null) clearTimeout(trackingTimer);
 
     if (arrivalEndHandler && slides[0]) {
       slides[0].removeEventListener(
