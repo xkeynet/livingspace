@@ -615,6 +615,7 @@
    ========================================================= */
 
 .main-menu__art {
+  color: var(--main-foreground);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
