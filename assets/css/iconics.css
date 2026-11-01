@@ -25,7 +25,15 @@
   --iconicsBottomGap:0px;
 
   /* =======================================================
-     03 — ALIEN
+     03 — ARRIVAL ANIMATION
+     ======================================================= */
+
+  --iconicsArrivalDuration:1050ms;
+  --iconicsArrivalEase:cubic-bezier(0.16,1,0.3,1);
+  --iconicsArrivalX:100vw;
+
+  /* =======================================================
+     04 — ALIEN
      ======================================================= */
 
   --iconicsAlienW:110px;
@@ -33,7 +41,7 @@
   --iconicsAlienGap:22px;
 
   /* =======================================================
-     04 — HEADING
+     05 — HEADING
      ======================================================= */
 
   --iconicsHeadingFont:"Barlow",sans-serif;
@@ -43,7 +51,7 @@
   --iconicsHeadingLineHeight:1.3;
 
   /* =======================================================
-     05 — SOCIAL ICONS
+     06 — SOCIAL ICONS
      ======================================================= */
 
   --iconicsIconSize:23px;
@@ -52,7 +60,7 @@
   --iconicsIconsTopGap:14px;
 
   /* =======================================================
-     06 — DIVIDER
+     07 — DIVIDER
      ======================================================= */
 
   --iconicsDividerW:1px;
@@ -60,7 +68,7 @@
   --iconicsDividerColor:rgba(255,255,255,0.45);
 
   /* =======================================================
-     07 — COPYRIGHT
+     08 — COPYRIGHT
      ======================================================= */
 
   --iconicsCopyrightTopGap:34px;
@@ -71,7 +79,7 @@
 }
 
 /* =========================================================
-   SECTION — SYNCHRONIZED WITH HOME CAROUSEL
+   SECTION — SYNCHRONIZED CAROUSEL ARRIVAL
    ========================================================= */
 
 .iconics {
@@ -83,18 +91,27 @@
   padding:0;
   color:var(--iconicsWhite);
   pointer-events:none;
+
   opacity:0;
   visibility:hidden;
+  transform:translate3d(var(--iconicsArrivalX),0,0);
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+
   transition:
-    opacity var(--homeCarouselFadeDuration,220ms) linear,
-    visibility 0s linear var(--homeCarouselFadeDuration,220ms);
+    transform var(--iconicsArrivalDuration) var(--iconicsArrivalEase),
+    opacity var(--iconicsArrivalDuration) linear,
+    visibility 0s linear var(--iconicsArrivalDuration);
 }
 
 .home-view.is-carousel-visible .iconics {
   opacity:1;
   visibility:visible;
+  transform:translate3d(0,0,0);
+
   transition:
-    opacity var(--homeCarouselFadeDuration,220ms) linear,
+    transform var(--iconicsArrivalDuration) var(--iconicsArrivalEase),
+    opacity var(--iconicsArrivalDuration) linear,
     visibility 0s;
 }
 
@@ -305,10 +322,11 @@
    ========================================================= */
 
 @media (prefers-reduced-motion:reduce) {
-  .iconics,
-  .iconics__alien,
-  .iconics__icon {
+  .iconics {
     transition:none;
-    animation:none;
+  }
+
+  .home-view.is-carousel-visible .iconics {
+    transform:none;
   }
 }
