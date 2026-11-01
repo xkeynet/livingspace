@@ -57,7 +57,7 @@
   --iconicsIconSize:23px;
   --iconicsIconBox:28px;
   --iconicsIconGap:13px;
-  --iconicsIconsTopGap:14px;
+  --iconicsIconsTopGap:29px;
 
   /* =======================================================
      07 — DIVIDER
@@ -72,10 +72,10 @@
      ======================================================= */
 
   --iconicsCopyrightTopGap:34px;
-  --iconicsCopyrightSize:11px;
-  --iconicsCopyrightWeight:400;
-  --iconicsCopyrightSpacing:0.02em;
-  --iconicsCopyrightLineHeight:1.5;
+  --iconicsCopyrightSize:var(--iconicsHeadingSize);
+  --iconicsCopyrightWeight:var(--iconicsHeadingWeight);
+  --iconicsCopyrightSpacing:0.01em;
+  --iconicsCopyrightLineHeight:1.3;
 }
 
 /* =========================================================
@@ -238,7 +238,7 @@
   width:100%;
   margin:var(--iconicsCopyrightTopGap) 0 0;
   padding:0;
-  color:var(--iconicsMuted);
+  color:var(--iconicsWhite);
   font-family:var(--iconicsHeadingFont);
   font-size:var(--iconicsCopyrightSize);
   font-weight:var(--iconicsCopyrightWeight);
@@ -260,10 +260,9 @@
     --iconicsIconSize:18px;
     --iconicsIconBox:20px;
     --iconicsIconGap:5px;
-    --iconicsIconsTopGap:11px;
+    --iconicsIconsTopGap:26px;
     --iconicsDividerH:19px;
     --iconicsCopyrightTopGap:28px;
-    --iconicsCopyrightSize:10px;
   }
 }
 
@@ -279,7 +278,7 @@
     --iconicsIconSize:20px;
     --iconicsIconBox:23px;
     --iconicsIconGap:7px;
-    --iconicsIconsTopGap:12px;
+    --iconicsIconsTopGap:27px;
   }
 }
 
@@ -311,9 +310,8 @@
     --iconicsIconSize:26px;
     --iconicsIconBox:34px;
     --iconicsIconGap:16px;
-    --iconicsIconsTopGap:16px;
+    --iconicsIconsTopGap:31px;
     --iconicsCopyrightTopGap:42px;
-    --iconicsCopyrightSize:12px;
   }
 }
 
