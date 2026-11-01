@@ -887,3 +887,13 @@
       border-top-width 240ms ease-out;
   }
 }
+
+/* =========================================================
+   MAIN MENU — SCROLL LOCK
+   ========================================================= */
+
+.main-menu {
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: pan-x;
+}
