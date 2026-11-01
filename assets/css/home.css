@@ -31,7 +31,7 @@
      ======================================================= */
 
   --homeDividerH:1px;
-  --homeDividerColor:rgba(255,255,255,0.18);
+  --homeDividerColor:rgba(255,255,255,0.38);
   --homeDividerShadow:0 1px 8px rgba(255,255,255,0.06);
   --homeDividerMoveDuration:900ms;
   --homeDividerFadeDuration:420ms;
@@ -200,8 +200,8 @@
 .home-view__divider {
   position:absolute;
   top:0;
-  left:var(--menu-left);
-  right:var(--menu-right);
+  left:0;
+  right:0;
   height:var(--homeDividerH);
   background:var(--homeDividerColor);
   box-shadow:var(--homeDividerShadow);
@@ -312,10 +312,10 @@
 
 .home-carousel__image {
   display:block;
-  width:var(--homeImageW);
-  max-width:var(--homeImageMaxW);
+  width:100vw;
+  max-width:none;
   height:auto;
-  margin:0 auto;
+  margin:0 0 0 calc(-1 * var(--menu-left));
   border-radius:var(--homeImageRadius);
   object-fit:contain;
   object-position:center;
@@ -488,12 +488,12 @@
   transform:scale(var(--homeBtnActiveScale));
 }
 
-.home-view .home-carousel .home-carousel__actions .home-carousel__button:focus-visible {
+.home-view .home-carousel .home-carousel .home-carousel__button:focus-visible {
   outline:var(--homeBtnFocusW) solid var(--homeBtnFocusColor);
   outline-offset:var(--homeBtnFocusGap);
 }
 
-.home-view .home-carousel .home-carousel__actions .home-carousel__button:disabled {
+.home-view .home-carousel .home-carousel__button:disabled {
   opacity:1;
   cursor:not-allowed;
 }
