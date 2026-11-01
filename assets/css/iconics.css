@@ -7,78 +7,6 @@
    CSS  = DESIGN A RESPONZIVITA
    ========================================================= */
 
-:root {
-  /* =======================================================
-     01 — COLORS
-     ======================================================= */
-
-  --iconicsWhite:#FFFFFF;
-  --iconicsMuted:rgba(255,255,255,0.55);
-  --iconicsAccent:#FFE34F;
-
-  /* =======================================================
-     02 — SECTION
-     ======================================================= */
-
-  --iconicsTopGap:42px;
-  --iconicsMaxW:640px;
-  --iconicsBottomGap:0px;
-
-  /* =======================================================
-     03 — ARRIVAL ANIMATION
-     ======================================================= */
-
-  --iconicsArrivalDuration:1050ms;
-  --iconicsArrivalEase:cubic-bezier(0.16,1,0.3,1);
-  --iconicsArrivalX:100vw;
-
-  /* =======================================================
-     04 — ALIEN
-     ======================================================= */
-
-  --iconicsAlienW:55px;
-  --iconicsAlienOpacity:1;
-  --iconicsAlienGap:22px;
-  --iconicsAlienLeft:20px;
-
-  /* =======================================================
-     05 — HEADING
-     ======================================================= */
-
-  --iconicsHeadingFont:"Barlow",sans-serif;
-  --iconicsHeadingSize:15px;
-  --iconicsHeadingWeight:600;
-  --iconicsHeadingSpacing:0.01em;
-  --iconicsHeadingLineHeight:1.3;
-
-  /* =======================================================
-     06 — SOCIAL ICONS
-     ======================================================= */
-
-  --iconicsIconSize:23px;
-  --iconicsIconBox:28px;
-  --iconicsIconGap:13px;
-  --iconicsIconsTopGap:29px;
-
-  /* =======================================================
-     07 — DIVIDER
-     ======================================================= */
-
-  --iconicsDividerW:1px;
-  --iconicsDividerH:23px;
-  --iconicsDividerColor:rgba(255,255,255,0.45);
-
-  /* =======================================================
-     08 — COPYRIGHT
-     ======================================================= */
-
-  --iconicsCopyrightTopGap:34px;
-  --iconicsCopyrightSize:var(--iconicsHeadingSize);
-  --iconicsCopyrightWeight:var(--iconicsHeadingWeight);
-  --iconicsCopyrightSpacing:0.01em;
-  --iconicsCopyrightLineHeight:1.3;
-}
-
 /* =========================================================
    SECTION — SYNCHRONIZED CAROUSEL ARRIVAL
    ========================================================= */
@@ -86,23 +14,23 @@
 .iconics {
   position:relative;
   width:100%;
-  max-width:var(--iconicsMaxW);
+  max-width:none;
   box-sizing:border-box;
-  margin:var(--iconicsTopGap) auto var(--iconicsBottomGap);
+  margin:42px auto 0;
   padding:0;
-  color:var(--iconicsWhite);
+  color:#FFFFFF;
   pointer-events:none;
 
   opacity:0;
   visibility:hidden;
-  transform:translate3d(var(--iconicsArrivalX),0,0);
+  transform:translate3d(100vw,0,0);
   backface-visibility:hidden;
   -webkit-backface-visibility:hidden;
 
   transition:
-    transform var(--iconicsArrivalDuration) var(--iconicsArrivalEase),
-    opacity var(--iconicsArrivalDuration) linear,
-    visibility 0s linear var(--iconicsArrivalDuration);
+    transform 1050ms cubic-bezier(0.16,1,0.3,1),
+    opacity 1050ms linear,
+    visibility 0s linear 1050ms;
 }
 
 .home-view.is-carousel-visible .iconics {
@@ -111,8 +39,8 @@
   transform:translate3d(0,0,0);
 
   transition:
-    transform var(--iconicsArrivalDuration) var(--iconicsArrivalEase),
-    opacity var(--iconicsArrivalDuration) linear,
+    transform 1050ms cubic-bezier(0.16,1,0.3,1),
+    opacity 1050ms linear,
     visibility 0s;
 }
 
@@ -121,12 +49,14 @@
    ========================================================= */
 
 .iconics__main {
+  position:relative;
   display:flex;
   align-items:center;
   justify-content:center;
   width:100%;
   min-width:0;
-  gap:var(--iconicsAlienGap);
+  padding:0;
+  box-sizing:border-box;
 }
 
 /* =========================================================
@@ -136,15 +66,14 @@
 .iconics__alien {
   display:block;
   position:absolute;
-  left:var(--iconicsAlienLeft);
-  top:50%;
-  flex:0 0 var(--iconicsAlienW);
-  width:var(--iconicsAlienW);
-  max-width:var(--iconicsAlienW);
+  left:calc(20px - (100vw - 100%) / 2);
+  top:0;
+  width:49px;
+  max-width:none;
   height:auto;
   object-fit:contain;
-  opacity:var(--iconicsAlienOpacity);
-  transform:translateY(-50%);
+  opacity:1;
+  transform:none;
   user-select:none;
   -webkit-user-select:none;
   -webkit-user-drag:none;
@@ -158,10 +87,13 @@
 .iconics__content {
   display:flex;
   flex-direction:column;
-  align-items:flex-start;
+  align-items:center;
   justify-content:center;
   flex:0 1 auto;
+  width:100%;
   min-width:0;
+  padding:35px 0 0;
+  box-sizing:border-box;
 }
 
 /* =========================================================
@@ -171,13 +103,13 @@
 .iconics__heading {
   margin:0;
   padding:0;
-  color:var(--iconicsWhite);
-  font-family:var(--iconicsHeadingFont);
-  font-size:var(--iconicsHeadingSize);
-  font-weight:var(--iconicsHeadingWeight);
-  line-height:var(--iconicsHeadingLineHeight);
-  letter-spacing:var(--iconicsHeadingSpacing);
-  text-align:left;
+  color:#FFFFFF;
+  font-family:"Barlow",sans-serif;
+  font-size:15px;
+  font-weight:600;
+  line-height:1.3;
+  letter-spacing:0.01em;
+  text-align:center;
 }
 
 /* =========================================================
@@ -187,31 +119,32 @@
 .iconics__icons {
   display:flex;
   align-items:center;
-  justify-content:flex-start;
+  justify-content:space-between;
   flex-wrap:nowrap;
-  width:max-content;
-  max-width:100%;
+  width:calc(100% - 40px);
+  max-width:540px;
   min-width:0;
-  margin:var(--iconicsIconsTopGap) 0 0;
+  margin:29px auto 0;
   padding:0;
-  gap:var(--iconicsIconGap);
+  gap:0;
+  box-sizing:border-box;
 }
 
 .iconics__item {
   display:inline-flex;
-  flex:0 0 var(--iconicsIconBox);
+  flex:0 0 28px;
   align-items:center;
   justify-content:center;
-  width:var(--iconicsIconBox);
-  height:var(--iconicsIconBox);
+  width:28px;
+  height:28px;
   margin:0;
   padding:0;
 }
 
 .iconics__icon {
   display:block;
-  width:var(--iconicsIconSize);
-  height:var(--iconicsIconSize);
+  width:23px;
+  height:23px;
   max-width:100%;
   max-height:100%;
   object-fit:contain;
@@ -227,12 +160,12 @@
 
 .iconics__divider {
   display:block;
-  flex:0 0 var(--iconicsDividerW);
-  width:var(--iconicsDividerW);
-  height:var(--iconicsDividerH);
+  flex:0 0 1px;
+  width:1px;
+  height:23px;
   margin:0;
   padding:0;
-  background:var(--iconicsDividerColor);
+  background:rgba(255,255,255,0.45);
 }
 
 /* =========================================================
@@ -241,14 +174,15 @@
 
 .iconics__copyright {
   width:100%;
-  margin:var(--iconicsCopyrightTopGap) 0 0;
-  padding:0;
-  color:var(--iconicsWhite);
-  font-family:var(--iconicsHeadingFont);
-  font-size:var(--iconicsCopyrightSize);
-  font-weight:var(--iconicsCopyrightWeight);
-  line-height:var(--iconicsCopyrightLineHeight);
-  letter-spacing:var(--iconicsCopyrightSpacing);
+  margin:34px 0 0;
+  padding:0 12px;
+  box-sizing:border-box;
+  color:#FFFFFF;
+  font-family:"Barlow",sans-serif;
+  font-size:15px;
+  font-weight:600;
+  line-height:1.3;
+  letter-spacing:0.01em;
   text-align:center;
 }
 
@@ -257,17 +191,45 @@
    ========================================================= */
 
 @media (max-width:374px) {
-  :root {
-    --iconicsTopGap:36px;
-    --iconicsAlienW:33px;
-    --iconicsAlienGap:10px;
-    --iconicsHeadingSize:12px;
-    --iconicsIconSize:18px;
-    --iconicsIconBox:20px;
-    --iconicsIconGap:5px;
-    --iconicsIconsTopGap:26px;
-    --iconicsDividerH:19px;
-    --iconicsCopyrightTopGap:28px;
+  .iconics {
+    margin-top:36px;
+  }
+
+  .iconics__alien {
+    width:40px;
+  }
+
+  .iconics__content {
+    padding-top:28px;
+  }
+
+  .iconics__heading {
+    font-size:12px;
+  }
+
+  .iconics__icons {
+    width:calc(100% - 40px);
+    margin-top:26px;
+  }
+
+  .iconics__item {
+    flex-basis:20px;
+    width:20px;
+    height:20px;
+  }
+
+  .iconics__icon {
+    width:18px;
+    height:18px;
+  }
+
+  .iconics__divider {
+    height:19px;
+  }
+
+  .iconics__copyright {
+    margin-top:28px;
+    font-size:12px;
   }
 }
 
@@ -276,14 +238,36 @@
    ========================================================= */
 
 @media (min-width:375px) and (max-width:767px) {
-  :root {
-    --iconicsAlienW:41px;
-    --iconicsAlienGap:12px;
-    --iconicsHeadingSize:13px;
-    --iconicsIconSize:20px;
-    --iconicsIconBox:23px;
-    --iconicsIconGap:7px;
-    --iconicsIconsTopGap:27px;
+  .iconics__alien {
+    width:49px;
+  }
+
+  .iconics__content {
+    padding-top:35px;
+  }
+
+  .iconics__heading {
+    font-size:13px;
+  }
+
+  .iconics__icons {
+    width:calc(100% - 40px);
+    margin-top:27px;
+  }
+
+  .iconics__item {
+    flex-basis:23px;
+    width:23px;
+    height:23px;
+  }
+
+  .iconics__icon {
+    width:20px;
+    height:20px;
+  }
+
+  .iconics__copyright {
+    font-size:13px;
   }
 }
 
@@ -292,13 +276,35 @@
    ========================================================= */
 
 @media (min-width:768px) and (max-width:1199px) {
-  :root {
-    --iconicsAlienW:52.5px;
-    --iconicsAlienGap:20px;
-    --iconicsHeadingSize:15px;
-    --iconicsIconSize:24px;
-    --iconicsIconBox:30px;
-    --iconicsIconGap:14px;
+  .iconics__alien {
+    width:63px;
+  }
+
+  .iconics__content {
+    padding-top:45px;
+  }
+
+  .iconics__heading {
+    font-size:15px;
+  }
+
+  .iconics__icons {
+    margin-top:29px;
+  }
+
+  .iconics__item {
+    flex-basis:30px;
+    width:30px;
+    height:30px;
+  }
+
+  .iconics__icon {
+    width:24px;
+    height:24px;
+  }
+
+  .iconics__copyright {
+    font-size:15px;
   }
 }
 
@@ -307,16 +313,40 @@
    ========================================================= */
 
 @media (min-width:1200px) {
-  :root {
-    --iconicsTopGap:52px;
-    --iconicsAlienW:62.5px;
-    --iconicsAlienGap:28px;
-    --iconicsHeadingSize:17px;
-    --iconicsIconSize:26px;
-    --iconicsIconBox:34px;
-    --iconicsIconGap:16px;
-    --iconicsIconsTopGap:31px;
-    --iconicsCopyrightTopGap:42px;
+  .iconics {
+    margin-top:52px;
+  }
+
+  .iconics__alien {
+    width:75px;
+  }
+
+  .iconics__content {
+    padding-top:54px;
+  }
+
+  .iconics__heading {
+    font-size:17px;
+  }
+
+  .iconics__icons {
+    margin-top:31px;
+  }
+
+  .iconics__item {
+    flex-basis:34px;
+    width:34px;
+    height:34px;
+  }
+
+  .iconics__icon {
+    width:26px;
+    height:26px;
+  }
+
+  .iconics__copyright {
+    margin-top:42px;
+    font-size:17px;
   }
 }
 
