@@ -36,9 +36,10 @@
      04 — ALIEN
      ======================================================= */
 
-  --iconicsAlienW:110px;
+  --iconicsAlienW:55px;
   --iconicsAlienOpacity:1;
   --iconicsAlienGap:22px;
+  --iconicsAlienLeft:20px;
 
   /* =======================================================
      05 — HEADING
@@ -134,12 +135,16 @@
 
 .iconics__alien {
   display:block;
+  position:absolute;
+  left:var(--iconicsAlienLeft);
+  top:50%;
   flex:0 0 var(--iconicsAlienW);
   width:var(--iconicsAlienW);
   max-width:var(--iconicsAlienW);
   height:auto;
   object-fit:contain;
   opacity:var(--iconicsAlienOpacity);
+  transform:translateY(-50%);
   user-select:none;
   -webkit-user-select:none;
   -webkit-user-drag:none;
@@ -254,7 +259,7 @@
 @media (max-width:374px) {
   :root {
     --iconicsTopGap:36px;
-    --iconicsAlienW:66px;
+    --iconicsAlienW:33px;
     --iconicsAlienGap:10px;
     --iconicsHeadingSize:12px;
     --iconicsIconSize:18px;
@@ -272,7 +277,7 @@
 
 @media (min-width:375px) and (max-width:767px) {
   :root {
-    --iconicsAlienW:82px;
+    --iconicsAlienW:41px;
     --iconicsAlienGap:12px;
     --iconicsHeadingSize:13px;
     --iconicsIconSize:20px;
@@ -288,7 +293,7 @@
 
 @media (min-width:768px) and (max-width:1199px) {
   :root {
-    --iconicsAlienW:105px;
+    --iconicsAlienW:52.5px;
     --iconicsAlienGap:20px;
     --iconicsHeadingSize:15px;
     --iconicsIconSize:24px;
@@ -304,7 +309,7 @@
 @media (min-width:1200px) {
   :root {
     --iconicsTopGap:52px;
-    --iconicsAlienW:125px;
+    --iconicsAlienW:62.5px;
     --iconicsAlienGap:28px;
     --iconicsHeadingSize:17px;
     --iconicsIconSize:26px;
