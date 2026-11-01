@@ -44,7 +44,7 @@
   --panel-font-size: 14px;
   --panel-line-height: 1.65;
   --arrow-safe: calc(var(--chev-size) + 26px);
-  --mainPanelDuration: 560ms;
+  --mainPanelDuration: 700ms;
 
   /* Animations */
   --menu-enter-duration: 1150ms;
