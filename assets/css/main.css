@@ -227,7 +227,7 @@
   top: calc(env(safe-area-inset-top, 0px) + var(--main-header-height) / 2);
   left: 50%;
 
-  width: 220px;
+  width: 240px;
   height: auto;
   margin: 0;
   padding: 0;
