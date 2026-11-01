@@ -214,6 +214,10 @@
   will-change:transform,opacity;
 }
 
+.home-view.is-divider-tracking .home-view__divider {
+  transition:opacity var(--homeDividerFadeDuration) ease-out;
+}
+
 .home-view.is-divider-visible .home-view__divider { opacity:1; }
 
 /* =========================================================
@@ -363,7 +367,7 @@
   font-family:var(--homeTitleFont);
   font-size:var(--homeDescriptionSize);
   font-weight:var(--homeDescriptionWeight);
-  line-height:var(--homeDescriptionLineHeight);
+  line-height:var(--homeTitleLineHeight);
   overflow-wrap:anywhere;
 }
 
