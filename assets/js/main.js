@@ -2,7 +2,7 @@
 
 /* =========================================================
    LIVINGSPACE — MAIN
-   MAIN VIEW + MENU STATE
+   MAIN VIEW + MENU STATE + ICONICS
    ========================================================= */
 
 (() => {
@@ -16,6 +16,20 @@
     cross: '/assets/icons/cross.svg',
     search: '/assets/icons/search.svg',
     chevron: '/assets/icons/arrow-down.svg'
+  };
+
+  const ICONICS = {
+    alien: '/assets/img/alien.png',
+    heading: 'Více z LIVINGSPACE na:',
+    copyright: 'TM & © LIVINGSPACE - Všechna práva vyhrazena',
+    icons: [
+      { name: 'TikTok', image: '/assets/img/tik-tok.png' },
+      { name: 'Instagram', image: '/assets/img/instagram.png' },
+      { name: 'X', image: '/assets/img/twitter.png' },
+      { name: 'Facebook', image: '/assets/img/facebook-white.png' },
+      { name: 'YouTube', image: '/assets/img/youtube.png' },
+      { name: 'TWINCH', image: '/assets/img/twinch.png' }
+    ]
   };
 
   const MAIN_LOGO_DELAY_MS = 3000;
@@ -36,6 +50,7 @@
   let mainControlsTimer = null;
   let saberSyncFrame = null;
   let menuResizeObserver = null;
+  let homeObserver = null;
 
   let mainView = null;
   let menuButton = null;
@@ -44,6 +59,8 @@
   let menuItems = [];
   let saber = null;
   let saberHandle = null;
+  let menuDivider = null;
+  let iconicsSection = null;
 
   /* =========================================================
      HELPERS
@@ -72,6 +89,107 @@
   crossIconPreload.src = ASSETS.cross;
 
   /* =========================================================
+     ICONICS — BUILD
+     ========================================================= */
+
+  const createIconicsItem = ({ name, image }) => {
+    const item = createElement('span', 'iconics__item');
+    const icon = createIcon(image, 'iconics__icon', name);
+
+    icon.width = 500;
+    icon.height = 500;
+    icon.loading = 'lazy';
+
+    item.appendChild(icon);
+    return item;
+  };
+
+  const createIconics = () => {
+    const section = createElement('section', 'iconics');
+    section.id = 'iconics';
+    section.setAttribute('aria-label', 'LIVINGSPACE — sociální sítě');
+
+    const main = createElement('div', 'iconics__main');
+
+    const alien = createIcon(ICONICS.alien, 'iconics__alien');
+    alien.setAttribute('aria-hidden', 'true');
+
+    const content = createElement('div', 'iconics__content');
+
+    const heading = createElement('h2', 'iconics__heading');
+    heading.textContent = ICONICS.heading;
+
+    const icons = createElement('div', 'iconics__icons');
+    icons.setAttribute('aria-label', 'Sociální platformy');
+
+    ICONICS.icons.forEach((item, index) => {
+      if (index === ICONICS.icons.length - 1) {
+        const divider = createElement('span', 'iconics__divider');
+        divider.setAttribute('aria-hidden', 'true');
+        icons.appendChild(divider);
+      }
+
+      icons.appendChild(createIconicsItem(item));
+    });
+
+    const copyright = createElement('p', 'iconics__copyright');
+    copyright.textContent = ICONICS.copyright;
+
+    content.append(heading, icons);
+    main.append(alien, content);
+    section.append(main, copyright);
+
+    return section;
+  };
+
+  /* =========================================================
+     ICONICS — PLACEMENT
+     ========================================================= */
+
+  const syncIconicsPlacement = () => {
+    if (!mainView || !iconicsSection) return;
+
+    if (menuOpen) {
+      if (!menuDivider) return;
+
+      if (iconicsSection.parentElement !== menuDivider.parentElement ||
+          iconicsSection.previousElementSibling !== menuDivider) {
+        menuDivider.insertAdjacentElement('afterend', iconicsSection);
+      }
+
+      iconicsSection.classList.add('iconics--menu');
+      return;
+    }
+
+    const carousel = mainView.querySelector('#homeView .home-carousel');
+    if (!carousel) return;
+
+    if (iconicsSection.parentElement !== carousel.parentElement ||
+        iconicsSection.previousElementSibling !== carousel) {
+      carousel.insertAdjacentElement('afterend', iconicsSection);
+    }
+
+    iconicsSection.classList.remove('iconics--menu');
+  };
+
+  const bindIconicsHome = () => {
+    if (!mainView || homeObserver) return;
+
+    const syncHome = () => {
+      if (!menuOpen) syncIconicsPlacement();
+    };
+
+    homeObserver = new MutationObserver(syncHome);
+
+    homeObserver.observe(mainView, {
+      childList: true,
+      subtree: true
+    });
+
+    syncHome();
+  };
+
+  /* =========================================================
      MENU VISIBILITY
      ========================================================= */
 
@@ -89,6 +207,7 @@
     menuOpen = true;
     mainView.classList.add('is-menu-visible');
     syncMenuIcon();
+    syncIconicsPlacement();
 
     requestAnimationFrame(() => {
       requestAnimationFrame(scheduleSaberSync);
@@ -101,6 +220,7 @@
     menuOpen = false;
     mainView.classList.remove('is-menu-visible');
     syncMenuIcon();
+    syncIconicsPlacement();
   };
 
   const toggleMainMenu = () => {
@@ -318,9 +438,9 @@
       createMenuPanel(createContactContent())
     );
 
-    const divider = createElement('div', 'main-menu__divider');
+    menuDivider = createElement('div', 'main-menu__divider');
 
-    content.append(menuList, divider);
+    content.append(menuList, menuDivider);
     menu.appendChild(content);
 
     return menu;
@@ -634,6 +754,10 @@
     mainView.append(createHeader(), createLogo(), createMenu());
     document.body.appendChild(mainView);
 
+    iconicsSection = createIconics();
+    menuDivider.insertAdjacentElement('afterend', iconicsSection);
+    bindIconicsHome();
+
     bindMenuEvents();
     bindSaberEvents();
     bindSaberLayoutSync();
@@ -696,11 +820,15 @@
     menuResizeObserver?.disconnect();
     menuResizeObserver = null;
 
+    homeObserver?.disconnect();
+    homeObserver = null;
+
     window.removeEventListener('resize', handleResize);
     window.removeEventListener('orientationchange', handleResize);
     window.removeEventListener('vb:gallery-closed', handleGalleryClosed);
 
     draggingSaber = false;
     menuOpen = false;
+    iconicsSection = null;
   }, { once: true });
 })();
