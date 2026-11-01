@@ -135,6 +135,17 @@
   pointer-events: none;
 }
 
+.main-view__header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--main-line);
+  pointer-events: none;
+}
+
 /* =========================================================
    HEADER — CONTROLS
    ========================================================= */
@@ -380,7 +391,7 @@
     0 0 3px rgba(255, 255, 255, 0.95),
     0 0 7px rgba(255, 238, 145, 0.90),
     0 0 13px rgba(255, 220, 70, 0.62),
-    0 0 22px rgba(255, 205, 35, 0.30);
+    0 0 22px rgba(255, 205, 35px, 0.30);
 
   transform: translate3d(0, 0, 0);
   transform-origin: center center;
