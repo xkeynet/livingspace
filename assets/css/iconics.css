@@ -71,7 +71,7 @@
 }
 
 /* =========================================================
-   SECTION
+   SECTION — SYNCHRONIZED WITH HOME CAROUSEL
    ========================================================= */
 
 .iconics {
@@ -83,6 +83,19 @@
   padding:0;
   color:var(--iconicsWhite);
   pointer-events:none;
+  opacity:0;
+  visibility:hidden;
+  transition:
+    opacity var(--homeCarouselFadeDuration,220ms) linear,
+    visibility 0s linear var(--homeCarouselFadeDuration,220ms);
+}
+
+.home-view.is-carousel-visible .iconics {
+  opacity:1;
+  visibility:visible;
+  transition:
+    opacity var(--homeCarouselFadeDuration,220ms) linear,
+    visibility 0s;
 }
 
 /* =========================================================
