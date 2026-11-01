@@ -529,7 +529,7 @@
     const item = menuItems[index];
     if (!item) return;
 
-    startDividerTracking();
+    // startDividerTracking();
 
     item.classList.remove('is-open');
     spinChevron(item, false);
@@ -542,7 +542,7 @@
 
     if (openIndex === index) openIndex = -1;
     scheduleSaberSync();
-    finishDividerTracking();
+    // finishDividerTracking();
   };
 
   const openItem = index => {
