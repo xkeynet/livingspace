@@ -1,11 +1,29 @@
+@font-face {
+  font-family: 'DIN 2014';
+  src: url('https://cdn.jsdelivr.net/gh/din-2014/din-2014@master/woff2/DIN2014-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DIN 2014';
+  src: url('https://cdn.jsdelivr.net/gh/din-2014/din-2014@master/woff2/DIN2014-Bold.woff2') format('woff2');
+  font-weight: 600, 700;
+  font-style: normal;
+}
+
+body {
+  font-family: 'DIN 2014', sans-serif;
+}
+
 /* =========================================================
    LIVINGSPACE — MAIN
    ========================================================= */
 
 .main-view {
   /* Typography */
-  --main-font: "Barlow", Arial, sans-serif;
-  --main-menu-font: "Barlow", Arial, sans-serif;
+  --main-font: 'DIN 2014', sans-serif;
+  --main-menu-font: 'DIN 2014', sans-serif;
 
   /* Colors */
   --main-background: #000000;
