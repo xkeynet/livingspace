@@ -1,24 +1,10 @@
-@font-face {
-  font-family: 'DIN 2014';
-  src: url('https://cdn.jsdelivr.net/gh/din-2014/din-2014@master/woff2/DIN2014-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'DIN 2014';
-  src: url('https://cdn.jsdelivr.net/gh/din-2014/din-2014@master/woff2/DIN2014-Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-}
-
 :root {
-  --main-font: 'DIN 2014', sans-serif;
-  --main-menu-font: 'DIN 2014', sans-serif;
+  --main-font: 'DIN Pro', 'DIN Alternate', 'DIN 1451', 'Helvetica Neue', Arial, sans-serif;
+  --main-menu-font: 'DIN Pro', 'DIN Alternate', 'DIN 1451', 'Helvetica Neue', Arial, sans-serif;
 }
 
 body {
-  font-family: 'DIN 2014', sans-serif;
+  font-family: 'DIN Pro', 'DIN Alternate', 'DIN 1451', 'Helvetica Neue', Arial, sans-serif;
 }
 
 /* =========================================================
