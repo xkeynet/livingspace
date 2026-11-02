@@ -4,8 +4,8 @@
 
 .main-view {
   /* Typography */
-  --main-font: "D-DIN", Arial, sans-serif;
-  --main-menu-font: "D-DIN", Arial, sans-serif;
+  --main-font: "Barlow", Arial, sans-serif;
+  --main-menu-font: "Barlow", Arial, sans-serif;
 
   /* Colors */
   --main-background: #000000;
@@ -571,9 +571,9 @@
   border-top: 1px solid var(--main-line-soft);
 
   transition:
-    padding-top var(--mainPanelDuration) cubic-bezier(0.2, 0.9, 0.2, 0.1),
-    padding-bottom var(--mainPanelDuration) cubic-bezier(0.2, 0.9, 0.2, 0.1),
-    border-top-width var(--mainPanelDuration) cubic-bezier(0.2, 0.9, 0.2, 0.1);
+    padding-top var(--mainPanelDuration) cubic-bezier(0.2, 0.9, 0.2, 1),
+    padding-bottom var(--mainPanelDuration) cubic-bezier(0.2, 0.9, 0.2, 1),
+    border-top-width var(--mainPanelDuration) cubic-bezier(0.2, 0.9, 0.2, 1);
 }
 
 .main-menu__item.is-open + .main-menu__panel .main-menu__panel-inner {
