@@ -302,7 +302,7 @@ body {
 
   100% {
     opacity: 1;
-    transform: translate3d(-50%, -50%, 0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -450,7 +450,7 @@ body {
   color: var(--main-grey);
   font-family: var(--main-menu-font);
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.05;
   letter-spacing: var(--menu-letter-spacing);
   text-transform: uppercase;
@@ -664,7 +664,7 @@ body {
   color: var(--main-grey);
   font-family: var(--main-menu-font);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1;
   letter-spacing: 0.12em;
 
