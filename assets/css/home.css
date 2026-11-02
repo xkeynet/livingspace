@@ -84,7 +84,7 @@
   --homeBtnPadX:12px;
   --homeBtnPadY:0px;
 
-  --homeBtnFont:"D-DIN",Arial,sans-serif;
+  --homeBtnFont:"Barlow",sans-serif;
   --homeBtnFontSize:15px;
   --homeBtnFontWeight:700;
   --homeBtnLineHeight:1.2;
@@ -444,28 +444,6 @@
    READ BUTTON
    ========================================================= */
 
-.home-view .home-carousel .home-carousel .home-carousel__button:focus-visible {
-  outline:var(--homeBtnFocusW) solid var(--homeBtnFocusColor);
-  outline-offset:var(--homeBtnFocusGap);
-}
-
-.home-view .home-carousel .home-carousel__button:disabled {
-  opacity:1;
-  cursor:not-allowed;
-}
-
-.home-view .home-carousel .home-carousel__actions .home-carousel__button--read:disabled {
-  background-color:var(--homeReadBg);
-  border-color:var(--homeReadBorder);
-  color:var(--homeReadText);
-  -webkit-text-fill-color:var(--homeReadText);
-  opacity:1;
-}
-
-/* =========================================================
-   READ BUTTON
-   ========================================================= */
-
 .home-view .home-carousel .home-carousel__actions .home-carousel__button--read {
   background-color:var(--homeReadBg);
   border-color:var(--homeReadBorder);
@@ -514,9 +492,22 @@
   transform:scale(var(--homeBtnActiveScale));
 }
 
-.home-view .home-carousel .home-carousel__actions .home-carousel__button:focus-visible {
+.home-view .home-carousel .home-carousel .home-carousel__button:focus-visible {
   outline:var(--homeBtnFocusW) solid var(--homeBtnFocusColor);
   outline-offset:var(--homeBtnFocusGap);
+}
+
+.home-view .home-carousel .home-carousel__button:disabled {
+  opacity:1;
+  cursor:not-allowed;
+}
+
+.home-view .home-carousel .home-carousel__actions .home-carousel__button--read:disabled {
+  background-color:var(--homeReadBg);
+  border-color:var(--homeReadBorder);
+  color:var(--homeReadText);
+  -webkit-text-fill-color:var(--homeReadText);
+  opacity:1;
 }
 
 /* =========================================================
