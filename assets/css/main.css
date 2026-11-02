@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Electrolize&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Tomorrow&display=swap');
 /* =========================================================
    LIVINGSPACE — MAIN
    ========================================================= */
@@ -7,7 +6,7 @@
 .main-view {
   /* Typography */
   --main-font: "Barlow", Arial, sans-serif;
-  --main-menu-font: "Electrolize", Arial, sans-serif;
+  --main-menu-font: "Tomorrow", Arial, sans-serif;
 
   /* Colors */
   --main-background: #000000;
