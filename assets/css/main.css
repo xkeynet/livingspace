@@ -1,10 +1,4 @@
-@font-face {
-  font-family: "DIN 2014";
-  src: url("/assets/fonts/DIN2014-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
+@import url('https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&display=swap');
 
 /* =========================================================
    LIVINGSPACE — MAIN
@@ -13,7 +7,7 @@
 .main-view {
   /* Typography */
   --main-font: "Barlow", Arial, sans-serif;
-  --main-menu-font: "DIN 2014", Arial, sans-serif;
+  --main-menu-font: "Bai Jamjuree", Arial, sans-serif;
 
   /* Colors */
   --main-background: #000000;
