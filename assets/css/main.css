@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;500;600;700&display=swap');
 
 /* =========================================================
    LIVINGSPACE — MAIN
@@ -7,7 +7,7 @@
 .main-view {
   /* Typography */
   --main-font: "Barlow", Arial, sans-serif;
-  --main-menu-font: "Bai Jamjuree", Arial, sans-serif;
+  --main-menu-font: "Titillium Web", Arial, sans-serif;
 
   /* Colors */
   --main-background: #000000;
