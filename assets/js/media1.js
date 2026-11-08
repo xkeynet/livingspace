@@ -18,7 +18,10 @@
     id: 'media1',
     title: 'ON-OFF ST',
     designer: 'Alberto Colonello',
-    imageRoot: '/assets/pics/'
+    imageRoot: '/assets/pics/',
+    arrow: '/assets/icons/arrow-right.svg',
+    arrowDelay: 2000,
+    arrowDuration: 1600
   });
 
   const SELECTORS = Object.freeze({
@@ -62,6 +65,8 @@
   let carousel = null;
   let article = null;
   let readButton = null;
+  let backButton = null;
+  let backIcon = null;
 
   let initialized = false;
   let articleOpen = false;
@@ -73,6 +78,7 @@
   let transitionFrame = null;
   let scrollFrame = null;
   let placementFrame = null;
+  let arrowTimer = null;
 
   /* =========================================================
      03 — HELPERS
@@ -108,19 +114,172 @@
   };
 
   /* =========================================================
-     04 — ARTICLE BLOCKS
+     04 — ARROW STYLES
+
+     SVG:
+       /assets/icons/arrow-right.svg
+
+     START:
+       →
+
+     AFTER 2000 MS:
+       2 × 360° + 180°
+
+     FINAL:
+       ←
+
+     Animation:
+       1600ms cubic-bezier(.14,.92,.18,1)
+     ========================================================= */
+
+  const installArrowStyles = () => {
+    if (document.getElementById('media1-arrow-styles')) return;
+
+    const style = createElement('style');
+    style.id = 'media1-arrow-styles';
+
+    style.textContent = `
+      .media1__topbar {
+        position:relative;
+        display:grid;
+        grid-template-columns:34px minmax(0,1fr) 34px;
+        align-items:center;
+        width:100%;
+        min-height:34px;
+        margin:0;
+        padding:0;
+      }
+
+      .media1__back {
+        appearance:none;
+        -webkit-appearance:none;
+        display:inline-flex;
+        align-items:center;
+        justify-content:flex-start;
+        width:34px;
+        height:34px;
+        margin:0;
+        padding:0;
+        border:0;
+        background:transparent;
+        color:#FFFFFF;
+        cursor:pointer;
+        touch-action:manipulation;
+        -webkit-tap-highlight-color:transparent;
+      }
+
+      .media1__back-icon {
+        display:block;
+        width:28px;
+        height:28px;
+        object-fit:contain;
+        transform-origin:50% 50%;
+        transform:rotate(0deg) translateZ(0);
+        will-change:transform;
+        backface-visibility:hidden;
+        -webkit-backface-visibility:hidden;
+      }
+
+      .media1__back-icon.is-spinning {
+        animation:media1ArrowSpin 1600ms cubic-bezier(.14,.92,.18,1) forwards;
+      }
+
+      @keyframes media1ArrowSpin {
+        0% {
+          transform:rotate(0deg) translateZ(0);
+        }
+
+        100% {
+          transform:rotate(900deg) translateZ(0);
+        }
+      }
+
+      .media1__topbar .media1__title {
+        width:100%;
+        min-width:0;
+        margin:0;
+        padding:0;
+        text-align:center;
+      }
+
+      .media1__back:focus-visible {
+        outline:2px solid #FFFFFF;
+        outline-offset:4px;
+      }
+
+      @media (prefers-reduced-motion:reduce) {
+        .media1__back-icon.is-spinning {
+          animation-duration:0.01ms;
+        }
+      }
+    `;
+
+    document.head.appendChild(style);
+  };
+
+  const stopArrowAnimation = () => {
+    if (arrowTimer !== null) {
+      clearTimeout(arrowTimer);
+      arrowTimer = null;
+    }
+
+    backIcon?.classList.remove('is-spinning');
+  };
+
+  const startArrowAnimation = () => {
+    stopArrowAnimation();
+
+    if (!backIcon) return;
+
+    void backIcon.offsetWidth;
+
+    arrowTimer = window.setTimeout(() => {
+      arrowTimer = null;
+
+      if (!articleOpen || !backIcon) return;
+
+      backIcon.classList.add('is-spinning');
+    }, CONFIG.arrowDelay);
+  };
+
+  /* =========================================================
+     05 — ARTICLE BLOCKS
      ========================================================= */
 
   const createHeader = item => {
     const header = createElement('header', 'media1__header');
+    const topbar = createElement('div', 'media1__topbar');
+
+    backButton = createElement('button', 'media1__back');
+    backButton.type = 'button';
+    backButton.setAttribute('aria-label', 'Zpět na hlavní stránku');
+
+    backIcon = createElement('img', 'media1__back-icon');
+    backIcon.src = CONFIG.arrow;
+    backIcon.alt = '';
+    backIcon.setAttribute('aria-hidden', 'true');
+    backIcon.decoding = 'async';
+    backIcon.draggable = false;
+
+    backButton.appendChild(backIcon);
+    backButton.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      closeArticle();
+    });
 
     const title = createElement('h1', 'media1__title');
     title.textContent = item.title;
 
+    const rightSlot = createElement('span', 'media1__right-slot');
+    rightSlot.setAttribute('aria-hidden', 'true');
+
+    topbar.append(backButton, title, rightSlot);
+
     const designer = createElement('p', 'media1__designer');
     designer.textContent = `Design: ${item.designer}`;
 
-    header.append(title, designer);
+    header.append(topbar, designer);
     return header;
   };
 
@@ -160,14 +319,12 @@
   };
 
   /* =========================================================
-     05 — ARTICLE FACTORY
-
-     Bez tlačítka ZPĚT.
-     Navigační šipka bude doplněna
-     podle dodaných keyframes.
+     06 — ARTICLE FACTORY
      ========================================================= */
 
   const createArticle = () => {
+    installArrowStyles();
+
     const element = createElement('article', 'media1');
 
     element.id = CONFIG.id;
@@ -186,7 +343,7 @@
   };
 
   /* =========================================================
-     06 — ICONICS PLACEMENT
+     07 — ICONICS PLACEMENT
 
      HOME:
        CAROUSEL
@@ -262,7 +419,7 @@
   };
 
   /* =========================================================
-     07 — ARTICLE OPEN
+     08 — ARTICLE OPEN
      ========================================================= */
 
   const openArticle = () => {
@@ -285,6 +442,7 @@
     }
 
     syncIconicsPlacement();
+    startArrowAnimation();
     setScrollTop(0);
 
     transitionFrame = requestAnimationFrame(() => {
@@ -304,7 +462,7 @@
   };
 
   /* =========================================================
-     08 — ARTICLE CLOSE
+     09 — ARTICLE CLOSE
      ========================================================= */
 
   const closeArticle = () => {
@@ -312,6 +470,7 @@
 
     articleOpen = false;
     cancelFrames();
+    stopArrowAnimation();
 
     article.classList.remove('is-visible');
     home.classList.remove('media1-is-open');
@@ -340,7 +499,7 @@
   };
 
   /* =========================================================
-     09 — READ BUTTON CONNECTION
+     10 — READ BUTTON CONNECTION
      ========================================================= */
 
   const connectReadButton = () => {
@@ -368,7 +527,7 @@
   };
 
   /* =========================================================
-     10 — HOME INTEGRATION
+     11 — HOME INTEGRATION
 
      DOM:
        .home-carousel
@@ -401,7 +560,7 @@
   };
 
   /* =========================================================
-     11 — STARTUP
+     12 — STARTUP
      ========================================================= */
 
   const start = () => {
@@ -421,7 +580,7 @@
   };
 
   /* =========================================================
-     12 — PUBLIC API
+     13 — PUBLIC API
      ========================================================= */
 
   window.LivingSpaceMedia1 = Object.freeze({
@@ -432,7 +591,7 @@
   });
 
   /* =========================================================
-     13 — KEYBOARD
+     14 — KEYBOARD
      ========================================================= */
 
   document.addEventListener('keydown', event => {
@@ -442,7 +601,7 @@
   });
 
   /* =========================================================
-     14 — START
+     15 — START
      ========================================================= */
 
   if (document.readyState === 'loading') {
@@ -452,12 +611,13 @@
   }
 
   /* =========================================================
-     15 — CLEANUP
+     16 — CLEANUP
      ========================================================= */
 
   window.addEventListener('pagehide', () => {
     observer?.disconnect();
     iconicsObserver?.disconnect();
     cancelFrames();
+    stopArrowAnimation();
   }, { once: true });
 })();
