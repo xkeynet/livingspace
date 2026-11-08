@@ -113,20 +113,20 @@
 }
 
 /* =========================================================
-   SOCIAL ICONS
+   SOCIAL ICONS — ISOLATED LAYOUT
    ========================================================= */
 
 .iconics__icons {
   display:flex;
   align-items:center;
-  justify-content:space-between;
+  justify-content:center;
   flex-wrap:nowrap;
-  width:calc(100% - 40px);
-  max-width:540px;
+  width:max-content;
+  max-width:calc(100% - 40px);
   min-width:0;
   margin:29px auto 0;
   padding:0;
-  gap:0;
+  gap:20px;
   box-sizing:border-box;
 }
 
@@ -208,8 +208,9 @@
   }
 
   .iconics__icons {
-    width:calc(100% - 40px);
+    max-width:calc(100% - 40px);
     margin-top:26px;
+    gap:12px;
   }
 
   .iconics__item {
@@ -251,8 +252,9 @@
   }
 
   .iconics__icons {
-    width:calc(100% - 40px);
+    max-width:calc(100% - 40px);
     margin-top:27px;
+    gap:20px;
   }
 
   .iconics__item {
@@ -290,6 +292,7 @@
 
   .iconics__icons {
     margin-top:29px;
+    gap:32px;
   }
 
   .iconics__item {
@@ -331,6 +334,7 @@
 
   .iconics__icons {
     margin-top:31px;
+    gap:40px;
   }
 
   .iconics__item {
