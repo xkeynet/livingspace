@@ -497,7 +497,7 @@
 
 .home-view .home-carousel .home-carousel__actions .home-carousel__button--next {
   background-color:var(--homeNextBg);
-  border-color:var(--homeNextBorder);
+  border-color:var(--homeNextHoverBorder);
   border-width:var(--homeNextBorderW);
   color:var(--homeNextText);
   -webkit-text-fill-color:var(--homeNextText);
@@ -599,13 +599,14 @@
 }
 
 /* =========================================================
-   SOCIAL LINKS
+   SOCIAL LINKS — INDEPENDENT LAYOUT
    ========================================================= */
 
 .home-social {
   width:100%;
+  box-sizing:border-box;
   margin:var(--homeSocialTopGap) auto 0;
-  padding:0;
+  padding:0 var(--menu-right) 0 var(--menu-left);
   display:flex;
   align-items:center;
   justify-content:center;
