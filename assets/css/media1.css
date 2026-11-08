@@ -31,6 +31,7 @@
   --media1-content-gap:22px;
   --media1-text-padding:20px;
   --media1-text-max-width:760px;
+  --media1-paragraph-max-width:680px;
 
   --media1-title-size:26px;
   --media1-title-weight:400;
@@ -40,8 +41,8 @@
 
   --media1-body-size:18px;
   --media1-body-weight:400;
-  --media1-body-line-height:1.4;
-  --media1-body-letter-spacing:-0.015em;
+  --media1-body-line-height:1.5;
+  --media1-body-letter-spacing:normal;
 
   --media1-header-top-gap:8px;
   --media1-header-bottom-gap:8px;
@@ -310,7 +311,7 @@
 .media1__paragraph {
   display:block;
   width:100%;
-  max-width:var(--media1-text-max-width);
+  max-width:var(--media1-paragraph-max-width);
 
   margin:0 auto;
   padding:0;
@@ -324,7 +325,7 @@
   line-height:var(--media1-body-line-height);
   letter-spacing:var(--media1-body-letter-spacing);
 
-  text-align:justify;
+  text-align:left;
   text-transform:none;
   text-wrap:pretty;
 
