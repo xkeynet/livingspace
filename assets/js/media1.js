@@ -75,6 +75,17 @@
     {
       type: 'text',
       text: 'Dvířka spodních skříněk lze dodat bez úchytek, vybavená systémem otevírání stisknutím Tip-On.'
+    },
+    {
+      type: 'image',
+      src: '007.png',
+      alt: 'BOFFI ON-OFF ST — detail kuchyňské skříňky'
+    },
+    {
+      type: 'text',
+      text: 'Nabídka materiálů Boffi a jejich kompatibilita s jednotlivými produkty se neustále vyvíjejí; informujte se u svého prodejce o aktuální dostupnosti produktu v požadovaném provedení na boffi.com.',
+      linkText: 'boffi.com',
+      linkUrl: 'https://www.boffi.com/'
     }
   ];
 
@@ -326,9 +337,29 @@
     const section = createElement('section', 'media1__text');
     const paragraph = createElement('p', 'media1__paragraph');
 
-    paragraph.textContent = item.text;
-    section.appendChild(paragraph);
+    if (item.linkText && item.linkUrl && item.text.includes(item.linkText)) {
+      const position = item.text.lastIndexOf(item.linkText);
+      const before = item.text.slice(0, position);
+      const after = item.text.slice(position + item.linkText.length);
 
+      paragraph.appendChild(document.createTextNode(before));
+
+      const link = createElement('a', 'media1__link');
+      link.href = item.linkUrl;
+      link.textContent = item.linkText;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.style.color = 'inherit';
+      link.style.textDecoration = 'underline';
+      link.style.textUnderlineOffset = '3px';
+
+      paragraph.appendChild(link);
+      paragraph.appendChild(document.createTextNode(after));
+    } else {
+      paragraph.textContent = item.text;
+    }
+
+    section.appendChild(paragraph);
     return section;
   };
 
