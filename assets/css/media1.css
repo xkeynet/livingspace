@@ -1,1 +1,230 @@
+/* =========================================================
+   LIVINGSPACE — MEDIA 001
+   BOFFI / ON-OFF ST
 
+   Samostatný design článku.
+   Bez zásahů do HOME, HEADERU a ostatních komponent.
+   ========================================================= */
+
+/* =========================================================
+   01 — FONT
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&display=swap');
+
+/* =========================================================
+   02 — VARIABLES
+   ========================================================= */
+
+.media1 {
+  --media1-bg: #FFFFFF;
+  --media1-color: #000000;
+
+  --media1-font: 'Titillium Web', sans-serif;
+
+  --media1-content-gap: 3px;
+  --media1-text-padding: 20px;
+
+  --media1-title-size: clamp(38px, 9vw, 72px);
+  --media1-body-size: 17px;
+  --media1-body-line-height: 1.65;
+
+  --media1-content-max-width: 1440px;
+  --media1-text-max-width: 760px;
+}
+
+/* =========================================================
+   03 — ARTICLE ROOT
+   ========================================================= */
+
+.media1 {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+
+  background: var(--media1-bg);
+  color: var(--media1-color);
+
+  font-family: var(--media1-font);
+  font-size: var(--media1-body-size);
+  font-weight: 400;
+  line-height: var(--media1-body-line-height);
+
+  overflow-x: clip;
+  box-sizing: border-box;
+}
+
+.media1 *,
+.media1 *::before,
+.media1 *::after {
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   04 — CONTENT LAYOUT
+   ========================================================= */
+
+.media1__content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--media1-content-max-width);
+  margin: 0 auto;
+  padding: 0;
+
+  gap: var(--media1-content-gap);
+}
+
+/* =========================================================
+   05 — ARTICLE HEADER
+   ========================================================= */
+
+.media1__header {
+  width: 100%;
+  margin: 0;
+  padding: 32px var(--media1-text-padding) 24px;
+  text-align: left;
+}
+
+.media1__title {
+  margin: 0;
+  padding: 0;
+
+  font-family: var(--media1-font);
+  font-size: var(--media1-title-size);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+  color: var(--media1-color);
+}
+
+.media1__designer {
+  margin: 14px 0 0;
+  padding: 0;
+
+  font-family: var(--media1-font);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  color: var(--media1-color);
+}
+
+/* =========================================================
+   06 — FULL-WIDTH IMAGES
+   ========================================================= */
+
+.media1__figure {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+  overflow: hidden;
+}
+
+.media1__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+
+  object-fit: contain;
+  object-position: center;
+
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* =========================================================
+   07 — TEXT BLOCKS
+   ========================================================= */
+
+.media1__text {
+  width: 100%;
+  margin: 0;
+  padding: 0 var(--media1-text-padding);
+}
+
+.media1__paragraph {
+  width: 100%;
+  max-width: var(--media1-text-max-width);
+  margin: 0 auto;
+  padding: 0;
+
+  font-family: var(--media1-font);
+  font-size: var(--media1-body-size);
+  font-weight: 400;
+  line-height: var(--media1-body-line-height);
+  letter-spacing: 0;
+  text-align: left;
+  color: var(--media1-color);
+
+  overflow-wrap: break-word;
+}
+
+/* =========================================================
+   08 — TABLET
+   ========================================================= */
+
+@media (min-width: 768px) {
+  .media1 {
+    --media1-text-padding: 40px;
+    --media1-body-size: 18px;
+    --media1-content-gap: 3px;
+  }
+
+  .media1__header {
+    padding-top: 48px;
+    padding-bottom: 36px;
+  }
+
+  .media1__designer {
+    font-size: 15px;
+  }
+}
+
+/* =========================================================
+   09 — DESKTOP
+   ========================================================= */
+
+@media (min-width: 1200px) {
+  .media1 {
+    --media1-text-padding: 60px;
+    --media1-body-size: 19px;
+    --media1-content-gap: 3px;
+  }
+
+  .media1__header {
+    padding-top: 64px;
+    padding-bottom: 48px;
+  }
+}
+
+/* =========================================================
+   10 — SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 375px) {
+  .media1 {
+    --media1-text-padding: 16px;
+    --media1-body-size: 16px;
+  }
+
+  .media1__header {
+    padding-top: 24px;
+    padding-bottom: 20px;
+  }
+
+  .media1__designer {
+    font-size: 13px;
+  }
+}
