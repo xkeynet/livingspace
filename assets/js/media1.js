@@ -66,6 +66,15 @@
     {
       type: 'text',
       text: 'Sofistikovaný systém elektronicky výklopných čel odhaluje špičkové vestavěné spotřebiče.'
+    },
+    {
+      type: 'image',
+      src: '006.png',
+      alt: 'BOFFI ON-OFF ST — detail spodních skříněk a výsuvných zásuvek'
+    },
+    {
+      type: 'text',
+      text: 'Dvířka spodních skříněk lze dodat bez úchytek, vybavená systémem otevírání stisknutím Tip-On.'
     }
   ];
 
