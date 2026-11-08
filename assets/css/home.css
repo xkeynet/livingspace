@@ -55,6 +55,13 @@
   --homeImageBottomGap:20px;
 
   /* =======================================================
+     05A — START 001 / BOFFI LOGO
+     ======================================================= */
+
+  --homeBoffiLogoW:120px;
+  --homeBoffiLogoGap:0px;
+
+  /* =======================================================
      06 — ARTICLE TYPOGRAPHY
      ======================================================= */
 
@@ -321,6 +328,29 @@
   height:auto;
   margin:0 0 0 calc(-1 * var(--menu-left));
   border-radius:var(--homeImageRadius);
+  object-fit:contain;
+  object-position:center;
+  user-select:none;
+  -webkit-user-select:none;
+  -webkit-user-drag:none;
+  pointer-events:none;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+}
+
+/* =========================================================
+   START 001 — BOFFI BRAND LOGO
+   ========================================================= */
+
+.home-carousel__brand-logo {
+  display:block;
+  width:var(--homeBoffiLogoW);
+  max-width:100%;
+  height:auto;
+  margin:var(--homeBoffiLogoGap) auto 0;
+  padding:0;
+  border:0;
+  border-radius:0;
   object-fit:contain;
   object-position:center;
   user-select:none;
