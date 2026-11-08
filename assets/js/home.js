@@ -32,7 +32,7 @@
       alt: 'BOFFI — kuchyně ON-OFF ST',
       brandLogo: '/assets/pics/002.png',
       brandAlt: 'BOFFI',
-      title: '',
+      title: 'ON-OFF ST',
       description: '',
       url: ''
     },
