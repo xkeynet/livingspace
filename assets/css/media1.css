@@ -327,9 +327,12 @@
   text-align:left;
   text-transform:none;
 
-  overflow-wrap:break-word;
-  hyphens:auto;
-  -webkit-hyphens:auto;
+  hyphens:none;
+  -webkit-hyphens:none;
+  -ms-hyphens:none;
+  word-break:normal;
+  overflow-wrap:normal;
+  white-space:normal;
 }
 
 /* =========================================================
