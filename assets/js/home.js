@@ -16,6 +16,8 @@
 
      image       = cesta k fotografii
      alt         = alternativní text fotografie
+     brandLogo   = cesta k logu značky
+     brandAlt    = alternativní text loga
      title       = nadpis článku
      description = krátký popis
      url         = odkaz na celý článek
@@ -25,7 +27,15 @@
      ========================================================= */
 
   const HOME_SLIDES = [
-    { image: null, alt: '', title: '', description: '', url: '' },
+    {
+      image: '/assets/pics/001.png',
+      alt: 'BOFFI — kuchyně ON-OFF ST',
+      brandLogo: '/assets/pics/002.png',
+      brandAlt: 'BOFFI',
+      title: '',
+      description: '',
+      url: ''
+    },
     { image: null, alt: '', title: '', description: '', url: '' },
     { image: null, alt: '', title: '', description: '', url: '' },
     { image: null, alt: '', title: '', description: '', url: '' },
@@ -609,8 +619,8 @@
       );
 
       /*
-       * Fotografie vzniká pouze tehdy, pokud je uvedena cesta.
-       * Žádný placeholder ani rezervovaná výška.
+       * Úvodní fotografie.
+       * Zachovává původní poměr stran.
        */
 
       if (item.image) {
@@ -643,6 +653,38 @@
         });
 
         slide.appendChild(image);
+      }
+
+      /*
+       * Logo značky.
+       * Samostatný obrazový prvek pod úvodní fotografií.
+       * Velikost a centrování řídí home.css.
+       */
+
+      if (item.brandLogo) {
+        const brandLogo = document.createElement('img');
+
+        brandLogo.className = 'home-carousel__brand-logo';
+        brandLogo.src = item.brandLogo;
+        brandLogo.alt = item.brandAlt || 'Logo značky';
+        brandLogo.decoding = 'async';
+        brandLogo.draggable = false;
+
+        brandLogo.addEventListener('load', () => {
+          if (index === activeIndex) {
+            syncViewportHeight(index, !carouselVisible);
+          }
+        });
+
+        brandLogo.addEventListener('error', () => {
+          brandLogo.remove();
+
+          if (index === activeIndex) {
+            syncViewportHeight(index, !carouselVisible);
+          }
+        });
+
+        slide.appendChild(brandLogo);
       }
 
       slide.appendChild(createArticleContent(item));
