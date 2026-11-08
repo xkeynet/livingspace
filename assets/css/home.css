@@ -236,9 +236,8 @@
   box-sizing:border-box;
   padding:
     calc(var(--home-divider-y,150px) + var(--homeContentTopGap))
-    var(--menu-right)
-    var(--homeContentBottomPad)
-    var(--menu-left);
+    0
+    var(--homeContentBottomPad);
   transition:padding-top var(--homeDividerMoveDuration) var(--homeCarouselEase);
   pointer-events:none;
 }
@@ -323,10 +322,10 @@
 
 .home-carousel__image {
   display:block;
-  width:100vw;
-  max-width:none;
+  width:100%;
+  max-width:100%;
   height:auto;
-  margin:0 0 0 calc(-1 * var(--menu-left));
+  margin:0;
   border-radius:var(--homeImageRadius);
   object-fit:contain;
   object-position:center;
@@ -369,7 +368,7 @@
   width:100%;
   min-width:0;
   box-sizing:border-box;
-  padding:0;
+  padding:0 var(--menu-right) 0 var(--menu-left);
   color:var(--homeWhite);
   text-align:center;
 }
@@ -673,8 +672,8 @@
 
 @media (min-width:1200px) {
   .home-view__content {
-    max-width:var(--homeDesktopMaxW);
-    margin:0 auto;
+    max-width:none;
+    margin:0;
   }
 }
 
