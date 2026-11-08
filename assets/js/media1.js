@@ -517,6 +517,10 @@
 
   /* =========================================================
      09 — ARTICLE CLOSE
+
+     Návrat na začátek HOME.
+     Přepnutí carouselu na první článek BOFFI.
+     Autoplay zůstává řízené home.js.
      ========================================================= */
 
   const closeArticle = () => {
@@ -543,7 +547,11 @@
       iconics.classList.remove('iconics--menu');
     }
 
-    setScrollTop(previousScrollTop);
+    setScrollTop(0);
+
+    document.dispatchEvent(new CustomEvent('vb:home-go-to-slide', {
+      detail: { index: 0 }
+    }));
 
     if (previousFocus?.isConnected) {
       previousFocus.focus({ preventScroll: true });
