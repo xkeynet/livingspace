@@ -32,9 +32,6 @@
 
   /* =========================================================
      01 — ARTICLE CONTENT
-
-     Fotografie a texty jsou samostatné bloky.
-     Jejich pořadí lze upravovat bez změny rendereru.
      ========================================================= */
 
   const CONTENT = [
@@ -98,7 +95,6 @@
   let home = null;
   let homeContent = null;
   let carousel = null;
-  let social = null;
   let article = null;
   let readButton = null;
 
@@ -125,7 +121,6 @@
 
   const setScrollTop = value => {
     if (!main) return;
-
     main.scrollTop = value;
   };
 
@@ -142,7 +137,7 @@
   };
 
   /* =========================================================
-     04 — ARTICLE HEADER
+     04 — ARTICLE BLOCKS
      ========================================================= */
 
   const createHeader = item => {
@@ -155,13 +150,8 @@
     designer.textContent = `Design: ${item.designer}`;
 
     header.append(title, designer);
-
     return header;
   };
-
-  /* =========================================================
-     05 — ARTICLE PHOTOGRAPHY
-     ========================================================= */
 
   const createImage = (item, index) => {
     const figure = createElement('figure', 'media1__figure');
@@ -176,20 +166,14 @@
     if (index === 1) image.fetchPriority = 'high';
 
     figure.appendChild(image);
-
     return figure;
   };
-
-  /* =========================================================
-     06 — ARTICLE TEXT
-     ========================================================= */
 
   const createText = item => {
     const section = createElement('section', 'media1__text');
     const paragraph = createElement('p', 'media1__paragraph');
 
     paragraph.textContent = item.text;
-
     section.appendChild(paragraph);
 
     return section;
@@ -205,7 +189,11 @@
   };
 
   /* =========================================================
-     07 — ARTICLE FACTORY
+     05 — ARTICLE FACTORY
+
+     Bez tlačítka ZPĚT.
+     Budoucí navigační šipka bude doplněna
+     podle samostatně dodaných keyframes.
      ========================================================= */
 
   const createArticle = () => {
@@ -215,38 +203,19 @@
     element.hidden = true;
     element.setAttribute('aria-label', 'BOFFI — ON-OFF ST');
 
-    const navigation = createElement('div', 'media1__navigation');
-
-    const back = createElement('button', 'media1__back');
-
-    back.type = 'button';
-    back.textContent = '← ZPĚT';
-    back.setAttribute('aria-label', 'Zpět na HOME');
-    back.addEventListener('click', closeArticle);
-
-    navigation.appendChild(back);
-
     const content = createElement('div', 'media1__content');
 
     CONTENT.forEach((item, index) => {
       const block = createBlock(item, index);
-
       if (block) content.appendChild(block);
     });
 
-    element.append(navigation, content);
-
+    element.appendChild(content);
     return element;
   };
 
   /* =========================================================
-     08 — ARTICLE OPEN
-
-     HOME zůstává zachovaný.
-     Skrývá se pouze carousel.
-
-     Header, logo, menu, divider a sociální
-     sekce zůstávají součástí původní stránky.
+     06 — ARTICLE OPEN
      ========================================================= */
 
   const openArticle = () => {
@@ -261,7 +230,6 @@
     cancelFrames();
 
     article.hidden = false;
-
     home.classList.add('media1-is-open');
 
     carousel?.setAttribute('aria-hidden', 'true');
@@ -274,17 +242,13 @@
 
     transitionFrame = requestAnimationFrame(() => {
       transitionFrame = null;
-
       if (!articleOpen) return;
 
       article.classList.add('is-visible');
 
       scrollFrame = requestAnimationFrame(() => {
         scrollFrame = null;
-
-        if (!articleOpen) return;
-
-        setScrollTop(0);
+        if (articleOpen) setScrollTop(0);
       });
     });
 
@@ -292,22 +256,17 @@
   };
 
   /* =========================================================
-     09 — ARTICLE CLOSE
-
-     Obnoví původní HOME bez vytváření
-     nového carouselu.
+     07 — ARTICLE CLOSE
      ========================================================= */
 
   const closeArticle = () => {
     if (!initialized || !articleOpen) return;
 
     articleOpen = false;
-
     cancelFrames();
 
     article.classList.remove('is-visible');
     home.classList.remove('media1-is-open');
-
     article.hidden = true;
 
     carousel?.removeAttribute('aria-hidden');
@@ -326,10 +285,7 @@
   };
 
   /* =========================================================
-     10 — READ BUTTON CONNECTION
-
-     Aktivuje původní tlačítko ČÍST.
-     Nemění jeho design ani HTML strukturu.
+     08 — READ BUTTON CONNECTION
      ========================================================= */
 
   const connectReadButton = () => {
@@ -343,7 +299,6 @@
 
     if (button instanceof HTMLButtonElement) {
       button.disabled = false;
-      button.removeAttribute('aria-label');
     }
 
     button.setAttribute('aria-label', 'Číst článek BOFFI ON-OFF ST');
@@ -351,7 +306,6 @@
     button.addEventListener('click', event => {
       event.preventDefault();
       event.stopPropagation();
-
       openArticle();
     });
 
@@ -359,20 +313,41 @@
   };
 
   /* =========================================================
-     11 — HOME INTEGRATION
+     09 — HOME INTEGRATION
 
-     Pořadí DOM:
+     Článek musí být před sociální sekcí
+     bez ohledu na to, zda je .home-social
+     uvnitř .home-view__content, nebo
+     jejím sourozencem.
 
-     HOME CONTENT
-       CAROUSEL
-       ARTICLE
-       SOCIAL
+     DOM při čtení:
 
-     Při čtení:
-       CAROUSEL = SKRYTÝ
-       ARTICLE  = VIDITELNÝ
-       SOCIAL   = POD ČLÁNKEM
+     HEADER / DIVIDER
+     ARTICLE
+     SOCIAL / COPYRIGHT
      ========================================================= */
+
+  const insertArticle = () => {
+    const social = home?.querySelector(SELECTORS.social);
+
+    if (social && homeContent.contains(social)) {
+      const directChild = [...homeContent.children].find(
+        child => child === social || child.contains(social)
+      );
+
+      if (directChild && directChild !== carousel) {
+        homeContent.insertBefore(article, directChild);
+        return;
+      }
+    }
+
+    if (social && social.parentElement === home) {
+      home.insertBefore(article, social);
+      return;
+    }
+
+    carousel.insertAdjacentElement('afterend', article);
+  };
 
   const initialize = () => {
     if (initialized) return true;
@@ -382,27 +357,20 @@
 
     homeContent = home?.querySelector(SELECTORS.content);
     carousel = homeContent?.querySelector(SELECTORS.carousel);
-    social = homeContent?.querySelector(SELECTORS.social);
 
     if (!main || !home || !homeContent || !carousel) return false;
 
     article = createArticle();
-
-    if (social) {
-      homeContent.insertBefore(article, social);
-    } else {
-      carousel.insertAdjacentElement('afterend', article);
-    }
+    insertArticle();
 
     initialized = true;
-
     connectReadButton();
 
     return true;
   };
 
   /* =========================================================
-     12 — STARTUP
+     10 — STARTUP
      ========================================================= */
 
   const start = () => {
@@ -422,7 +390,7 @@
   };
 
   /* =========================================================
-     13 — PUBLIC API
+     11 — PUBLIC API
      ========================================================= */
 
   window.LivingSpaceMedia1 = Object.freeze({
@@ -433,18 +401,17 @@
   });
 
   /* =========================================================
-     14 — KEYBOARD
+     12 — KEYBOARD
      ========================================================= */
 
   document.addEventListener('keydown', event => {
     if (event.key !== 'Escape' || !articleOpen) return;
     if (main?.classList.contains('is-menu-visible')) return;
-
     closeArticle();
   });
 
   /* =========================================================
-     15 — START
+     13 — START
      ========================================================= */
 
   if (document.readyState === 'loading') {
@@ -454,7 +421,7 @@
   }
 
   /* =========================================================
-     16 — CLEANUP
+     14 — CLEANUP
      ========================================================= */
 
   window.addEventListener('pagehide', () => {
