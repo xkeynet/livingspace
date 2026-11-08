@@ -61,6 +61,15 @@
     {
       type: 'text',
       text: 'Dvířka spodních skříněk lze dodat bez úchytek, vybavená systémem otevírání stisknutím Tip-On.'
+    },
+    {
+      type: 'image',
+      src: '005.png',
+      alt: 'BOFFI ON-OFF ST — detail vestavěných spotřebičů'
+    },
+    {
+      type: 'text',
+      text: 'Elektronicky výklopná čela odhalují vestavěné spotřebiče.'
     }
   ];
 
