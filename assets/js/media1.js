@@ -95,6 +95,7 @@
   let home = null;
   let homeContent = null;
   let carousel = null;
+  let social = null;
   let article = null;
   let readButton = null;
 
@@ -232,9 +233,9 @@
     article.hidden = false;
     home.classList.add('media1-is-open');
 
-    carousel?.setAttribute('aria-hidden', 'true');
+    carousel.setAttribute('aria-hidden', 'true');
 
-    if (carousel && 'inert' in carousel) {
+    if ('inert' in carousel) {
       carousel.inert = true;
     }
 
@@ -269,9 +270,9 @@
     home.classList.remove('media1-is-open');
     article.hidden = true;
 
-    carousel?.removeAttribute('aria-hidden');
+    carousel.removeAttribute('aria-hidden');
 
-    if (carousel && 'inert' in carousel) {
+    if ('inert' in carousel) {
       carousel.inert = false;
     }
 
@@ -315,53 +316,47 @@
   /* =========================================================
      09 — HOME INTEGRATION
 
-     Článek musí být před sociální sekcí
-     bez ohledu na to, zda je .home-social
-     uvnitř .home-view__content, nebo
-     jejím sourozencem.
+     Skutečná struktura podle home.js:
 
-     DOM při čtení:
+     #homeView
+       .home-view__divider
+       .home-view__content
+         .home-carousel
+         .home-social
 
-     HEADER / DIVIDER
-     ARTICLE
-     SOCIAL / COPYRIGHT
+     Po inicializaci media1.js:
+
+     #homeView
+       .home-view__divider
+       .home-view__content
+         .home-carousel
+         #media1
+         .home-social
+
+     Při otevření článku se carousel skryje.
+     Článek a sociální sekce zůstávají
+     v přirozeném pořadí dokumentu.
      ========================================================= */
-
-  const insertArticle = () => {
-    const social = home?.querySelector(SELECTORS.social);
-
-    if (social && homeContent.contains(social)) {
-      const directChild = [...homeContent.children].find(
-        child => child === social || child.contains(social)
-      );
-
-      if (directChild && directChild !== carousel) {
-        homeContent.insertBefore(article, directChild);
-        return;
-      }
-    }
-
-    if (social && social.parentElement === home) {
-      home.insertBefore(article, social);
-      return;
-    }
-
-    carousel.insertAdjacentElement('afterend', article);
-  };
 
   const initialize = () => {
     if (initialized) return true;
 
     main = document.querySelector(SELECTORS.main);
     home = document.querySelector(SELECTORS.home);
-
     homeContent = home?.querySelector(SELECTORS.content);
     carousel = homeContent?.querySelector(SELECTORS.carousel);
 
     if (!main || !home || !homeContent || !carousel) return false;
 
+    social = homeContent.querySelector(SELECTORS.social);
+
     article = createArticle();
-    insertArticle();
+
+    carousel.insertAdjacentElement('afterend', article);
+
+    if (social && article.nextElementSibling !== social) {
+      homeContent.insertBefore(article, social);
+    }
 
     initialized = true;
     connectReadButton();
