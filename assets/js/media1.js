@@ -21,7 +21,7 @@
     imageRoot: '/assets/pics/',
     arrow: '/assets/icons/arrow-right.svg',
     arrowDelay: 2000,
-    arrowDuration: 1600
+    arrowDuration: 1040
   });
 
   const SELECTORS = Object.freeze({
@@ -129,7 +129,7 @@
        ←
 
      Animation:
-       1600ms cubic-bezier(.14,.92,.18,1)
+       1040ms cubic-bezier(0.2,0.9,0.2,1)
      ========================================================= */
 
   const installArrowStyles = () => {
@@ -170,8 +170,8 @@
 
       .media1__back-icon {
         display:block;
-        width:34px;
-        height:34px;
+        width:30px;
+        height:30px;
         object-fit:contain;
         transform-origin:50% 50%;
         transform:rotate(0deg) translateZ(0);
@@ -181,7 +181,7 @@
       }
 
       .media1__back-icon.is-spinning {
-        animation:media1ArrowSpin 1600ms cubic-bezier(.14,.92,.18,1) forwards;
+        animation:media1ArrowSpin 1040ms cubic-bezier(0.2,0.9,0.2,1) forwards;
       }
 
       @keyframes media1ArrowSpin {
