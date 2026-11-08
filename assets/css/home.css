@@ -228,7 +228,7 @@
 .home-view.is-divider-visible .home-view__divider { opacity:1; }
 
 /* =========================================================
-   HOME CONTENT
+   HOME CONTENT — ORIGINAL CONTENT BOUNDARIES
    ========================================================= */
 
 .home-view__content {
@@ -236,8 +236,9 @@
   box-sizing:border-box;
   padding:
     calc(var(--home-divider-y,150px) + var(--homeContentTopGap))
-    0
-    var(--homeContentBottomPad);
+    var(--menu-right)
+    var(--homeContentBottomPad)
+    var(--menu-left);
   transition:padding-top var(--homeDividerMoveDuration) var(--homeCarouselEase);
   pointer-events:none;
 }
@@ -245,12 +246,13 @@
 .main-view.is-menu-visible .home-view__content { display:none; }
 
 /* =========================================================
-   CAROUSEL
+   CAROUSEL — INDEPENDENT FULL-BLEED LAYOUT
    ========================================================= */
 
 .home-carousel {
-  width:100%;
+  width:calc(100% + var(--menu-left) + var(--menu-right));
   min-width:0;
+  margin-left:calc(-1 * var(--menu-left));
   opacity:0;
   transition:opacity var(--homeCarouselFadeDuration) linear;
 }
@@ -361,7 +363,7 @@
 }
 
 /* =========================================================
-   ARTICLE CONTENT
+   ARTICLE CONTENT — INDEPENDENT FROM FULL-BLEED IMAGE
    ========================================================= */
 
 .home-carousel__article {
