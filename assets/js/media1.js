@@ -10,6 +10,7 @@
    Žádné přesměrování ani samostatná stránka.
 
    home.js / home.css / main.js = BEZE ZMĚN
+   iconics.js / iconics.css = BEZE ZMĚN
    ========================================================= */
 
 (() => {
@@ -27,7 +28,7 @@
     carousel: '.home-carousel',
     firstSlide: '.home-carousel__slide:first-child',
     read: '.home-carousel__button--read',
-    social: '.home-social'
+    iconics: '#iconics'
   });
 
   /* =========================================================
@@ -95,7 +96,6 @@
   let home = null;
   let homeContent = null;
   let carousel = null;
-  let social = null;
   let article = null;
   let readButton = null;
 
@@ -105,8 +105,10 @@
   let previousFocus = null;
 
   let observer = null;
+  let iconicsObserver = null;
   let transitionFrame = null;
   let scrollFrame = null;
+  let placementFrame = null;
 
   /* =========================================================
      03 — HELPERS
@@ -121,8 +123,7 @@
   const getScrollTop = () => main?.scrollTop || 0;
 
   const setScrollTop = value => {
-    if (!main) return;
-    main.scrollTop = value;
+    if (main) main.scrollTop = value;
   };
 
   const cancelFrames = () => {
@@ -134,6 +135,11 @@
     if (scrollFrame !== null) {
       cancelAnimationFrame(scrollFrame);
       scrollFrame = null;
+    }
+
+    if (placementFrame !== null) {
+      cancelAnimationFrame(placementFrame);
+      placementFrame = null;
     }
   };
 
@@ -193,8 +199,8 @@
      05 — ARTICLE FACTORY
 
      Bez tlačítka ZPĚT.
-     Budoucí navigační šipka bude doplněna
-     podle samostatně dodaných keyframes.
+     Navigační šipka bude doplněna
+     podle dodaných keyframes.
      ========================================================= */
 
   const createArticle = () => {
@@ -216,7 +222,83 @@
   };
 
   /* =========================================================
-     06 — ARTICLE OPEN
+     06 — ICONICS PLACEMENT
+
+     HOME:
+       CAROUSEL
+       ICONICS
+
+     ARTICLE:
+       CAROUSEL (SKRYTÝ)
+       ARTICLE
+       ICONICS
+
+     MENU:
+       Původní iconics.js spravuje
+       umístění v menu.
+
+     Sledujeme pouze přemístění #iconics.
+     Žádné kopírování ani úprava obsahu.
+     ========================================================= */
+
+  const getIconics = () => document.querySelector(SELECTORS.iconics);
+
+  const syncIconicsPlacement = () => {
+    if (!initialized || !articleOpen || !article || !homeContent || !main) return;
+    if (main.classList.contains('is-menu-visible')) return;
+
+    const iconics = getIconics();
+    if (!iconics) return;
+
+    if (iconics.parentElement !== homeContent || iconics.previousElementSibling !== article) {
+      article.insertAdjacentElement('afterend', iconics);
+    }
+
+    iconics.classList.remove('iconics--menu');
+  };
+
+  const scheduleIconicsPlacement = () => {
+    if (!articleOpen || placementFrame !== null) return;
+
+    placementFrame = requestAnimationFrame(() => {
+      placementFrame = null;
+      syncIconicsPlacement();
+    });
+  };
+
+  const watchIconics = () => {
+    if (iconicsObserver || !main) return;
+
+    iconicsObserver = new MutationObserver(mutations => {
+      if (!articleOpen) return;
+
+      const iconics = getIconics();
+
+      if (!iconics) {
+        scheduleIconicsPlacement();
+        return;
+      }
+
+      const moved = mutations.some(mutation => {
+        if (mutation.type !== 'childList') return false;
+
+        return [...mutation.addedNodes].includes(iconics) ||
+          [...mutation.removedNodes].includes(iconics);
+      });
+
+      if (moved || iconics.previousElementSibling !== article) {
+        scheduleIconicsPlacement();
+      }
+    });
+
+    iconicsObserver.observe(main, {
+      childList: true,
+      subtree: true
+    });
+  };
+
+  /* =========================================================
+     07 — ARTICLE OPEN
      ========================================================= */
 
   const openArticle = () => {
@@ -224,7 +306,6 @@
     if (main.classList.contains('is-menu-visible')) return;
 
     articleOpen = true;
-
     previousScrollTop = getScrollTop();
     previousFocus = document.activeElement;
 
@@ -233,12 +314,13 @@
     article.hidden = false;
     home.classList.add('media1-is-open');
 
-    carousel.setAttribute('aria-hidden', 'true');
+    carousel?.setAttribute('aria-hidden', 'true');
 
-    if ('inert' in carousel) {
+    if (carousel && 'inert' in carousel) {
       carousel.inert = true;
     }
 
+    syncIconicsPlacement();
     setScrollTop(0);
 
     transitionFrame = requestAnimationFrame(() => {
@@ -246,6 +328,7 @@
       if (!articleOpen) return;
 
       article.classList.add('is-visible');
+      syncIconicsPlacement();
 
       scrollFrame = requestAnimationFrame(() => {
         scrollFrame = null;
@@ -257,7 +340,7 @@
   };
 
   /* =========================================================
-     07 — ARTICLE CLOSE
+     08 — ARTICLE CLOSE
      ========================================================= */
 
   const closeArticle = () => {
@@ -270,10 +353,17 @@
     home.classList.remove('media1-is-open');
     article.hidden = true;
 
-    carousel.removeAttribute('aria-hidden');
+    carousel?.removeAttribute('aria-hidden');
 
-    if ('inert' in carousel) {
+    if (carousel && 'inert' in carousel) {
       carousel.inert = false;
+    }
+
+    const iconics = getIconics();
+
+    if (iconics && !main.classList.contains('is-menu-visible')) {
+      carousel.insertAdjacentElement('afterend', iconics);
+      iconics.classList.remove('iconics--menu');
     }
 
     setScrollTop(previousScrollTop);
@@ -286,7 +376,7 @@
   };
 
   /* =========================================================
-     08 — READ BUTTON CONNECTION
+     09 — READ BUTTON CONNECTION
      ========================================================= */
 
   const connectReadButton = () => {
@@ -314,28 +404,15 @@
   };
 
   /* =========================================================
-     09 — HOME INTEGRATION
+     10 — HOME INTEGRATION
 
-     Skutečná struktura podle home.js:
+     DOM:
+       .home-carousel
+       #media1
+       .home-social
 
-     #homeView
-       .home-view__divider
-       .home-view__content
-         .home-carousel
-         .home-social
-
-     Po inicializaci media1.js:
-
-     #homeView
-       .home-view__divider
-       .home-view__content
-         .home-carousel
-         #media1
-         .home-social
-
-     Při otevření článku se carousel skryje.
-     Článek a sociální sekce zůstávají
-     v přirozeném pořadí dokumentu.
+     ICONICS se při otevření článku
+     přesune mezi #media1 a .home-social.
      ========================================================= */
 
   const initialize = () => {
@@ -348,24 +425,19 @@
 
     if (!main || !home || !homeContent || !carousel) return false;
 
-    social = homeContent.querySelector(SELECTORS.social);
-
     article = createArticle();
-
     carousel.insertAdjacentElement('afterend', article);
 
-    if (social && article.nextElementSibling !== social) {
-      homeContent.insertBefore(article, social);
-    }
-
     initialized = true;
+
     connectReadButton();
+    watchIconics();
 
     return true;
   };
 
   /* =========================================================
-     10 — STARTUP
+     11 — STARTUP
      ========================================================= */
 
   const start = () => {
@@ -385,7 +457,7 @@
   };
 
   /* =========================================================
-     11 — PUBLIC API
+     12 — PUBLIC API
      ========================================================= */
 
   window.LivingSpaceMedia1 = Object.freeze({
@@ -396,7 +468,7 @@
   });
 
   /* =========================================================
-     12 — KEYBOARD
+     13 — KEYBOARD
      ========================================================= */
 
   document.addEventListener('keydown', event => {
@@ -406,7 +478,7 @@
   });
 
   /* =========================================================
-     13 — START
+     14 — START
      ========================================================= */
 
   if (document.readyState === 'loading') {
@@ -416,11 +488,12 @@
   }
 
   /* =========================================================
-     14 — CLEANUP
+     15 — CLEANUP
      ========================================================= */
 
   window.addEventListener('pagehide', () => {
     observer?.disconnect();
+    iconicsObserver?.disconnect();
     cancelFrames();
   }, { once: true });
 })();
