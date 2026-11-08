@@ -14,7 +14,7 @@
    01 — TYPOGRAPHY
    ========================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@400&family=Titillium+Web:wght@400;500;600;700&display=swap');
 
 /* =========================================================
    02 — VARIABLES
@@ -27,46 +27,46 @@
   --media1-accent:#FFE34F;
 
   --media1-font:"Titillium Web",sans-serif;
+  --media1-title-font:"Jost",sans-serif;
 
-  --media1-content-gap:3px;
+  --media1-content-gap:22px;
   --media1-text-padding:20px;
   --media1-text-max-width:760px;
 
-  --media1-title-size:clamp(32px,8vw,64px);
-  --media1-title-weight:700;
-  --media1-title-line-height:1.1;
+  --media1-title-size:26px;
+  --media1-title-weight:400;
+  --media1-title-line-height:1.2;
 
   --media1-designer-size:15px;
 
   --media1-body-size:19px;
   --media1-body-weight:400;
-  --media1-body-line-height:1.65;
+  --media1-body-line-height:1.4;
+  --media1-body-letter-spacing:-0.015em;
 
-  --media1-header-top-gap:28px;
-  --media1-header-bottom-gap:24px;
+  --media1-header-top-gap:8px;
+  --media1-header-bottom-gap:8px;
 
-  --media1-back-size:15px;
-  --media1-back-top-gap:18px;
-  --media1-back-bottom-gap:14px;
+  --media1-back-size:14px;
+  --media1-back-top-gap:0px;
+  --media1-back-bottom-gap:8px;
 
   --media1-transition-duration:280ms;
   --media1-transition-ease:cubic-bezier(0.16,1,0.3,1);
-
-  --media1-image-max-width:100%;
 }
 
 /* =========================================================
    03 — HOME ARTICLE MODE
 
-   Zachováváme původní HOME.
-   Skrýváme pouze carousel.
+   Původní HOME zůstává zachovaný.
+   Při čtení skrýváme pouze carousel.
 
-   Header, logo, menu a ostatní komponenty
-   nejsou přepisovány.
+   Header, logo, hamburger, vyhledávání
+   a oddělovací linka zůstávají beze změn.
    ========================================================= */
 
 .home-view.media1-is-open {
-  background:#000000;
+  background:var(--media1-bg,#000000);
 }
 
 .home-view.media1-is-open .home-carousel {
@@ -129,12 +129,13 @@
 }
 
 /* =========================================================
-   05 — FULL-BLEED ARTICLE LAYOUT
+   05 — ARTICLE LAYOUT
 
-   HOME používá vlastní horizontální odsazení.
+   Článek kompenzuje horizontální odsazení
+   původního HOME stejně jako carousel.
 
-   Článek jej kompenzuje stejně jako
-   původní HOME carousel.
+   Fotografie i text pak používají jednotné
+   vnitřní odsazení.
    ========================================================= */
 
 .home-view .media1 {
@@ -149,8 +150,12 @@
   min-width:0;
   margin:0;
   padding:0;
-
   gap:var(--media1-content-gap);
+}
+
+.media1__content > * {
+  flex:0 0 auto;
+  min-width:0;
 }
 
 /* =========================================================
@@ -188,7 +193,7 @@
 
   font-family:var(--media1-font);
   font-size:var(--media1-back-size);
-  font-weight:700;
+  font-weight:600;
   line-height:1.2;
   letter-spacing:0.06em;
 
@@ -224,6 +229,11 @@
 
 /* =========================================================
    07 — ARTICLE HEADER
+
+   ON-OFF ST:
+   Jost Regular 400
+   26px
+   Centrovaný
    ========================================================= */
 
 .media1__header {
@@ -236,7 +246,7 @@
     var(--media1-header-bottom-gap);
 
   color:var(--media1-color);
-  text-align:left;
+  text-align:center;
 }
 
 .media1__title {
@@ -247,21 +257,21 @@
 
   color:var(--media1-color);
 
-  font-family:var(--media1-font);
+  font-family:var(--media1-title-font);
   font-size:var(--media1-title-size);
   font-weight:var(--media1-title-weight);
   font-style:normal;
   line-height:var(--media1-title-line-height);
-  letter-spacing:-0.025em;
+  letter-spacing:0;
 
-  text-align:left;
+  text-align:center;
   text-transform:uppercase;
   overflow-wrap:anywhere;
 }
 
 .media1__designer {
   display:block;
-  margin:14px 0 0;
+  margin:10px 0 0;
   padding:0;
 
   color:var(--media1-muted);
@@ -270,29 +280,31 @@
   font-size:var(--media1-designer-size);
   font-weight:400;
   font-style:normal;
-  line-height:1.5;
-  letter-spacing:0.02em;
+  line-height:1.4;
+  letter-spacing:0;
 
-  text-align:left;
+  text-align:center;
 }
 
 /* =========================================================
    08 — PHOTOGRAPHY
 
-   Full-bleed fotografie.
+   Stejné horizontální odsazení jako text.
    Původní poměr stran.
-   Žádný ořez ani deformace.
+   Bez ořezu a deformace.
    ========================================================= */
 
 .media1__figure {
   display:block;
-  width:100%;
+  width:calc(100% - 2 * var(--media1-text-padding));
+  max-width:var(--media1-text-max-width);
   min-width:0;
-  margin:0;
+
+  margin:0 auto;
   padding:0;
 
   border:0;
-  border-radius:0;
+  border-radius:8px;
   background:var(--media1-bg);
 
   line-height:0;
@@ -302,7 +314,7 @@
 .media1__image {
   display:block;
   width:100%;
-  max-width:var(--media1-image-max-width);
+  max-width:100%;
   height:auto;
 
   margin:0;
@@ -325,6 +337,9 @@
 
 /* =========================================================
    09 — ARTICLE TEXT
+
+   Titillium Web Regular 400.
+   Kompaktnější řádkování a proklad.
    ========================================================= */
 
 .media1__text {
@@ -353,7 +368,7 @@
   font-weight:var(--media1-body-weight);
   font-style:normal;
   line-height:var(--media1-body-line-height);
-  letter-spacing:0;
+  letter-spacing:var(--media1-body-letter-spacing);
 
   text-align:left;
   text-transform:none;
@@ -364,41 +379,38 @@
 }
 
 /* =========================================================
-   10 — ARTICLE IMAGE / TEXT SPACING
+   10 — ARTICLE SPACING
 
-   Jednotná mezera mezi všemi obsahovými bloky.
-
-   Výchozí hodnota: 3px.
+   Fotografie a text tvoří jeden
+   konzistentní redakční sloupec.
    ========================================================= */
-
-.media1__content > * {
-  flex:0 0 auto;
-  min-width:0;
-}
 
 .media1__content > .media1__figure,
 .media1__content > .media1__text {
-  margin:0;
+  margin-top:0;
+  margin-bottom:0;
 }
 
-.media1__content > .media1__figure + .media1__text,
-.media1__content > .media1__text + .media1__figure,
-.media1__content > .media1__text + .media1__text,
-.media1__content > .media1__figure + .media1__figure {
-  margin:0;
+.media1__content > .media1__header + .media1__figure {
+  margin-top:4px;
+}
+
+.media1__content > .media1__text + .media1__text {
+  margin-top:-4px;
 }
 
 /* =========================================================
    11 — SOCIAL SECTION
 
    Původní sociální komponenta HOME.
-   Zachováváme její existující design.
+   Bez zásahu do jejího obsahu nebo designu.
 
-   Pouze zajišťujeme umístění za článkem.
+   Umístění za článkem zajišťuje media1.js.
    ========================================================= */
 
 .home-view.media1-is-open .home-social {
   position:relative;
+  display:flex;
   visibility:visible;
   opacity:1;
   pointer-events:auto;
@@ -407,8 +419,7 @@
 /* =========================================================
    12 — MENU COMPATIBILITY
 
-   Původní menu má při otevření přednost.
-   Článek nesmí překrývat jeho obsah.
+   Otevřené původní menu má přednost.
    ========================================================= */
 
 .main-view.is-menu-visible .home-view.media1-is-open .media1 {
@@ -428,10 +439,7 @@
     --media1-text-padding:16px;
     --media1-body-size:17px;
     --media1-designer-size:13px;
-    --media1-back-size:14px;
-
-    --media1-header-top-gap:22px;
-    --media1-header-bottom-gap:20px;
+    --media1-back-size:13px;
   }
 }
 
@@ -444,9 +452,7 @@
     --media1-text-padding:40px;
     --media1-body-size:20px;
     --media1-designer-size:16px;
-
-    --media1-header-top-gap:40px;
-    --media1-header-bottom-gap:32px;
+    --media1-content-gap:26px;
   }
 }
 
@@ -459,9 +465,7 @@
     --media1-text-padding:60px;
     --media1-body-size:21px;
     --media1-designer-size:17px;
-
-    --media1-header-top-gap:56px;
-    --media1-header-bottom-gap:40px;
+    --media1-content-gap:30px;
   }
 }
 
