@@ -113,7 +113,7 @@
 }
 
 /* =========================================================
-   SOCIAL ICONS — ISOLATED LAYOUT
+   SOCIAL ICONS
    ========================================================= */
 
 .iconics__icons {
@@ -209,7 +209,6 @@
 
   .iconics__icons {
     width:calc(100% - 40px);
-    max-width:540px;
     margin-top:26px;
   }
 
@@ -253,7 +252,6 @@
 
   .iconics__icons {
     width:calc(100% - 40px);
-    max-width:540px;
     margin-top:27px;
   }
 
