@@ -170,8 +170,8 @@
 
       .media1__back-icon {
         display:block;
-        width:28px;
-        height:28px;
+        width:34px;
+        height:34px;
         object-fit:contain;
         transform-origin:50% 50%;
         transform:rotate(0deg) translateZ(0);
