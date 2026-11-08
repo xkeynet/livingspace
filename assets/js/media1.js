@@ -530,6 +530,17 @@
     cancelFrames();
     stopArrowAnimation();
 
+    const viewport = carousel?.querySelector('.home-carousel__viewport');
+    const activeSlide = carousel?.querySelector('.home-carousel__slide.is-active');
+    const scrollBehavior = main.style.scrollBehavior;
+    const overflowAnchor = main.style.overflowAnchor;
+    const homeVisibility = home.style.visibility;
+    const viewportTransition = viewport?.style.transition;
+
+    main.style.scrollBehavior = 'auto';
+    main.style.overflowAnchor = 'none';
+    home.style.visibility = 'hidden';
+
     article.classList.remove('is-visible');
     home.classList.remove('media1-is-open');
     article.hidden = true;
@@ -547,7 +558,18 @@
       iconics.classList.remove('iconics--menu');
     }
 
-    setScrollTop(0);
+    if (viewport) {
+      viewport.style.transition = 'none';
+
+      const slide = activeSlide || carousel.querySelector('.home-carousel__slide:first-child');
+      const height = slide ? Math.ceil(slide.getBoundingClientRect().height) : 0;
+
+      if (height > 0) viewport.style.height = `${height}px`;
+
+      void viewport.offsetHeight;
+    }
+
+    main.scrollTop = 0;
 
     document.dispatchEvent(new CustomEvent('vb:home-go-to-slide', {
       detail: { index: 0 }
@@ -555,6 +577,28 @@
 
     if (previousFocus?.isConnected) {
       previousFocus.focus({ preventScroll: true });
+    }
+
+    main.scrollTop = 0;
+
+    if (viewport) {
+      const slide = carousel.querySelector('.home-carousel__slide.is-active') ||
+        carousel.querySelector('.home-carousel__slide:first-child');
+
+      const height = slide ? Math.ceil(slide.getBoundingClientRect().height) : 0;
+      if (height > 0) viewport.style.height = `${height}px`;
+    }
+
+    void home.offsetHeight;
+
+    home.style.visibility = homeVisibility;
+    main.style.scrollBehavior = scrollBehavior;
+    main.style.overflowAnchor = overflowAnchor;
+
+    if (viewport) {
+      requestAnimationFrame(() => {
+        if (viewport.isConnected) viewport.style.transition = viewportTransition;
+      });
     }
 
     document.dispatchEvent(new CustomEvent('vb:media1-close'));
