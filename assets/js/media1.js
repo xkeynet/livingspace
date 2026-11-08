@@ -83,7 +83,7 @@
     },
     {
       type: 'text',
-      text: 'Nabídka materiálů Boffi a jejich kompatibilita s jednotlivými produkty se neustále vyvíjejí; informujte se u svého prodejce o aktuální dostupnosti produktu v požadovaném provedení na boffi.com.',
+      text: 'Nabídka materiálů Boffi a jejich kompatibilita s jednotlivými produkty se neustále vyvíjejí; informujte se u svého prodejce o aktuální dostupnosti produktu v požadovaném provedení, nebo přímo na oficiálních stránkách společnosti boffi.com',
       linkText: 'boffi.com',
       linkUrl: 'https://www.boffi.com/'
     }
@@ -350,8 +350,8 @@
       link.target = '_blank';
       link.rel = 'noopener noreferrer';
       link.style.color = 'inherit';
-      link.style.textDecoration = 'underline';
-      link.style.textUnderlineOffset = '3px';
+      link.style.fontWeight = '700';
+      link.style.textDecoration = 'none';
 
       paragraph.appendChild(link);
       paragraph.appendChild(document.createTextNode(after));
