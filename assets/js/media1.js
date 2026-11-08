@@ -48,43 +48,7 @@
     },
     {
       type: 'text',
-      text: 'Modulární kuchyně ON-OFF ST se vyznačuje samostatně stojící konstrukcí vybavenou skládacími dvířky, která se elektronicky otevírají směrem vzhůru a odhalují pracovní prostor uvnitř. Po uzavření pracovní část zcela skryjí a promění kuchyni v monolitický nábytkový prvek.'
-    },
-    {
-      type: 'text',
-      text: 'Spodní skříňky jsou dostupné v provedení s úchytkami i bez nich. Vedle nich lze umístit vysokou skříň s dvířky, která se při otevření zasouvají do bočních prostorů.'
-    },
-    {
-      type: 'image',
-      src: '004.png',
-      alt: 'BOFFI ON-OFF ST — boční pohled na kuchyni'
-    },
-    {
-      type: 'text',
-      text: 'Skládací dvířka systému ON-OFF ST, která zakrývají pracovní desku, jsou vybavena elektronickým mechanismem umožňujícím plynulé otevření a úplné skrytí dvířek. Když je kuchyně zavřená, působí jako elegantní designový prvek, přesto si zachovává veškerou funkčnost moderní kuchyně.'
-    },
-    {
-      type: 'image',
-      src: '005.png',
-      alt: 'BOFFI ON-OFF ST — detail pracovní plochy'
-    },
-    {
-      type: 'text',
-      text: 'Dvířka spodních skříněk mohou být dodávána bez úchytek, se systémem otevírání zatlačením Tip-On.'
-    },
-    {
-      type: 'image',
-      src: '006.png',
-      alt: 'BOFFI ON-OFF ST — detail úložného systému'
-    },
-    {
-      type: 'text',
-      text: 'Skládací dvířka se elektronicky otevírají směrem vzhůru a odhalují vše, co je v kuchyni potřeba.'
-    },
-    {
-      type: 'image',
-      src: '007.png',
-      alt: 'BOFFI ON-OFF ST — detail mechanismu'
+      text: 'Modulární kuchyně ON-OFF ST se vyznačuje samostatně stojící konstrukcí vybavenou skládacími dvířky, která se elektronicky otevírají směrem vzhůru a odhalují pracovní plochu uvnitř. Po uzavření zcela zakrývají pracovní prostor a proměňují kuchyni v monolitický kus nábytku. Spodní skříňky jsou dostupné s úchytkami i bez nich a vedle nich lze umístit vysokou skříň s dvířky zasouvajícími se do bočních prostorů. Skládací dvířka ON-OFF ST, která zakrývají pracovní desku, jsou vybavena elektronickým mechanismem umožňujícím plynulé otevírání a úplné skrytí dvířek. Díky této vlastnosti se kuchyně po uzavření promění v elegantní designový prvek, přičemž si zachovává veškerou funkčnost moderní kuchyně.'
     }
   ];
 
