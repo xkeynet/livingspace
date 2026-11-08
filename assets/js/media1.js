@@ -4,89 +4,107 @@
    LIVINGSPACE — MEDIA 001
    BOFFI / ON-OFF ST
 
-   Samostatný článek a propojení s HOME.
-   Bez úprav home.js, home.css nebo main.js.
+   ARTICLE ENGINE — HOME INTEGRATION
+
+   Článek je součástí existující HOME.
+   Žádné přesměrování ani samostatná stránka.
+
+   home.js / home.css / main.js = BEZE ZMĚN
    ========================================================= */
 
 (() => {
-  const MEDIA_ID = 'media1';
-  const MEDIA_TITLE = 'ON-OFF ST';
-  const MEDIA_DESIGNER = 'Alberto Colonello';
+  const CONFIG = Object.freeze({
+    id: 'media1',
+    title: 'ON-OFF ST',
+    designer: 'Alberto Colonello',
+    imageRoot: '/assets/pics/',
+    transitionMs: 280
+  });
 
-  const SELECTORS = {
+  const SELECTORS = Object.freeze({
     main: '#mainView',
     home: '#homeView',
+    content: '.home-view__content',
     carousel: '.home-carousel',
     firstSlide: '.home-carousel__slide:first-child',
-    readButton: '.home-carousel__button--read'
-  };
+    read: '.home-carousel__button--read',
+    social: '.home-social'
+  });
 
-  let article = null;
-  let articleOpen = false;
-  let readButton = null;
-  let observer = null;
-  let previousScrollTop = 0;
-  let previousFocus = null;
-
-  /* =========================================================
-     01 — ARTICLE CONTENT
-     ========================================================= */
-
-  const MEDIA_CONTENT = [
+  const CONTENT = [
     {
       type: 'header',
-      title: MEDIA_TITLE,
-      designer: MEDIA_DESIGNER
+      title: CONFIG.title,
+      designer: CONFIG.designer
     },
     {
       type: 'image',
-      src: '/assets/pics/003.png',
+      src: '003.png',
       alt: 'BOFFI ON-OFF ST — otevřená kuchyně'
     },
     {
       type: 'text',
-      content: 'Modulární kuchyně ON-OFF ST se vyznačuje samostatně stojící konstrukcí vybavenou skládacími dvířky, která se elektronicky otevírají směrem vzhůru a odhalují pracovní prostor uvnitř. Po uzavření pracovní část zcela skryjí a promění kuchyni v monolitický nábytkový prvek.'
+      text: 'Modulární kuchyně ON-OFF ST se vyznačuje samostatně stojící konstrukcí vybavenou skládacími dvířky, která se elektronicky otevírají směrem vzhůru a odhalují pracovní prostor uvnitř. Po uzavření pracovní část zcela skryjí a promění kuchyni v monolitický nábytkový prvek.'
     },
     {
       type: 'text',
-      content: 'Spodní skříňky jsou dostupné v provedení s úchytkami i bez nich. Vedle nich lze umístit vysokou skříň s dvířky, která se při otevření zasouvají do bočních prostorů.'
+      text: 'Spodní skříňky jsou dostupné v provedení s úchytkami i bez nich. Vedle nich lze umístit vysokou skříň s dvířky, která se při otevření zasouvají do bočních prostorů.'
     },
     {
       type: 'image',
-      src: '/assets/pics/004.png',
+      src: '004.png',
       alt: 'BOFFI ON-OFF ST — boční pohled na kuchyni'
     },
     {
       type: 'text',
-      content: 'Skládací dvířka systému ON-OFF ST, která zakrývají pracovní desku, jsou vybavena elektronickým mechanismem umožňujícím plynulé otevření a úplné skrytí dvířek. Když je kuchyně zavřená, působí jako elegantní designový prvek, přesto si zachovává veškerou funkčnost moderní kuchyně.'
+      text: 'Skládací dvířka systému ON-OFF ST, která zakrývají pracovní desku, jsou vybavena elektronickým mechanismem umožňujícím plynulé otevření a úplné skrytí dvířek. Když je kuchyně zavřená, působí jako elegantní designový prvek, přesto si zachovává veškerou funkčnost moderní kuchyně.'
     },
     {
       type: 'image',
-      src: '/assets/pics/005.png',
+      src: '005.png',
       alt: 'BOFFI ON-OFF ST — detail pracovní plochy'
     },
     {
       type: 'text',
-      content: 'Dvířka spodních skříněk mohou být dodávána bez úchytek, se systémem otevírání zatlačením Tip-On.'
+      text: 'Dvířka spodních skříněk mohou být dodávána bez úchytek, se systémem otevírání zatlačením Tip-On.'
     },
     {
       type: 'image',
-      src: '/assets/pics/006.png',
+      src: '006.png',
       alt: 'BOFFI ON-OFF ST — detail úložného systému'
     },
     {
       type: 'text',
-      content: 'Skládací dvířka se elektronicky otevírají směrem vzhůru a odhalují vše, co je v kuchyni potřeba.'
+      text: 'Skládací dvířka se elektronicky otevírají směrem vzhůru a odhalují vše, co je v kuchyni potřeba.'
     },
     {
       type: 'image',
-      src: '/assets/pics/007.png',
+      src: '007.png',
       alt: 'BOFFI ON-OFF ST — detail mechanismu'
     }
   ];
 
   /* =========================================================
-     02 — ELEMENT FACTORY
+     01 — STATE
+     ========================================================= */
+
+  let main = null;
+  let home = null;
+  let homeContent = null;
+  let carousel = null;
+  let article = null;
+  let readButton = null;
+
+  let initialized = false;
+  let articleOpen = false;
+  let previousScrollTop = 0;
+  let previousFocus = null;
+
+  let observer = null;
+  let transitionFrame = null;
+
+  /* =========================================================
+     02 — HELPERS
      ========================================================= */
 
   const createElement = (tag, className = '') => {
@@ -95,8 +113,18 @@
     return element;
   };
 
+  const prefersReducedMotion = () =>
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const getScrollTop = () => main?.scrollTop || 0;
+
+  const setScrollTop = value => {
+    if (!main) return;
+    main.scrollTop = value;
+  };
+
   /* =========================================================
-     03 — ARTICLE BLOCKS
+     03 — CONTENT BLOCKS
      ========================================================= */
 
   const createHeader = item => {
@@ -112,15 +140,17 @@
     return header;
   };
 
-  const createImage = item => {
+  const createImage = (item, index) => {
     const figure = createElement('figure', 'media1__figure');
     const image = createElement('img', 'media1__image');
 
-    image.src = item.src;
+    image.src = `${CONFIG.imageRoot}${item.src}`;
     image.alt = item.alt;
-    image.loading = 'lazy';
     image.decoding = 'async';
+    image.loading = index === 1 ? 'eager' : 'lazy';
     image.draggable = false;
+
+    if (index === 1) image.fetchPriority = 'high';
 
     figure.appendChild(image);
     return figure;
@@ -130,16 +160,16 @@
     const section = createElement('section', 'media1__text');
     const paragraph = createElement('p', 'media1__paragraph');
 
-    paragraph.textContent = item.content;
-    section.appendChild(paragraph);
+    paragraph.textContent = item.text;
 
+    section.appendChild(paragraph);
     return section;
   };
 
-  const createContentBlock = item => {
+  const createBlock = (item, index) => {
     switch (item.type) {
       case 'header': return createHeader(item);
-      case 'image': return createImage(item);
+      case 'image': return createImage(item, index);
       case 'text': return createText(item);
       default: return null;
     }
@@ -152,97 +182,106 @@
   const createArticle = () => {
     const element = createElement('article', 'media1');
 
-    element.id = MEDIA_ID;
+    element.id = CONFIG.id;
+    element.hidden = true;
     element.setAttribute('aria-label', 'BOFFI — ON-OFF ST');
+
+    const navigation = createElement('div', 'media1__navigation');
 
     const back = createElement('button', 'media1__back');
     back.type = 'button';
     back.textContent = '← ZPĚT';
-    back.setAttribute('aria-label', 'Zpět na hlavní stránku');
-
+    back.setAttribute('aria-label', 'Zpět na HOME');
     back.addEventListener('click', closeArticle);
+
+    navigation.appendChild(back);
 
     const content = createElement('div', 'media1__content');
 
-    MEDIA_CONTENT.forEach(item => {
-      const block = createContentBlock(item);
+    CONTENT.forEach((item, index) => {
+      const block = createBlock(item, index);
       if (block) content.appendChild(block);
     });
 
-    element.append(back, content);
-
+    element.append(navigation, content);
     return element;
   };
 
   /* =========================================================
-     05 — ARTICLE OPEN / CLOSE
+     05 — ARTICLE TRANSITION
      ========================================================= */
 
   const openArticle = () => {
-    if (articleOpen) return;
-
-    const main = document.querySelector(SELECTORS.main);
-    const home = document.querySelector(SELECTORS.home);
-
-    if (!main || !home) return;
+    if (!initialized || articleOpen || !main || !home) return;
     if (main.classList.contains('is-menu-visible')) return;
 
     articleOpen = true;
+
+    previousScrollTop = getScrollTop();
     previousFocus = document.activeElement;
-    previousScrollTop = main.scrollTop;
 
-    if (!article) article = createArticle();
-
-    home.appendChild(article);
-
-    home.classList.add('media1-is-open');
+    if (transitionFrame !== null) {
+      cancelAnimationFrame(transitionFrame);
+      transitionFrame = null;
+    }
 
     article.hidden = false;
 
-    main.scrollTop = 0;
+    home.classList.add('media1-is-open');
 
-    requestAnimationFrame(() => {
+    setScrollTop(0);
+
+    transitionFrame = requestAnimationFrame(() => {
+      transitionFrame = null;
       if (!articleOpen) return;
+
+      article.classList.add('is-visible');
 
       const back = article.querySelector('.media1__back');
       back?.focus({ preventScroll: true });
     });
+
+    document.dispatchEvent(new CustomEvent('vb:media1-open'));
   };
 
   const closeArticle = () => {
-    if (!articleOpen) return;
-
-    const main = document.querySelector(SELECTORS.main);
-    const home = document.querySelector(SELECTORS.home);
+    if (!initialized || !articleOpen) return;
 
     articleOpen = false;
 
-    if (home) home.classList.remove('media1-is-open');
-    if (article) article.hidden = true;
+    if (transitionFrame !== null) {
+      cancelAnimationFrame(transitionFrame);
+      transitionFrame = null;
+    }
 
-    if (main) main.scrollTop = previousScrollTop;
+    article.classList.remove('is-visible');
+    home.classList.remove('media1-is-open');
+
+    article.hidden = true;
+
+    setScrollTop(previousScrollTop);
 
     if (previousFocus?.isConnected) {
       previousFocus.focus({ preventScroll: true });
     }
+
+    document.dispatchEvent(new CustomEvent('vb:media1-close'));
   };
 
   /* =========================================================
-     06 — HOME READ BUTTON CONNECTION
+     06 — READ BUTTON CONNECTION
      ========================================================= */
 
   const connectReadButton = () => {
-    const firstSlide = document.querySelector(SELECTORS.firstSlide);
-    if (!firstSlide) return false;
+    const firstSlide = home?.querySelector(SELECTORS.firstSlide);
+    const button = firstSlide?.querySelector(SELECTORS.read);
 
-    const button = firstSlide.querySelector(SELECTORS.readButton);
     if (!button) return false;
-
     if (button === readButton) return true;
 
     readButton = button;
 
-    if (button.tagName === 'BUTTON') {
+    if (button instanceof HTMLButtonElement) {
       button.disabled = false;
       button.removeAttribute('aria-label');
     }
@@ -259,74 +298,47 @@
   };
 
   /* =========================================================
-     07 — ARTICLE STYLES
+     07 — HOME INTEGRATION
      ========================================================= */
 
-  const installArticleStyles = () => {
-    if (document.getElementById('media1-integration-styles')) return;
+  const initialize = () => {
+    if (initialized) return true;
 
-    const style = createElement('style');
-    style.id = 'media1-integration-styles';
+    main = document.querySelector(SELECTORS.main);
+    home = document.querySelector(SELECTORS.home);
 
-    style.textContent = `
-      .home-view.media1-is-open {
-        background: #FFFFFF;
-        min-height: 100%;
-      }
+    homeContent = home?.querySelector(SELECTORS.content);
+    carousel = home?.querySelector(SELECTORS.carousel);
 
-      .home-view.media1-is-open .home-view__content,
-      .home-view.media1-is-open .home-view__divider {
-        display: none !important;
-      }
+    if (!main || !home || !homeContent || !carousel) return false;
 
-      .home-view.media1-is-open .media1 {
-        display: block;
-        position: relative;
-        width: 100%;
-        min-height: 100svh;
-        padding-top: 150px;
-        background: #FFFFFF;
-        color: #000000;
-        pointer-events: auto;
-      }
+    article = createArticle();
 
-      .home-view.media1-is-open .media1__back {
-        display: block;
-        margin: 0 0 20px 20px;
-        padding: 8px 12px;
-        border: 0;
-        background: transparent;
-        color: #000000;
-        font-family: 'Titillium Web', sans-serif;
-        font-size: 15px;
-        font-weight: 700;
-        cursor: pointer;
-      }
+    /*
+     * Článek vkládáme do stejného obsahového
+     * kontejneru HOME jako carousel.
+     *
+     * Sociální sekce zůstává samostatně zachována.
+     */
 
-      .home-view.media1-is-open .media1__back:focus-visible {
-        outline: 2px solid #000000;
-        outline-offset: 3px;
-      }
+    carousel.insertAdjacentElement('afterend', article);
 
-      .media1[hidden] {
-        display: none !important;
-      }
-    `;
+    initialized = true;
 
-    document.head.appendChild(style);
+    connectReadButton();
+
+    return true;
   };
 
   /* =========================================================
-     08 — INIT
+     08 — STARTUP
      ========================================================= */
 
-  const init = () => {
-    installArticleStyles();
-
-    if (connectReadButton()) return;
+  const start = () => {
+    if (initialize()) return;
 
     observer = new MutationObserver(() => {
-      if (!connectReadButton()) return;
+      if (!initialize()) return;
 
       observer.disconnect();
       observer = null;
@@ -339,23 +351,31 @@
   };
 
   /* =========================================================
-     09 — PUBLIC MODULE
+     09 — PUBLIC API
      ========================================================= */
 
   window.LivingSpaceMedia1 = Object.freeze({
     create: createArticle,
     open: openArticle,
-    close: closeArticle
+    close: closeArticle,
+    isOpen: () => articleOpen
   });
 
   /* =========================================================
-     10 — START
+     10 — EVENTS
      ========================================================= */
 
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Escape' || !articleOpen) return;
+    if (main?.classList.contains('is-menu-visible')) return;
+
+    closeArticle();
+  });
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init, { once: true });
+    document.addEventListener('DOMContentLoaded', start, { once: true });
   } else {
-    init();
+    start();
   }
 
   /* =========================================================
@@ -364,6 +384,9 @@
 
   window.addEventListener('pagehide', () => {
     observer?.disconnect();
-    observer = null;
+
+    if (transitionFrame !== null) {
+      cancelAnimationFrame(transitionFrame);
+    }
   }, { once: true });
 })();
