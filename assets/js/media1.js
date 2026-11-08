@@ -69,7 +69,7 @@
     },
     {
       type: 'text',
-      text: 'Elektronicky výklopná čela odhalují vestavěné spotřebiče.'
+      text: 'Sofistikovaný systém elektronicky výklopných čel odhaluje špičkové vestavěné spotřebiče.'
     }
   ];
 
