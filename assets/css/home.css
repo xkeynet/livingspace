@@ -62,6 +62,13 @@
   --homeBoffiLogoGap:12px;
 
   /* =======================================================
+     05B — START 001 / ON-OFF ST
+     ======================================================= */
+
+  --homeBoffiTitleSize:30px;
+  --homeBoffiTitleGap:6px;
+
+  /* =======================================================
      06 — ARTICLE TYPOGRAPHY
      ======================================================= */
 
@@ -391,6 +398,20 @@
   overflow-wrap:anywhere;
 }
 
+/* =========================================================
+   START 001 — BOFFI / ON-OFF ST TYPOGRAPHY
+   ========================================================= */
+
+.home-carousel__slide:first-child .home-carousel__brand-logo + .home-carousel__article .home-carousel__title {
+  margin-top:var(--homeBoffiTitleGap);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;
+  font-size:var(--homeBoffiTitleSize);
+  font-weight:400;
+  font-style:normal;
+  line-height:1.2;
+  letter-spacing:normal;
+}
+
 .home-carousel__description {
   margin:var(--homeDescriptionTopGap) 0 0;
   padding:0;
@@ -443,7 +464,7 @@
   min-height:var(--homeBtnH);
   box-sizing:border-box;
   margin:0;
-  padding:var(--homeBtnPadY) var(--homeBtnPadX);
+  padding:var(--homeBtnPadY) var(--homeBtnPadPadX);
   border-style:solid;
   border-width:var(--homeReadBorderW);
   border-radius:var(--homeBtnRadius);
