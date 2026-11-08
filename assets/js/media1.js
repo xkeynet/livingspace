@@ -17,8 +17,7 @@
     id: 'media1',
     title: 'ON-OFF ST',
     designer: 'Alberto Colonello',
-    imageRoot: '/assets/pics/',
-    transitionMs: 280
+    imageRoot: '/assets/pics/'
   });
 
   const SELECTORS = Object.freeze({
@@ -30,6 +29,13 @@
     read: '.home-carousel__button--read',
     social: '.home-social'
   });
+
+  /* =========================================================
+     01 — ARTICLE CONTENT
+
+     Fotografie a texty jsou samostatné bloky.
+     Jejich pořadí lze upravovat bez změny rendereru.
+     ========================================================= */
 
   const CONTENT = [
     {
@@ -85,13 +91,14 @@
   ];
 
   /* =========================================================
-     01 — STATE
+     02 — STATE
      ========================================================= */
 
   let main = null;
   let home = null;
   let homeContent = null;
   let carousel = null;
+  let social = null;
   let article = null;
   let readButton = null;
 
@@ -102,9 +109,10 @@
 
   let observer = null;
   let transitionFrame = null;
+  let scrollFrame = null;
 
   /* =========================================================
-     02 — HELPERS
+     03 — HELPERS
      ========================================================= */
 
   const createElement = (tag, className = '') => {
@@ -113,18 +121,28 @@
     return element;
   };
 
-  const prefersReducedMotion = () =>
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
   const getScrollTop = () => main?.scrollTop || 0;
 
   const setScrollTop = value => {
     if (!main) return;
+
     main.scrollTop = value;
   };
 
+  const cancelFrames = () => {
+    if (transitionFrame !== null) {
+      cancelAnimationFrame(transitionFrame);
+      transitionFrame = null;
+    }
+
+    if (scrollFrame !== null) {
+      cancelAnimationFrame(scrollFrame);
+      scrollFrame = null;
+    }
+  };
+
   /* =========================================================
-     03 — CONTENT BLOCKS
+     04 — ARTICLE HEADER
      ========================================================= */
 
   const createHeader = item => {
@@ -137,8 +155,13 @@
     designer.textContent = `Design: ${item.designer}`;
 
     header.append(title, designer);
+
     return header;
   };
+
+  /* =========================================================
+     05 — ARTICLE PHOTOGRAPHY
+     ========================================================= */
 
   const createImage = (item, index) => {
     const figure = createElement('figure', 'media1__figure');
@@ -153,8 +176,13 @@
     if (index === 1) image.fetchPriority = 'high';
 
     figure.appendChild(image);
+
     return figure;
   };
+
+  /* =========================================================
+     06 — ARTICLE TEXT
+     ========================================================= */
 
   const createText = item => {
     const section = createElement('section', 'media1__text');
@@ -163,6 +191,7 @@
     paragraph.textContent = item.text;
 
     section.appendChild(paragraph);
+
     return section;
   };
 
@@ -176,7 +205,7 @@
   };
 
   /* =========================================================
-     04 — ARTICLE FACTORY
+     07 — ARTICLE FACTORY
      ========================================================= */
 
   const createArticle = () => {
@@ -189,6 +218,7 @@
     const navigation = createElement('div', 'media1__navigation');
 
     const back = createElement('button', 'media1__back');
+
     back.type = 'button';
     back.textContent = '← ZPĚT';
     back.setAttribute('aria-label', 'Zpět na HOME');
@@ -200,19 +230,27 @@
 
     CONTENT.forEach((item, index) => {
       const block = createBlock(item, index);
+
       if (block) content.appendChild(block);
     });
 
     element.append(navigation, content);
+
     return element;
   };
 
   /* =========================================================
-     05 — ARTICLE TRANSITION
+     08 — ARTICLE OPEN
+
+     HOME zůstává zachovaný.
+     Skrývá se pouze carousel.
+
+     Header, logo, menu, divider a sociální
+     sekce zůstávají součástí původní stránky.
      ========================================================= */
 
   const openArticle = () => {
-    if (!initialized || articleOpen || !main || !home) return;
+    if (!initialized || articleOpen || !main || !home || !article) return;
     if (main.classList.contains('is-menu-visible')) return;
 
     articleOpen = true;
@@ -220,44 +258,63 @@
     previousScrollTop = getScrollTop();
     previousFocus = document.activeElement;
 
-    if (transitionFrame !== null) {
-      cancelAnimationFrame(transitionFrame);
-      transitionFrame = null;
-    }
+    cancelFrames();
 
     article.hidden = false;
 
     home.classList.add('media1-is-open');
 
+    carousel?.setAttribute('aria-hidden', 'true');
+
+    if (carousel && 'inert' in carousel) {
+      carousel.inert = true;
+    }
+
     setScrollTop(0);
 
     transitionFrame = requestAnimationFrame(() => {
       transitionFrame = null;
+
       if (!articleOpen) return;
 
       article.classList.add('is-visible');
 
-      const back = article.querySelector('.media1__back');
-      back?.focus({ preventScroll: true });
+      scrollFrame = requestAnimationFrame(() => {
+        scrollFrame = null;
+
+        if (!articleOpen) return;
+
+        setScrollTop(0);
+      });
     });
 
     document.dispatchEvent(new CustomEvent('vb:media1-open'));
   };
+
+  /* =========================================================
+     09 — ARTICLE CLOSE
+
+     Obnoví původní HOME bez vytváření
+     nového carouselu.
+     ========================================================= */
 
   const closeArticle = () => {
     if (!initialized || !articleOpen) return;
 
     articleOpen = false;
 
-    if (transitionFrame !== null) {
-      cancelAnimationFrame(transitionFrame);
-      transitionFrame = null;
-    }
+    cancelFrames();
 
     article.classList.remove('is-visible');
     home.classList.remove('media1-is-open');
 
     article.hidden = true;
+
+    carousel?.removeAttribute('aria-hidden');
+
+    if (carousel && 'inert' in carousel) {
+      carousel.inert = false;
+    }
 
     setScrollTop(previousScrollTop);
 
@@ -269,7 +326,10 @@
   };
 
   /* =========================================================
-     06 — READ BUTTON CONNECTION
+     10 — READ BUTTON CONNECTION
+
+     Aktivuje původní tlačítko ČÍST.
+     Nemění jeho design ani HTML strukturu.
      ========================================================= */
 
   const connectReadButton = () => {
@@ -291,6 +351,7 @@
     button.addEventListener('click', event => {
       event.preventDefault();
       event.stopPropagation();
+
       openArticle();
     });
 
@@ -298,7 +359,19 @@
   };
 
   /* =========================================================
-     07 — HOME INTEGRATION
+     11 — HOME INTEGRATION
+
+     Pořadí DOM:
+
+     HOME CONTENT
+       CAROUSEL
+       ARTICLE
+       SOCIAL
+
+     Při čtení:
+       CAROUSEL = SKRYTÝ
+       ARTICLE  = VIDITELNÝ
+       SOCIAL   = POD ČLÁNKEM
      ========================================================= */
 
   const initialize = () => {
@@ -308,20 +381,18 @@
     home = document.querySelector(SELECTORS.home);
 
     homeContent = home?.querySelector(SELECTORS.content);
-    carousel = home?.querySelector(SELECTORS.carousel);
+    carousel = homeContent?.querySelector(SELECTORS.carousel);
+    social = homeContent?.querySelector(SELECTORS.social);
 
     if (!main || !home || !homeContent || !carousel) return false;
 
     article = createArticle();
 
-    /*
-     * Článek vkládáme do stejného obsahového
-     * kontejneru HOME jako carousel.
-     *
-     * Sociální sekce zůstává samostatně zachována.
-     */
-
-    carousel.insertAdjacentElement('afterend', article);
+    if (social) {
+      homeContent.insertBefore(article, social);
+    } else {
+      carousel.insertAdjacentElement('afterend', article);
+    }
 
     initialized = true;
 
@@ -331,7 +402,7 @@
   };
 
   /* =========================================================
-     08 — STARTUP
+     12 — STARTUP
      ========================================================= */
 
   const start = () => {
@@ -351,7 +422,7 @@
   };
 
   /* =========================================================
-     09 — PUBLIC API
+     13 — PUBLIC API
      ========================================================= */
 
   window.LivingSpaceMedia1 = Object.freeze({
@@ -362,7 +433,7 @@
   });
 
   /* =========================================================
-     10 — EVENTS
+     14 — KEYBOARD
      ========================================================= */
 
   document.addEventListener('keydown', event => {
@@ -372,6 +443,10 @@
     closeArticle();
   });
 
+  /* =========================================================
+     15 — START
+     ========================================================= */
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', start, { once: true });
   } else {
@@ -379,14 +454,11 @@
   }
 
   /* =========================================================
-     11 — CLEANUP
+     16 — CLEANUP
      ========================================================= */
 
   window.addEventListener('pagehide', () => {
     observer?.disconnect();
-
-    if (transitionFrame !== null) {
-      cancelAnimationFrame(transitionFrame);
-    }
+    cancelFrames();
   }, { once: true });
 })();
