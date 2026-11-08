@@ -2,229 +2,480 @@
    LIVINGSPACE — MEDIA 001
    BOFFI / ON-OFF ST
 
-   Samostatný design článku.
-   Bez zásahů do HOME, HEADERU a ostatních komponent.
+   HOME-INTEGRATED ARTICLE DESIGN
+
+   Černé pozadí / bílá typografie.
+   Článek je součástí existující HOME.
+
+   home.js / home.css / main.js = BEZE ZMĚN
    ========================================================= */
 
 /* =========================================================
-   01 — FONT
+   01 — TYPOGRAPHY
    ========================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;500;600;700&display=swap');
 
 /* =========================================================
    02 — VARIABLES
    ========================================================= */
 
 .media1 {
-  --media1-bg: #FFFFFF;
-  --media1-color: #000000;
+  --media1-bg:#000000;
+  --media1-color:#FFFFFF;
+  --media1-muted:rgba(255,255,255,0.72);
+  --media1-accent:#FFE34F;
 
-  --media1-font: 'Titillium Web', sans-serif;
+  --media1-font:"Titillium Web",sans-serif;
 
-  --media1-content-gap: 3px;
-  --media1-text-padding: 20px;
+  --media1-content-gap:3px;
+  --media1-text-padding:20px;
+  --media1-text-max-width:760px;
 
-  --media1-title-size: clamp(38px, 9vw, 72px);
-  --media1-body-size: 17px;
-  --media1-body-line-height: 1.65;
+  --media1-title-size:clamp(32px,8vw,64px);
+  --media1-title-weight:700;
+  --media1-title-line-height:1.1;
 
-  --media1-content-max-width: 1440px;
-  --media1-text-max-width: 760px;
+  --media1-designer-size:15px;
+
+  --media1-body-size:19px;
+  --media1-body-weight:400;
+  --media1-body-line-height:1.65;
+
+  --media1-header-top-gap:28px;
+  --media1-header-bottom-gap:24px;
+
+  --media1-back-size:15px;
+  --media1-back-top-gap:18px;
+  --media1-back-bottom-gap:14px;
+
+  --media1-transition-duration:280ms;
+  --media1-transition-ease:cubic-bezier(0.16,1,0.3,1);
+
+  --media1-image-max-width:100%;
 }
 
 /* =========================================================
-   03 — ARTICLE ROOT
+   03 — HOME ARTICLE MODE
+
+   Zachováváme původní HOME.
+   Skrýváme pouze carousel.
+
+   Header, logo, menu a ostatní komponenty
+   nejsou přepisovány.
+   ========================================================= */
+
+.home-view.media1-is-open {
+  background:#000000;
+}
+
+.home-view.media1-is-open .home-carousel {
+  display:none;
+}
+
+.home-view.media1-is-open .home-view__content {
+  display:block;
+}
+
+.home-view.media1-is-open .home-social {
+  display:flex;
+}
+
+/* =========================================================
+   04 — ARTICLE ROOT
    ========================================================= */
 
 .media1 {
-  position: relative;
-  display: block;
-  width: 100%;
-  min-width: 0;
-  margin: 0;
-  padding: 0;
+  position:relative;
+  display:block;
+  width:100%;
+  min-width:0;
+  margin:0;
+  padding:0;
 
-  background: var(--media1-bg);
-  color: var(--media1-color);
+  background:var(--media1-bg);
+  color:var(--media1-color);
 
-  font-family: var(--media1-font);
-  font-size: var(--media1-body-size);
-  font-weight: 400;
-  line-height: var(--media1-body-line-height);
+  font-family:var(--media1-font);
+  font-size:var(--media1-body-size);
+  font-weight:var(--media1-body-weight);
+  line-height:var(--media1-body-line-height);
 
-  overflow-x: clip;
-  box-sizing: border-box;
+  opacity:0;
+  transform:translate3d(0,12px,0);
+
+  transition:
+    opacity var(--media1-transition-duration) ease,
+    transform var(--media1-transition-duration) var(--media1-transition-ease);
+
+  pointer-events:none;
+  box-sizing:border-box;
 }
 
 .media1 *,
 .media1 *::before,
 .media1 *::after {
-  box-sizing: border-box;
+  box-sizing:border-box;
+}
+
+.media1[hidden] {
+  display:none !important;
+}
+
+.media1.is-visible {
+  opacity:1;
+  transform:translate3d(0,0,0);
+  pointer-events:auto;
 }
 
 /* =========================================================
-   04 — CONTENT LAYOUT
+   05 — FULL-BLEED ARTICLE LAYOUT
+
+   HOME používá vlastní horizontální odsazení.
+
+   Článek jej kompenzuje stejně jako
+   původní HOME carousel.
    ========================================================= */
 
-.media1__content {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: var(--media1-content-max-width);
-  margin: 0 auto;
-  padding: 0;
+.home-view .media1 {
+  width:calc(100% + var(--menu-left,0px) + var(--menu-right,0px));
+  margin-left:calc(-1 * var(--menu-left,0px));
+}
 
-  gap: var(--media1-content-gap);
+.media1__content {
+  display:flex;
+  flex-direction:column;
+  width:100%;
+  min-width:0;
+  margin:0;
+  padding:0;
+
+  gap:var(--media1-content-gap);
 }
 
 /* =========================================================
-   05 — ARTICLE HEADER
+   06 — BACK NAVIGATION
+   ========================================================= */
+
+.media1__navigation {
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  width:100%;
+  margin:0;
+  padding:
+    var(--media1-back-top-gap)
+    var(--media1-text-padding)
+    var(--media1-back-bottom-gap);
+}
+
+.media1__back {
+  appearance:none;
+  -webkit-appearance:none;
+
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  min-height:36px;
+  margin:0;
+  padding:6px 0;
+
+  border:0;
+  border-radius:0;
+  background:transparent;
+  color:var(--media1-color);
+
+  font-family:var(--media1-font);
+  font-size:var(--media1-back-size);
+  font-weight:700;
+  line-height:1.2;
+  letter-spacing:0.06em;
+
+  text-align:left;
+  text-transform:uppercase;
+  text-decoration:none;
+
+  cursor:pointer;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+  -webkit-touch-callout:none;
+  user-select:none;
+
+  transition:
+    color 180ms ease,
+    opacity 180ms ease;
+}
+
+@media (hover:hover) {
+  .media1__back:hover {
+    color:var(--media1-accent);
+  }
+}
+
+.media1__back:active {
+  opacity:0.65;
+}
+
+.media1__back:focus-visible {
+  outline:2px solid var(--media1-accent);
+  outline-offset:5px;
+}
+
+/* =========================================================
+   07 — ARTICLE HEADER
    ========================================================= */
 
 .media1__header {
-  width: 100%;
-  margin: 0;
-  padding: 32px var(--media1-text-padding) 24px;
-  text-align: left;
+  display:block;
+  width:100%;
+  margin:0;
+  padding:
+    var(--media1-header-top-gap)
+    var(--media1-text-padding)
+    var(--media1-header-bottom-gap);
+
+  color:var(--media1-color);
+  text-align:left;
 }
 
 .media1__title {
-  margin: 0;
-  padding: 0;
+  display:block;
+  width:100%;
+  margin:0;
+  padding:0;
 
-  font-family: var(--media1-font);
-  font-size: var(--media1-title-size);
-  font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: -0.025em;
-  text-transform: uppercase;
-  color: var(--media1-color);
+  color:var(--media1-color);
+
+  font-family:var(--media1-font);
+  font-size:var(--media1-title-size);
+  font-weight:var(--media1-title-weight);
+  font-style:normal;
+  line-height:var(--media1-title-line-height);
+  letter-spacing:-0.025em;
+
+  text-align:left;
+  text-transform:uppercase;
+  overflow-wrap:anywhere;
 }
 
 .media1__designer {
-  margin: 14px 0 0;
-  padding: 0;
+  display:block;
+  margin:14px 0 0;
+  padding:0;
 
-  font-family: var(--media1-font);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  letter-spacing: 0.02em;
-  color: var(--media1-color);
+  color:var(--media1-muted);
+
+  font-family:var(--media1-font);
+  font-size:var(--media1-designer-size);
+  font-weight:400;
+  font-style:normal;
+  line-height:1.5;
+  letter-spacing:0.02em;
+
+  text-align:left;
 }
 
 /* =========================================================
-   06 — FULL-WIDTH IMAGES
+   08 — PHOTOGRAPHY
+
+   Full-bleed fotografie.
+   Původní poměr stran.
+   Žádný ořez ani deformace.
    ========================================================= */
 
 .media1__figure {
-  display: block;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  line-height: 0;
-  overflow: hidden;
+  display:block;
+  width:100%;
+  min-width:0;
+  margin:0;
+  padding:0;
+
+  border:0;
+  border-radius:0;
+  background:var(--media1-bg);
+
+  line-height:0;
+  overflow:hidden;
 }
 
 .media1__image {
-  display: block;
-  width: 100%;
-  height: auto;
-  max-width: 100%;
-  margin: 0;
-  padding: 0;
+  display:block;
+  width:100%;
+  max-width:var(--media1-image-max-width);
+  height:auto;
 
-  object-fit: contain;
-  object-position: center;
+  margin:0;
+  padding:0;
 
-  -webkit-user-drag: none;
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-touch-callout: none;
+  border:0;
+  border-radius:0;
+
+  object-fit:contain;
+  object-position:center;
+
+  user-select:none;
+  -webkit-user-select:none;
+  -webkit-user-drag:none;
+  -webkit-touch-callout:none;
+
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
 }
 
 /* =========================================================
-   07 — TEXT BLOCKS
+   09 — ARTICLE TEXT
    ========================================================= */
 
 .media1__text {
-  width: 100%;
-  margin: 0;
-  padding: 0 var(--media1-text-padding);
+  display:block;
+  width:100%;
+  min-width:0;
+
+  margin:0;
+  padding:0 var(--media1-text-padding);
+
+  color:var(--media1-color);
 }
 
 .media1__paragraph {
-  width: 100%;
-  max-width: var(--media1-text-max-width);
-  margin: 0 auto;
-  padding: 0;
+  display:block;
+  width:100%;
+  max-width:var(--media1-text-max-width);
 
-  font-family: var(--media1-font);
-  font-size: var(--media1-body-size);
-  font-weight: 400;
-  line-height: var(--media1-body-line-height);
-  letter-spacing: 0;
-  text-align: left;
-  color: var(--media1-color);
+  margin:0 auto;
+  padding:0;
 
-  overflow-wrap: break-word;
+  color:var(--media1-color);
+
+  font-family:var(--media1-font);
+  font-size:var(--media1-body-size);
+  font-weight:var(--media1-body-weight);
+  font-style:normal;
+  line-height:var(--media1-body-line-height);
+  letter-spacing:0;
+
+  text-align:left;
+  text-transform:none;
+
+  overflow-wrap:break-word;
+  hyphens:auto;
+  -webkit-hyphens:auto;
 }
 
 /* =========================================================
-   08 — TABLET
+   10 — ARTICLE IMAGE / TEXT SPACING
+
+   Jednotná mezera mezi všemi obsahovými bloky.
+
+   Výchozí hodnota: 3px.
    ========================================================= */
 
-@media (min-width: 768px) {
+.media1__content > * {
+  flex:0 0 auto;
+  min-width:0;
+}
+
+.media1__content > .media1__figure,
+.media1__content > .media1__text {
+  margin:0;
+}
+
+.media1__content > .media1__figure + .media1__text,
+.media1__content > .media1__text + .media1__figure,
+.media1__content > .media1__text + .media1__text,
+.media1__content > .media1__figure + .media1__figure {
+  margin:0;
+}
+
+/* =========================================================
+   11 — SOCIAL SECTION
+
+   Původní sociální komponenta HOME.
+   Zachováváme její existující design.
+
+   Pouze zajišťujeme umístění za článkem.
+   ========================================================= */
+
+.home-view.media1-is-open .home-social {
+  position:relative;
+  visibility:visible;
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* =========================================================
+   12 — MENU COMPATIBILITY
+
+   Původní menu má při otevření přednost.
+   Článek nesmí překrývat jeho obsah.
+   ========================================================= */
+
+.main-view.is-menu-visible .home-view.media1-is-open .media1 {
+  pointer-events:none;
+}
+
+.main-view.is-menu-visible .home-view.media1-is-open .home-view__content {
+  display:none;
+}
+
+/* =========================================================
+   13 — SMALL MOBILE
+   ========================================================= */
+
+@media (max-width:374px) {
   .media1 {
-    --media1-text-padding: 40px;
-    --media1-body-size: 18px;
-    --media1-content-gap: 3px;
-  }
+    --media1-text-padding:16px;
+    --media1-body-size:17px;
+    --media1-designer-size:13px;
+    --media1-back-size:14px;
 
-  .media1__header {
-    padding-top: 48px;
-    padding-bottom: 36px;
-  }
-
-  .media1__designer {
-    font-size: 15px;
+    --media1-header-top-gap:22px;
+    --media1-header-bottom-gap:20px;
   }
 }
 
 /* =========================================================
-   09 — DESKTOP
+   14 — TABLET
    ========================================================= */
 
-@media (min-width: 1200px) {
+@media (min-width:768px) {
   .media1 {
-    --media1-text-padding: 60px;
-    --media1-body-size: 19px;
-    --media1-content-gap: 3px;
-  }
+    --media1-text-padding:40px;
+    --media1-body-size:20px;
+    --media1-designer-size:16px;
 
-  .media1__header {
-    padding-top: 64px;
-    padding-bottom: 48px;
+    --media1-header-top-gap:40px;
+    --media1-header-bottom-gap:32px;
   }
 }
 
 /* =========================================================
-   10 — SMALL MOBILE
+   15 — DESKTOP
    ========================================================= */
 
-@media (max-width: 375px) {
+@media (min-width:1200px) {
   .media1 {
-    --media1-text-padding: 16px;
-    --media1-body-size: 16px;
+    --media1-text-padding:60px;
+    --media1-body-size:21px;
+    --media1-designer-size:17px;
+
+    --media1-header-top-gap:56px;
+    --media1-header-bottom-gap:40px;
+  }
+}
+
+/* =========================================================
+   16 — REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion:reduce) {
+  .media1,
+  .media1__back {
+    transition-duration:0.01ms;
   }
 
-  .media1__header {
-    padding-top: 24px;
-    padding-bottom: 20px;
-  }
-
-  .media1__designer {
-    font-size: 13px;
+  .media1 {
+    transform:none;
   }
 }
