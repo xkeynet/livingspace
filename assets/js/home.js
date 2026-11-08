@@ -33,7 +33,7 @@
       brandLogo: '/assets/pics/002.png',
       brandAlt: 'BOFFI',
       title: 'ON-OFF ST',
-      description: '',
+      description: 'Kuchyň, která dokáže zmizet',
       url: ''
     },
     { image: null, alt: '', title: '', description: '', url: '' },
