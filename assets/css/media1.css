@@ -38,7 +38,7 @@
 
   --media1-designer-size:15px;
 
-  --media1-body-size:19px;
+  --media1-body-size:18px;
   --media1-body-weight:400;
   --media1-body-line-height:1.4;
   --media1-body-letter-spacing:-0.015em;
@@ -324,8 +324,9 @@
   line-height:var(--media1-body-line-height);
   letter-spacing:var(--media1-body-letter-spacing);
 
-  text-align:left;
+  text-align:justify;
   text-transform:none;
+  text-wrap:pretty;
 
   hyphens:none;
   -webkit-hyphens:none;
