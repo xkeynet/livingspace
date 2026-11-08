@@ -51,7 +51,7 @@
     },
     {
       type: 'text',
-      text: 'Modulární kuchyně ON-OFF ST se vyznačuje samostatně stojící konstrukcí vybavenou skládacími dvířky, která se elektronicky otevírají směrem vzhůru a odhalují pracovní plochu uvnitř. Po uzavření zcela zakrývají pracovní prostor a proměňují kuchyni v monolitický kus nábytku. Spodní skříňky jsou dostupné s úchytkami i bez nich a vedle nich lze umístit vysokou skříň s dvířky zasouvajícími se do bočních prostorů. Skládací dvířka ON-OFF ST, která zakrývají pracovní desku, jsou vybavena elektronickým mechanismem umožňujícím plynulé otevírání a úplné skrytí dvířek. Díky této vlastnosti se kuchyně po uzavření promění v elegantní designový prvek, přičemž si zachovává veškerou funkčnost moderní kuchyně.'
+      text: 'Modulární kuchyně ON-OFF ST s minimalistickým a nadčasovým designem se vyznačuje samostatně stojící konstrukcí, která je vybavena elektronicky výklopnými čely otevírajícími se směrem nahoru, čímž odhalují vnitřní prostor pracovní zóny. Po zavření se celý pracovní prostor zcela skryje a promění kuchyň v monolitický kus nábytku. Spodní skříňky jsou k dispozici v bezúchytkovém provedení i s klasickým madlem, přičemž sestavu lze doplnit vysokým modulem s bočně zasouvacími dveřmi. Sofistikovaný elektronický mechanismus zajišťuje dokonale plynulý chod a úplné skrytí výklopného panelu z dohledu. Výsledkem je elegantní designový prvek, který si bez kompromisů zachovává maximální funkčnost moderní kuchyně.'
     }
   ];
 
