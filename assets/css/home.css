@@ -60,15 +60,15 @@
      05A — START 001 / BOFFI LOGO
      ======================================================= */
 
-  --homeBoffiLogoW:240px;
+  --homeBoffiLogoW:220px;
   --homeBoffiLogoGap:12px;
 
   /* =======================================================
      05B — START 001 / ON-OFF ST
      ======================================================= */
 
-  --homeBoffiTitleSize:30px;
-  --homeBoffiTitleGap:6px;
+  --homeBoffiTitleSize:26px;
+  --homeBoffiTitleGap:3px;
 
   /* =======================================================
      06 — ARTICLE TYPOGRAPHY
