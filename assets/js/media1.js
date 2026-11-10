@@ -83,7 +83,7 @@
     },
     {
       type: 'text',
-      text: 'Nabídka materiálů Boffi a jejich kompatibilita s jednotlivými produkty se neustále vyvíjejí; informujte se u svého prodejce o aktuální dostupnosti produktu v požadovaném provedení, nebo přímo na oficiálních stránkách společnosti boffi.com',
+      text: 'Nabídka materiálů Boffi a jejich kompatibilita s jednotlivými produkty se neustále vyvíjejí; informujte se u svého prodejce o aktuální dostupnosti produktu v požadovaném provedení, nebo přímo na oficiálních stránkách boffi.com',
       linkText: 'boffi.com',
       linkUrl: 'https://www.boffi.com/'
     }
